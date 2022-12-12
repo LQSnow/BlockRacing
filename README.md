@@ -129,6 +129,6 @@ zh_cn.json 翻译文件
 
 # 版权说明
 
-该项目签署**GNU Affero General Public License v3.0**授权许可
+该项目签署 [**GNU Affero General Public License v3.0**](https://github.com/LQSnow/BlockRacing/blob/main/LICENSE) 授权许可
 
-The project is licensed under the **GNU Affero General Public License v3.0**
+The project is licensed under the [**GNU Affero General Public License v3.0**](https://github.com/LQSnow/BlockRacing/blob/main/LICENSE)
