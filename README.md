@@ -126,3 +126,9 @@ zh_cn.json 翻译文件
 >  QQ：2784628010
 > 
 >  博客：lqsnow.top
+
+# 版权说明
+
+该项目签署**GNU Affero General Public License v3.0**授权许可
+
+The project is licensed under the **GNU Affero General Public License v3.0**
