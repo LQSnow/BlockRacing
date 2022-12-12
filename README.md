@@ -120,7 +120,7 @@ zh_cn.json 翻译文件
 
 # 意见反馈
 
-游戏反馈：https://shimo.im/forms/aBAYVwjVdMS6953j/fill
+游戏反馈：https://docs.qq.com/form/page/DU0Fvc0xtUmZWRUJN
 
 联系方式：
 
