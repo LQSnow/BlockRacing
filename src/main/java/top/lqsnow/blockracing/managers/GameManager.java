@@ -135,6 +135,10 @@ public class GameManager {
                 blue.removeEntry(p.getName());
             }
         }
+        Bukkit.getLogger().info("红队本局全部方块：");
+        Bukkit.getLogger().info(redCurrentBlocks.toString() + redTeamBlocks.toString());
+        Bukkit.getLogger().info("蓝队本局全部方块：");
+        Bukkit.getLogger().info(blueCurrentBlocks.toString() + blueTeamBlocks.toString());
     }
 
     // 设置两个队伍的目标方块
