@@ -2,9 +2,11 @@ package top.lqsnow.blockracing.managers;
 
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import top.lqsnow.blockracing.Main;
 import top.lqsnow.blockracing.utils.ConsoleCommandHandler;
+import top.lqsnow.blockracing.utils.ItemBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +18,7 @@ import static top.lqsnow.blockracing.commands.BlockRacing.blockAmount;
 import static top.lqsnow.blockracing.listeners.EventListener.blueTeamPlayerString;
 import static top.lqsnow.blockracing.listeners.EventListener.redTeamPlayerString;
 import static top.lqsnow.blockracing.managers.BlockManager.blocks;
-import static top.lqsnow.blockracing.managers.InventoryManager.setItem;
+import static top.lqsnow.blockracing.managers.InventoryManager.*;
 import static top.lqsnow.blockracing.managers.ScoreboardManager.*;
 
 public class GameManager {
@@ -62,7 +64,11 @@ public class GameManager {
         boolean flag = false;
         for (String s : blocks) {
             try {
-                setItem(s, 1, "1", "1", 0, "settings");
+                ItemStack stack = new ItemStack(Material.valueOf(s));
+                ItemBuilder TeamChestBuilder = new ItemBuilder(stack);
+                TeamChestBuilder.setAmount(64);
+                TeamChestBuilder.toItemStack();
+                settings.setItem(0, stack);
             } catch (Exception e) {
                 Bukkit.getLogger().severe("名为 " + s + " 的物品不存在！请检查配置文件！");
                 ConsoleCommandHandler.send("tellraw @a \"\u00a74" + "名为 " + s + " 的物品不存在！请检查配置文件！" + "\"");

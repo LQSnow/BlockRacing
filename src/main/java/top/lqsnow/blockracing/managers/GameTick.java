@@ -1,5 +1,6 @@
 package top.lqsnow.blockracing.managers;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -78,6 +79,7 @@ public class GameTick extends BukkitRunnable {
     // 红队获得目标方块
     private void redTaskComplete(String block) throws Exception {
         ConsoleCommandHandler.send("tellraw @a {\"text\": \"\\u00a7c红队\\u00a7a收集了\u00a7b" + TranslationManager.getValue(block) + "\"}");
+        Bukkit.getLogger().info("红队收集了" + TranslationManager.getValue(block));
         ConsoleCommandHandler.send("execute as @a at @s run playsound minecraft:entity.experience_orb.pickup player @s");
         redCompleteAmount += 1;
         redCurrentBlocks.remove(block);
@@ -115,6 +117,7 @@ public class GameTick extends BukkitRunnable {
     // 蓝队获得目标方块
     private void blueTaskComplete(String block) throws Exception {
         ConsoleCommandHandler.send("tellraw @a {\"text\": \"\\u00a79蓝队\\u00a7a收集了\u00a7b" + TranslationManager.getValue(block) + "\"}");
+        Bukkit.getLogger().info("蓝队收集了" + TranslationManager.getValue(block));
         ConsoleCommandHandler.send("execute as @a at @s run playsound minecraft:entity.experience_orb.pickup player @s");
         blueCompleteAmount += 1;
         blueCurrentBlocks.remove(block);
