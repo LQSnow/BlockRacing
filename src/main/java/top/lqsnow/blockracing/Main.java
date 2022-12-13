@@ -38,6 +38,7 @@ public class Main extends JavaPlugin {
         ScoreboardManager.createScoreboard();
         ScoreboardManager.setPreScoreboard();
 
+        // 创建资源文件
         if(!getDataFolder().exists()) {
             this.saveResource("EasyBlocks.txt", false);
             this.saveResource("NormalBlocks.txt", false);
@@ -60,13 +61,6 @@ public class Main extends JavaPlugin {
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             ConsoleCommandHandler.send("difficulty peaceful");
         }, 5);
-    }
-
-
-
-    @Override
-    public void onDisable() {
-
     }
 
     public static Main getInstance() {return instance;}

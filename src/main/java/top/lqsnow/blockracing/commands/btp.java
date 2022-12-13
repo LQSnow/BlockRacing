@@ -23,7 +23,7 @@ public class btp implements CommandExecutor {
             // 旁观者可以自由tp
             if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(args[0]))) {
                 ((Player) sender).teleport(Objects.requireNonNull(Bukkit.getPlayer(args[0])));
-                sender.sendMessage(ChatColor.GREEN + "[旁观者TP]已成功TP至" + Bukkit.getPlayer(args[0]).getName());
+                sender.sendMessage(ChatColor.YELLOW + "[旁观者TP]" + ChatColor.WHITE + "已成功TP至" + Bukkit.getPlayer(args[0]).getName());
                 return true;
             } else {
                 sender.sendMessage(ChatColor.DARK_RED + "请正确输入指令！");
@@ -31,20 +31,23 @@ public class btp implements CommandExecutor {
             }
         }
 
+        // 红队TP
         if (redTeamPlayer.contains((Player) sender)) {
             if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(args[0])) && redTeamPlayer.contains(Bukkit.getPlayer(args[0]))) {
                 ((Player) sender).teleport(Objects.requireNonNull(Bukkit.getPlayer(args[0])));
-                sender.sendMessage(ChatColor.GREEN + "[红队TP]已成功TP至" + Bukkit.getPlayer(args[0]).getName());
+                sender.sendMessage(ChatColor.RED + "[红队TP]" + ChatColor.WHITE + "已成功TP至" + Bukkit.getPlayer(args[0]).getName());
                 return true;
             }else {
                 sender.sendMessage(ChatColor.DARK_RED + "玩家不存在或不在同一队伍！");
                 return true;
             }
         }
+
+        // 蓝队TP
         if (blueTeamPlayer.contains((Player) sender)) {
             if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(args[0])) && blueTeamPlayer.contains(Bukkit.getPlayer(args[0]))) {
                 ((Player) sender).teleport(Objects.requireNonNull(Bukkit.getPlayer(args[0])));
-                sender.sendMessage(ChatColor.GREEN + "[蓝队TP]已成功TP至" + Bukkit.getPlayer(args[0]).getName());
+                sender.sendMessage(ChatColor.BLUE + "[蓝队TP]" + ChatColor.WHITE + "已成功TP至" + Bukkit.getPlayer(args[0]).getName());
                 return true;
             }else {
                 sender.sendMessage(ChatColor.DARK_RED + "玩家不存在或不在同一队伍！");

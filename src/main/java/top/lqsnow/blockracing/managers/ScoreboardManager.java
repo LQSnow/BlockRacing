@@ -110,14 +110,10 @@ public class ScoreboardManager {
         setSlot(1, "&e&lMade by LQ_Snow");
     }
 
-
-    
     public static void update() {
         if (!gameStart) setPreScoreboard();
         else setGameScoreboard();
     }
-
-
 
     // 设置玩家记分板
     public static void setPlayerScoreboard(Player p) {

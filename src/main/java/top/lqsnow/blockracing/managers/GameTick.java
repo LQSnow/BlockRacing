@@ -18,14 +18,17 @@ public class GameTick extends BukkitRunnable {
     public static int redCompleteAmount;
     public static int blueCompleteAmount;
 
+    // 每2t执行一次
     @Override
     public void run() {
         try {
+            // 检查物品栏
             checkRedInventory();
             checkBlueInventory();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        // 胜利检测
         if (redCurrentBlocks.size() == 0) {
             GameManager.redWin();
             this.cancel();
@@ -37,7 +40,7 @@ public class GameTick extends BukkitRunnable {
     }
 
     // 检查红队物品栏
-    private void checkRedInventory() throws IOException, ParseException {
+    private void checkRedInventory() throws Exception {
         for (Player player : redTeamPlayer) {
             for (String block : redCurrentBlocks) {
                 if (player.getInventory().contains(Material.valueOf(block))) {
@@ -55,7 +58,7 @@ public class GameTick extends BukkitRunnable {
     }
 
     // 检查蓝队物品栏
-    private void checkBlueInventory() throws IOException, ParseException {
+    private void checkBlueInventory() throws Exception {
         for (Player player : blueTeamPlayer) {
             for (String block : blueCurrentBlocks) {
                 if (player.getInventory().contains(Material.valueOf(block))) {
@@ -72,7 +75,8 @@ public class GameTick extends BukkitRunnable {
         }
     }
 
-    private void redTaskComplete(String block) throws IOException, ParseException {
+    // 红队获得目标方块
+    private void redTaskComplete(String block) throws Exception {
         ConsoleCommandHandler.send("tellraw @a {\"text\": \"\\u00a7c红队\\u00a7a收集了\u00a7b" + TranslationManager.getValue(block) + "\"}");
         ConsoleCommandHandler.send("execute as @a at @s run playsound minecraft:entity.experience_orb.pickup player @s");
         redCompleteAmount += 1;
@@ -83,6 +87,7 @@ public class GameTick extends BukkitRunnable {
         }
         redTeamScore += 1;
         ScoreboardManager.update();
+        // 将一组该物品放到蓝队队伍箱子
         if (blueTeamChest1.firstEmpty() != -1) {
             ItemStack stack = new ItemStack(Material.valueOf(block));
             ItemBuilder TeamChestBuilder = new ItemBuilder(stack);
@@ -107,7 +112,8 @@ public class GameTick extends BukkitRunnable {
         }
     }
 
-    private void blueTaskComplete(String block) throws IOException, ParseException {
+    // 蓝队获得目标方块
+    private void blueTaskComplete(String block) throws Exception {
         ConsoleCommandHandler.send("tellraw @a {\"text\": \"\\u00a79蓝队\\u00a7a收集了\u00a7b" + TranslationManager.getValue(block) + "\"}");
         ConsoleCommandHandler.send("execute as @a at @s run playsound minecraft:entity.experience_orb.pickup player @s");
         blueCompleteAmount += 1;
@@ -118,6 +124,7 @@ public class GameTick extends BukkitRunnable {
         }
         blueTeamScore += 1;
         ScoreboardManager.update();
+        // 将一组该物品放到红队队伍箱子
         if (redTeamChest1.firstEmpty() != -1) {
             ItemStack stack = new ItemStack(Material.valueOf(block));
             ItemBuilder TeamChestBuilder = new ItemBuilder(stack);

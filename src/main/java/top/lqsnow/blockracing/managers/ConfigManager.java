@@ -11,6 +11,7 @@ import java.util.List;
 public class ConfigManager {
     static FileConfiguration config;
 
+    // 读取配置文件
     public ConfigManager() throws IOException {
         easyBlocks = readFile("EasyBlocks.txt");
         normalBlocks = readFile("NormalBlocks.txt");

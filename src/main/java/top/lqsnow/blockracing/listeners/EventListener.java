@@ -49,17 +49,19 @@ public class EventListener implements Listener {
         // 设置记分板
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             ScoreboardManager.setPlayerScoreboard(e.getPlayer());
-        }, 5);
+        }, 40);
+        // 初始化
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             GameManager.playerLogin(e.getPlayer());
-        }, 5);
-
+        }, 40);
+        // 在线列表添加玩家
         inGamePlayer.add(e.getPlayer());
 
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
+        // 在线列表移除玩家
         inGamePlayer.remove(e.getPlayer());
         if (prepareList.contains(e.getPlayer())) prepareList.remove(e.getPlayer());
     }
@@ -68,6 +70,8 @@ public class EventListener implements Listener {
     public void onClick(InventoryClickEvent e) {
         Player player = (Player) e.getWhoClicked();
         InventoryView inv = player.getOpenInventory();
+
+        // 防误触处理
         if (inv.getTitle().equals(TITLE_MENU) || inv.getTitle().equals(TITLE_TEAM_CHEST_SWITCH) || inv.getTitle().equals(TITLE_WAYPOINTS) || inv.getTitle().equals(TITLE_SETTINGS)) {
             e.setCancelled(true);
         }
@@ -79,7 +83,7 @@ public class EventListener implements Listener {
             return;
         }
 
-        // settings
+        // settings 设置界面
         if (clickedItem.getItemMeta().getDisplayName().equals("中等难度方块：" + ChatColor.RED + "已禁用")) {
             setItem("GREEN_CONCRETE", 1,
                     "中等难度方块：" + ChatColor.GREEN + "已启用",
@@ -130,7 +134,7 @@ public class EventListener implements Listener {
             ScoreboardManager.update();
         }
 
-        // menu
+        // menu 菜单界面
         if (clickedItem.getItemMeta().getDisplayName().equals(TEAM_CHEST)) {
             Bukkit.getPlayer(e.getWhoClicked().getName()).openInventory(chestSwitch);
             return;
@@ -202,7 +206,7 @@ public class EventListener implements Listener {
             }
         }
 
-        // 箱子选择界面
+        // chestSwitch 箱子选择界面
         if (clickedItem.getItemMeta().getDisplayName().equals(TEAM_CHEST1)) {
             if (redTeamPlayer.contains((Player) e.getWhoClicked())) {
                 Bukkit.getPlayer(e.getWhoClicked().getName()).openInventory(redTeamChest1);
@@ -228,7 +232,7 @@ public class EventListener implements Listener {
             return;
         }
 
-        // 记录点界面
+        // wayPoint 记录点界面
         if (clickedItem.getItemMeta().getDisplayName().equals(WAYPOINTS1)) {
             if (redTeamPlayer.contains((Player) e.getWhoClicked())) {
                 ItemStack Waypoints1 = new ItemStack(Material.FILLED_MAP);

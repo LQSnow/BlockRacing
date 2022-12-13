@@ -26,14 +26,14 @@ public class Prepare implements CommandExecutor {
         }
         if (!prepareList.contains((Player) sender)) {
             prepareList.add((Player) sender);
-            sender.sendMessage(ChatColor.AQUA + "已准备！");
+            ConsoleCommandHandler.send("tellraw @a \"\u00a7b" + sender.getName() + "已准备！\"");
             if (prepareList.size() > 1 && prepareList.size() == Bukkit.getOnlinePlayers().size()) {
                 canStart = true;
                 ConsoleCommandHandler.send("tellraw @a \"\u00a7b所有人都准备好了，输入/start开始游戏吧！\"");
             }
         } else {
             prepareList.remove((Player) sender);
-            sender.sendMessage(ChatColor.RED + "已取消准备！");
+            ConsoleCommandHandler.send("tellraw @a \"\u00a7c" + sender.getName() + "已取消准备！\"");
         }
         return true;
     }

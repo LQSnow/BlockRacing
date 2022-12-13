@@ -7,6 +7,7 @@ import static top.lqsnow.blockracing.commands.BlockRacing.blockAmount;
 import static top.lqsnow.blockracing.listeners.EventListener.*;
 
 public class BlockManager {
+    // 设置方块库
     public static boolean blockAmountCheckout = false;
     public static int maxBlockAmount;
     public static String[] easyBlocks;

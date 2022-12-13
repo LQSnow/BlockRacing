@@ -11,6 +11,7 @@ import top.lqsnow.blockracing.utils.ItemBuilder;
 import java.util.Objects;
 
 public class InventoryManager {
+    // 常量
     public static final String TITLE_SETTINGS = "设置菜单";
     public static final String TITLE_MENU = "主菜单";
     public static final String TITLE_TEAM_CHEST_SWITCH = "队伍箱子选择";
@@ -34,7 +35,8 @@ public class InventoryManager {
     public static final String ROLL = ChatColor.YELLOW + "Roll";
     public static final String FIND = ChatColor.AQUA + "定位";
     public static final String WAYPOINTS = ChatColor.LIGHT_PURPLE + "记录点";
-    
+
+    // 创建物品栏
     public static Player holder = Bukkit.getPlayer("InventoryHolder");
     public static Inventory settings = Bukkit.createInventory(holder, 9, TITLE_SETTINGS);
     public static Inventory menu = Bukkit.createInventory(holder, 9, TITLE_MENU);
@@ -48,6 +50,7 @@ public class InventoryManager {
     public static Inventory redWayPoints = Bukkit.createInventory(holder, 9, TITLE_WAYPOINTS);
     public static Inventory blueWayPoints = Bukkit.createInventory(holder, 9, TITLE_WAYPOINTS);
 
+    // 初始化
     public static void init() {
         // settings
         setItem("RED_CONCRETE", 1,
@@ -109,6 +112,7 @@ public class InventoryManager {
                 2, "blueWayPoints");
     }
 
+    // 添加物品
     public static void setItem(String material, int amount, String displayName, String lore, int slot, String inv){
         ItemStack stack = new ItemStack(Objects.requireNonNull(Material.getMaterial(material)));
         ItemBuilder builder = new ItemBuilder(stack);

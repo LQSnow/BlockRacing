@@ -22,14 +22,18 @@ public class BlockRacing implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (gameStart) {
-            sender.sendMessage(ChatColor.RED + "游戏已开始！无法加入或更换队伍！");
+            sender.sendMessage(ChatColor.RED + "游戏已开始！无法使用该指令！");
             return true;
         }
+
+        // 游戏介绍
         if (args.length == 0) {
             sender.sendMessage(ChatColor.AQUA + "欢迎来到方块竞速！本插件由洛奇亚LQ_Snow制作。");
             sender.sendMessage(ChatColor.GREEN + "游戏介绍：lqsnow.top");
             return true;
         }
+
+        // 加入队伍
         if (args[0].equals("teamjoinred")) {
             red.addEntry(sender.getName());
             ConsoleCommandHandler.send("tellraw @a {\"text\": \"\\u00a7c" + sender.getName() + "加入了红队！\"}");
@@ -38,6 +42,7 @@ public class BlockRacing implements CommandExecutor {
             if (blueTeamPlayer.contains(sender)) {
                 blueTeamPlayer.remove(sender);
                 blueTeamPlayerString.remove(sender.getName());
+                blue.removeEntry(sender.getName());
             }
         } else if (args[0].equals("teamjoinblue")) {
             blue.addEntry(sender.getName());
@@ -47,8 +52,10 @@ public class BlockRacing implements CommandExecutor {
             if (redTeamPlayer.contains(sender)) {
                 redTeamPlayer.remove(sender);
                 redTeamPlayerString.remove(sender.getName());
+                red.removeEntry(sender.getName());
             }
         } else {
+            // 设置目标方块数量
             try {
                 blockAmount = Integer.parseInt(args[0]);
                 flag = true;
