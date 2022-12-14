@@ -32,6 +32,7 @@ public class GameManager {
     public static ArrayList<Player> inGamePlayer = new ArrayList<>();
     public static ArrayList<Player> var = new ArrayList<>();
     public static boolean gameStart = false;
+    public static int locateCost;
 
     // 玩家登录时的设置
     public static void playerLogin(Player player) {
@@ -79,6 +80,13 @@ public class GameManager {
             getServer().getPluginManager().disablePlugin(Main.getInstance());
             return;
         }
+
+        if (blockAmount <= 20) locateCost = 2;
+        else if (blockAmount <= 50) locateCost = 3;
+        else if (blockAmount <= 100) locateCost = 5;
+        else if (blockAmount <= 200) locateCost = 8;
+        else locateCost = 10;
+        InventoryManager.setFindItem();
 
         BukkitTask gameTick = new GameTick().runTaskTimer(Main.getInstance(), 1L, 2L);
         ScoreboardManager.update();

@@ -60,6 +60,8 @@ public class Main extends JavaPlugin {
 
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             ConsoleCommandHandler.send("difficulty peaceful");
+            ConsoleCommandHandler.send("gamerule keepInventory true");
+            ConsoleCommandHandler.send("gamerule sendCommandFeedback false");
         }, 5);
     }
 

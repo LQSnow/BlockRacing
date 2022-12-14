@@ -1,8 +1,6 @@
 package top.lqsnow.blockracing.listeners;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.InventoryView;
@@ -10,7 +8,6 @@ import org.bukkit.inventory.ItemStack;
 import top.lqsnow.blockracing.Main;
 import top.lqsnow.blockracing.managers.GameManager;
 import top.lqsnow.blockracing.managers.ScoreboardManager;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -72,9 +69,9 @@ public class EventListener implements Listener {
         Player player = (Player) e.getWhoClicked();
         InventoryView inv = player.getOpenInventory();
 
-        // 防误触处理
         if (inv.getTitle().equals(TITLE_MENU) || inv.getTitle().equals(TITLE_TEAM_CHEST_SWITCH) || inv.getTitle().equals(TITLE_WAYPOINTS) || inv.getTitle().equals(TITLE_SETTINGS)) {
             e.setCancelled(true);
+            // 防误触处理
             if (e.getRawSlot() < 0 || e.getRawSlot() > e.getInventory().getSize()) {
                 return;
             }
@@ -186,8 +183,8 @@ public class EventListener implements Listener {
                     return;
                 }
                 if (redTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    if (redTeamScore >= 10) {
-                        redTeamScore -= 10;
+                    if (redTeamScore >= locateCost) {
+                        redTeamScore -= locateCost;
                         ScoreboardManager.update();
                         findCommandPermission.add((Player) e.getWhoClicked());
                         ConsoleCommandHandler.send("tellraw @a \"\\u00a7a" + e.getWhoClicked().getName() + "购买了定位命令使用权限！\"");
@@ -195,8 +192,8 @@ public class EventListener implements Listener {
                         e.getWhoClicked().sendMessage(ChatColor.DARK_RED + "积分不足！");
                     }
                 } else if (blueTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    if (blueTeamScore >= 10) {
-                        blueTeamScore -= 10;
+                    if (blueTeamScore >= locateCost) {
+                        blueTeamScore -= locateCost;
                         ScoreboardManager.update();
                         findCommandPermission.add((Player) e.getWhoClicked());
                         ConsoleCommandHandler.send("tellraw @a \"\\u00a7a" + e.getWhoClicked().getName() + "购买了定位命令使用权限！\"");
@@ -204,6 +201,19 @@ public class EventListener implements Listener {
                         e.getWhoClicked().sendMessage(ChatColor.DARK_RED + "积分不足！");
                     }
                 }
+            }
+
+            if (clickedItem.getItemMeta().getDisplayName().equals(RANDOMTP)) {
+                Player p = (Player) e.getWhoClicked();
+                e.getWhoClicked().closeInventory();
+                World playerWorld = Bukkit.getWorld("world");
+                double randX = r.nextInt(20000) - 10000;
+                double randZ = r.nextInt(20000) - 10000;
+                Location offset = new Location(playerWorld, randX, 0, randZ).toHighestLocation();
+                double Y = offset.getY() + 1;
+                offset.setY(Y);
+                p.teleport(offset);
+                p.sendMessage(ChatColor.GREEN + "已传送到 " + offset.getX() + " " + offset.getY() + " " + offset.getZ());
             }
 
             // chestSwitch 箱子选择界面
@@ -370,7 +380,7 @@ public class EventListener implements Listener {
                     bWayPoints3Builder.toItemStack();
                     blueWayPoints.setItem(2, bWayPoints3);
                     point3.remove("blue");
-            }
+                }
             }
         }
     }

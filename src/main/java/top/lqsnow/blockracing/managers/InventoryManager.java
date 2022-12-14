@@ -10,6 +10,8 @@ import top.lqsnow.blockracing.utils.ItemBuilder;
 
 import java.util.Objects;
 
+import static top.lqsnow.blockracing.managers.GameManager.locateCost;
+
 public class InventoryManager {
     // 常量
     public static final String TITLE_SETTINGS = "设置菜单";
@@ -35,6 +37,7 @@ public class InventoryManager {
     public static final String ROLL = ChatColor.YELLOW + "Roll";
     public static final String FIND = ChatColor.AQUA + "定位";
     public static final String WAYPOINTS = ChatColor.LIGHT_PURPLE + "记录点";
+    public static final String RANDOMTP = ChatColor.BLUE + "随机传送";
 
     // 创建物品栏
     public static Player holder = Bukkit.getPlayer("InventoryHolder");
@@ -73,12 +76,12 @@ public class InventoryManager {
         setItem("TOTEM_OF_UNDYING", 1,
                 ROLL, ChatColor.AQUA + "花费全部积分更换当前需求方块（每局每队仅限一次）",
                 2, "menu");
-        setItem("COMPASS", 1,
-                FIND, ChatColor.AQUA + "花费10积分获得一次定位命令使用权限，命令为/find",
-                4, "menu");
         setItem("MAP", 1,
                 WAYPOINTS, ChatColor.AQUA + "保存或传送至记录点",
                 6, "menu");
+        setItem("ENDER_PEARL", 1,
+                RANDOMTP, ChatColor.AQUA + "随机传送",
+                8, "menu");
 
         // chestSwitch
         setItem("CHEST", 1,
@@ -110,6 +113,12 @@ public class InventoryManager {
         setItem("MAP", 1,
                 WAYPOINTS3, ChatColor.AQUA + "左键点击创建记录点",
                 2, "blueWayPoints");
+    }
+
+    public static void setFindItem() {
+        setItem("COMPASS", 1,
+                FIND, ChatColor.AQUA + "花费" + locateCost + "积分获得一次定位命令使用权限，命令为/find",
+                4, "menu");
     }
 
     // 添加物品
