@@ -24,14 +24,10 @@ public class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EventListener(), this);
 
         // 注册命令处理器
-        Objects.requireNonNull(Bukkit.getPluginCommand("find")).setExecutor(new Find());
-        Objects.requireNonNull(Bukkit.getPluginCommand("find")).setTabCompleter(new Find());
-        Objects.requireNonNull(Bukkit.getPluginCommand("btp")).setExecutor(new btp());
-        Objects.requireNonNull(Bukkit.getPluginCommand("cd")).setExecutor(new cd());
-        Objects.requireNonNull(Bukkit.getPluginCommand("BlockRacing")).setExecutor(new BlockRacing());
-        Objects.requireNonNull(Bukkit.getPluginCommand("settings")).setExecutor(new Settings());
-        Objects.requireNonNull(Bukkit.getPluginCommand("prepare")).setExecutor(new Prepare());
-        Objects.requireNonNull(Bukkit.getPluginCommand("start")).setExecutor(new Start());
+        Objects.requireNonNull(Bukkit.getPluginCommand("locate")).setExecutor(new Locate());
+        Objects.requireNonNull(Bukkit.getPluginCommand("locate")).setTabCompleter(new Locate());
+        Objects.requireNonNull(Bukkit.getPluginCommand("tp")).setExecutor(new TP());
+        Objects.requireNonNull(Bukkit.getPluginCommand("restartgame")).setExecutor(new Restart());
 
 
         // 初始化记分板
@@ -62,6 +58,7 @@ public class Main extends JavaPlugin {
             ConsoleCommandHandler.send("difficulty peaceful");
             ConsoleCommandHandler.send("gamerule keepInventory true");
             ConsoleCommandHandler.send("gamerule sendCommandFeedback false");
+            ConsoleCommandHandler.send("time set day");
         }, 5);
     }
 

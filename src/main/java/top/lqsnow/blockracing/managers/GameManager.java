@@ -14,9 +14,7 @@ import java.util.Objects;
 import java.util.Random;
 
 import static org.bukkit.Bukkit.getServer;
-import static top.lqsnow.blockracing.commands.BlockRacing.blockAmount;
-import static top.lqsnow.blockracing.listeners.EventListener.blueTeamPlayerString;
-import static top.lqsnow.blockracing.listeners.EventListener.redTeamPlayerString;
+import static top.lqsnow.blockracing.listeners.EventListener.*;
 import static top.lqsnow.blockracing.managers.BlockManager.blocks;
 import static top.lqsnow.blockracing.managers.InventoryManager.*;
 import static top.lqsnow.blockracing.managers.ScoreboardManager.*;
@@ -33,23 +31,23 @@ public class GameManager {
     public static ArrayList<Player> var = new ArrayList<>();
     public static boolean gameStart = false;
     public static int locateCost;
+    public static boolean extremeMode = false;
 
     // 玩家登录时的设置
     public static void playerLogin(Player player) {
         if (!gameStart) {
             ConsoleCommandHandler.send("gamemode adventure @a");
-            ConsoleCommandHandler.send("tellraw " + player.getName() + " {\"text\": \"\\u00a7b\\u00a7l请加入选队！\"}");
-            ConsoleCommandHandler.send("tellraw " + player.getName() + " {\"text\": \"\\u00a7c[加入红队]\",\"clickEvent\": {\"action\": \"run_command\",\"value\": \"/blockracing teamjoinred\"},\"extra\": [{\"text\": \"\\u00a79[加入蓝队]\",\"clickEvent\": {\"action\": \"run_command\",\"value\": \"/blockracing teamjoinblue\"}}]}");
+            ConsoleCommandHandler.send("tellraw " + player.getName() + " {\"text\": \"\\u00a7b\\u00a7l欢迎来到方块竞速！按Shift+F打开菜单进行选队和准备！如果没反应，请检查潜行和切换副手的快捷键！\"}");
         } else {
             if (redTeamPlayerString.contains(player.getName())) {
                 if (!redTeamPlayer.contains(player)) {
                     redTeamPlayer.add(player);
                 }
-            }else if (blueTeamPlayerString.contains(player.getName())) {
+            } else if (blueTeamPlayerString.contains(player.getName())) {
                 if (!blueTeamPlayer.contains(player)) {
                     blueTeamPlayer.add(player);
                 }
-            }else {
+            } else {
                 player.setGameMode(GameMode.SPECTATOR);
                 player.sendMessage(ChatColor.RED + "游戏已开始，您现在为旁观者！");
             }
@@ -59,7 +57,9 @@ public class GameManager {
     // 游戏开始时的设置
     public static void gameStart() {
         gameStart = true;
-        setBlocks();
+        editAmountPlayer.clear();
+        if (!extremeMode) setBlocks();
+        else setExtremeBlocks();
 
         // 检查方块库是否正常
         boolean flag = false;
@@ -86,7 +86,7 @@ public class GameManager {
         else if (blockAmount <= 100) locateCost = 5;
         else if (blockAmount <= 200) locateCost = 8;
         else locateCost = 10;
-        InventoryManager.setFindItem();
+        InventoryManager.setLocateItem();
 
         BukkitTask gameTick = new GameTick().runTaskTimer(Main.getInstance(), 1L, 2L);
         ScoreboardManager.update();
@@ -100,8 +100,6 @@ public class GameManager {
                 var.remove(player);
             }
         }
-
-
 
         // 随机传送
         World playerWorld = Bukkit.getWorld("world");
@@ -185,6 +183,18 @@ public class GameManager {
         redTeamBlocks.remove(0);
         redTeamBlocks.remove(0);
         redTeamBlocks.remove(0);
+    }
+
+    private static void setExtremeBlocks() {
+        ArrayList<String> blocks_temp = new ArrayList<>();
+        Collections.addAll(blocks_temp, blocks);
+        for (int i = 0; i < blockAmount; i++) {
+            int a = r.nextInt(blocks.length - i);
+            redTeamBlocks.add(blocks_temp.get(a));
+            blueTeamBlocks.add(blocks_temp.get(a));
+            blocks_temp.remove(a);
+        }
+        setCurrentBlocks();
     }
 
     // 胜利检测

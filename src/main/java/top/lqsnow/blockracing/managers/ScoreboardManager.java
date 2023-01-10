@@ -12,7 +12,7 @@ import org.bukkit.scoreboard.Team;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static top.lqsnow.blockracing.commands.BlockRacing.blockAmount;
+import static top.lqsnow.blockracing.listeners.EventListener.blockAmount;
 import static top.lqsnow.blockracing.listeners.EventListener.*;
 import static top.lqsnow.blockracing.managers.BlockManager.*;
 import static top.lqsnow.blockracing.managers.GameManager.*;
@@ -54,13 +54,12 @@ public class ScoreboardManager {
     // 游戏开始前准备阶段的记分板设置
     public static void setPreScoreboard() {
         setTitle("&b方块竞速");
-        setSlot(9, "&a请在聊天框中进行选队");
-        setSlot(8, "&a选队完成后输入/prepare");
-        setSlot(7, "&a设置目标方块库请输入/settings");
-        setSlot(6, "&a设置目标方块数量请输入/blockracing <数量>");
-        setSlot(5, "");
+        setSlot(8, ChatColor.GREEN + "Shift+F打开菜单");
+        setSlot(7, ChatColor.GREEN + "如果无法打开，请检查潜行和切换副手的快捷键");
+        setSlot(6, "");
+        setSlot(5, ChatColor.YELLOW + "当前模式：" + (extremeMode ? "极限竞速模式" : "普通模式"));
         setSlot(4, ChatColor.YELLOW + "目标方块数量：" + blockAmount);
-        setSlot(3, ChatColor.YELLOW + "目标方块库：简单方块" + (enableNormalBlock? "+中等方块" : "") + (enableHardBlock? "+困难方块" : "") + (enableDyedBlock? "+染色方块" : "") + (enableEndBlock? "+末地方块" : ""));
+        setSlot(3, ChatColor.YELLOW + "目标方块库：简单方块" + (enableNormalBlock ? "+中等方块" : "") + (enableHardBlock ? "+困难方块" : "") + (enableDyedBlock ? "+染色方块" : "") + (enableEndBlock ? "+末地方块" : ""));
         setSlot(2, "");
         setSlot(1, "&e&lMade by LQ_Snow");
     }
@@ -71,7 +70,6 @@ public class ScoreboardManager {
         Collections.addAll(hardBlock, hardBlocks);
         Collections.addAll(dyedBlock, dyedBlocks);
         Collections.addAll(endBlock, endBlocks);
-
 
         if (redCurrentBlocks.size() >= 1) {
             setSlot(11, setDifficultyDisplay(redCurrentBlocks.get(0)));
@@ -104,6 +102,7 @@ public class ScoreboardManager {
             setSlot(2, setDifficultyDisplay(blueCurrentBlocks.get(3)));
         }
 
+        if (extremeMode) setSlot(13, ChatColor.YELLOW + "当前游戏模式为极限竞速模式！");
         setSlot(12, "&c红队：&e" + redTeamScore + "分" + "\u00a7b  (" + redCompleteAmount + "/" + blockAmount + ")");
         setSlot(7, "-------------------");
         setSlot(6, "&9蓝队：&e" + blueTeamScore + "分" + "\u00a7b  (" + blueCompleteAmount + "/" + blockAmount + ")");

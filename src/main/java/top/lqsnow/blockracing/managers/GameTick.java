@@ -5,15 +5,13 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.json.simple.parser.ParseException;
 import top.lqsnow.blockracing.utils.ConsoleCommandHandler;
 import top.lqsnow.blockracing.utils.ItemBuilder;
 
-import java.io.IOException;
-
 import static top.lqsnow.blockracing.managers.GameManager.*;
 import static top.lqsnow.blockracing.managers.InventoryManager.*;
-import static top.lqsnow.blockracing.managers.ScoreboardManager.*;
+import static top.lqsnow.blockracing.managers.ScoreboardManager.blueTeamScore;
+import static top.lqsnow.blockracing.managers.ScoreboardManager.redTeamScore;
 
 public class GameTick extends BukkitRunnable {
     public static int redCompleteAmount;
@@ -89,28 +87,29 @@ public class GameTick extends BukkitRunnable {
         }
         redTeamScore += 1;
         ScoreboardManager.update();
-        // 将一组该物品放到蓝队队伍箱子
-        if (blueTeamChest1.firstEmpty() != -1) {
-            ItemStack stack = new ItemStack(Material.valueOf(block));
-            ItemBuilder TeamChestBuilder = new ItemBuilder(stack);
-            TeamChestBuilder.setAmount(64);
-            TeamChestBuilder.toItemStack();
-            blueTeamChest1.setItem(blueTeamChest1.firstEmpty(), stack);
-        }else if (blueTeamChest2.firstEmpty() != -1) {
-            ItemStack stack = new ItemStack(Material.valueOf(block));
-            ItemBuilder TeamChestBuilder = new ItemBuilder(stack);
-            TeamChestBuilder.setAmount(64);
-            TeamChestBuilder.toItemStack();
-            blueTeamChest2.setItem(blueTeamChest2.firstEmpty(), stack);
-        }else if (blueTeamChest3.firstEmpty() != -1) {
-            ItemStack stack = new ItemStack(Material.valueOf(block));
-            ItemBuilder TeamChestBuilder = new ItemBuilder(stack);
-            TeamChestBuilder.setAmount(64);
-            TeamChestBuilder.toItemStack();
-            blueTeamChest3.setItem(blueTeamChest3.firstEmpty(), stack);
-        }
-        else {
-            ConsoleCommandHandler.send("tellraw @a \"\\u00a74蓝队队伍箱子已满！" + TranslationManager.getValue(block) + "无法放入队伍箱子！\"");
+        if (!extremeMode) {
+            // 将一组该物品放到蓝队队伍箱子
+            if (blueTeamChest1.firstEmpty() != -1) {
+                ItemStack stack = new ItemStack(Material.valueOf(block));
+                ItemBuilder TeamChestBuilder = new ItemBuilder(stack);
+                TeamChestBuilder.setAmount(64);
+                TeamChestBuilder.toItemStack();
+                blueTeamChest1.setItem(blueTeamChest1.firstEmpty(), stack);
+            } else if (blueTeamChest2.firstEmpty() != -1) {
+                ItemStack stack = new ItemStack(Material.valueOf(block));
+                ItemBuilder TeamChestBuilder = new ItemBuilder(stack);
+                TeamChestBuilder.setAmount(64);
+                TeamChestBuilder.toItemStack();
+                blueTeamChest2.setItem(blueTeamChest2.firstEmpty(), stack);
+            } else if (blueTeamChest3.firstEmpty() != -1) {
+                ItemStack stack = new ItemStack(Material.valueOf(block));
+                ItemBuilder TeamChestBuilder = new ItemBuilder(stack);
+                TeamChestBuilder.setAmount(64);
+                TeamChestBuilder.toItemStack();
+                blueTeamChest3.setItem(blueTeamChest3.firstEmpty(), stack);
+            } else {
+                ConsoleCommandHandler.send("tellraw @a \"\\u00a74蓝队队伍箱子已满！" + TranslationManager.getValue(block) + "无法放入队伍箱子！\"");
+            }
         }
     }
 
@@ -127,27 +126,29 @@ public class GameTick extends BukkitRunnable {
         }
         blueTeamScore += 1;
         ScoreboardManager.update();
-        // 将一组该物品放到红队队伍箱子
-        if (redTeamChest1.firstEmpty() != -1) {
-            ItemStack stack = new ItemStack(Material.valueOf(block));
-            ItemBuilder TeamChestBuilder = new ItemBuilder(stack);
-            TeamChestBuilder.setAmount(64);
-            TeamChestBuilder.toItemStack();
-            redTeamChest1.setItem(redTeamChest1.firstEmpty(), stack);
-        }else if (redTeamChest2.firstEmpty() != -1) {
-            ItemStack stack = new ItemStack(Material.valueOf(block));
-            ItemBuilder TeamChestBuilder = new ItemBuilder(stack);
-            TeamChestBuilder.setAmount(64);
-            TeamChestBuilder.toItemStack();
-            redTeamChest2.setItem(redTeamChest2.firstEmpty(), stack);
-        }else if (redTeamChest3.firstEmpty() != -1) {
-            ItemStack stack = new ItemStack(Material.valueOf(block));
-            ItemBuilder TeamChestBuilder = new ItemBuilder(stack);
-            TeamChestBuilder.setAmount(64);
-            TeamChestBuilder.toItemStack();
-            redTeamChest3.setItem(redTeamChest3.firstEmpty(), stack);
-        } else {
-            ConsoleCommandHandler.send("tellraw @a \"\\u00a74红队队伍箱子已满！" + TranslationManager.getValue(block) + "无法放入队伍箱子！\"");
+        if (!extremeMode) {
+            // 将一组该物品放到红队队伍箱子
+            if (redTeamChest1.firstEmpty() != -1) {
+                ItemStack stack = new ItemStack(Material.valueOf(block));
+                ItemBuilder TeamChestBuilder = new ItemBuilder(stack);
+                TeamChestBuilder.setAmount(64);
+                TeamChestBuilder.toItemStack();
+                redTeamChest1.setItem(redTeamChest1.firstEmpty(), stack);
+            } else if (redTeamChest2.firstEmpty() != -1) {
+                ItemStack stack = new ItemStack(Material.valueOf(block));
+                ItemBuilder TeamChestBuilder = new ItemBuilder(stack);
+                TeamChestBuilder.setAmount(64);
+                TeamChestBuilder.toItemStack();
+                redTeamChest2.setItem(redTeamChest2.firstEmpty(), stack);
+            } else if (redTeamChest3.firstEmpty() != -1) {
+                ItemStack stack = new ItemStack(Material.valueOf(block));
+                ItemBuilder TeamChestBuilder = new ItemBuilder(stack);
+                TeamChestBuilder.setAmount(64);
+                TeamChestBuilder.toItemStack();
+                redTeamChest3.setItem(redTeamChest3.firstEmpty(), stack);
+            } else {
+                ConsoleCommandHandler.send("tellraw @a \"\\u00a74红队队伍箱子已满！" + TranslationManager.getValue(block) + "无法放入队伍箱子！\"");
+            }
         }
     }
 }

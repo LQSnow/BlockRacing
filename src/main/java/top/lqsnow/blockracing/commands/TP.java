@@ -13,7 +13,7 @@ import java.util.Objects;
 import static top.lqsnow.blockracing.managers.GameManager.*;
 
 
-public class btp implements CommandExecutor {
+public class TP implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!gameStart) {
@@ -37,7 +37,7 @@ public class btp implements CommandExecutor {
                 ((Player) sender).teleport(Objects.requireNonNull(Bukkit.getPlayer(args[0])));
                 sender.sendMessage(ChatColor.RED + "[红队TP]" + ChatColor.WHITE + "已成功TP至" + Bukkit.getPlayer(args[0]).getName());
                 return true;
-            }else {
+            } else {
                 sender.sendMessage(ChatColor.DARK_RED + "玩家不存在或不在同一队伍！");
                 return true;
             }
@@ -49,7 +49,7 @@ public class btp implements CommandExecutor {
                 ((Player) sender).teleport(Objects.requireNonNull(Bukkit.getPlayer(args[0])));
                 sender.sendMessage(ChatColor.BLUE + "[蓝队TP]" + ChatColor.WHITE + "已成功TP至" + Bukkit.getPlayer(args[0]).getName());
                 return true;
-            }else {
+            } else {
                 sender.sendMessage(ChatColor.DARK_RED + "玩家不存在或不在同一队伍！");
                 return true;
             }

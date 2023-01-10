@@ -3,15 +3,16 @@ package top.lqsnow.blockracing.managers;
 import org.bukkit.Material;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import top.lqsnow.blockracing.Main;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
 import java.util.Objects;
 
 public class TranslationManager {
     /**
      * 获取方块名翻译
+     *
      * @param block 方块名，大写命名空间
      * @return 中文翻译
      */

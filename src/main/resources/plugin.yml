@@ -5,24 +5,12 @@ api-version: 1.19
 authors: [ LQ_Snow ]
 description: The first team to collect the required blocks wins
 commands:
-  prepare:
-    usage: "/prepare"
-    description: "Apply to start the game."
-  blockracing:
-    usage: "/blockracing <amount>"
-    description: "Set block amount."
-  cd:
-    usage: "/cd"
-    description: "Open the menu."
-  btp:
-    usage: "/btp <Teammate>"
+  tp:
+    usage: "/tp <Teammate>"
     description: "TP to teammate."
-  find:
-    usage: "/find <Structure | Biome>"
-    description: "Equivalent to '/locate'"
-  settings:
-    usage: "/settings"
-    description: "Open the setting menu."
-  start:
-    usage: "/start"
-    description: "Start the game."
+  locate:
+    usage: "/locate <Structure | Biome>"
+    description: "Locate structure or biome."
+  restartgame:
+    usage: "/restartgame"
+    description: "Restart the game."

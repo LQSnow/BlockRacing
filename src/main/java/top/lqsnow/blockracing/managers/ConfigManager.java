@@ -2,6 +2,7 @@ package top.lqsnow.blockracing.managers;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import top.lqsnow.blockracing.Main;
+
 import static top.lqsnow.blockracing.managers.BlockManager.*;
 
 import java.io.*;
@@ -25,7 +26,7 @@ public class ConfigManager {
         BufferedReader reader = new BufferedReader(new FileReader(file));
         List<String> lines = new ArrayList<>();
         String line;
-        while((line = reader.readLine()) != null) {
+        while ((line = reader.readLine()) != null) {
             if (!line.equals("")) lines.add(line);
         }
         reader.close();

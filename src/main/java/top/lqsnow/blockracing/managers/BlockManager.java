@@ -3,7 +3,7 @@ package top.lqsnow.blockracing.managers;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static top.lqsnow.blockracing.commands.BlockRacing.blockAmount;
+import static top.lqsnow.blockracing.listeners.EventListener.blockAmount;
 import static top.lqsnow.blockracing.listeners.EventListener.*;
 
 public class BlockManager {
@@ -16,6 +16,7 @@ public class BlockManager {
     public static String[] dyedBlocks;
     public static String[] endBlocks;
     public static String[] blocks;
+
     public static void init() {
         ArrayList<String> var = new ArrayList<>();
         Collections.addAll(var, easyBlocks);
