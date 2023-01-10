@@ -1,5 +1,5 @@
 name: BlockRacing
-version: '1.0'
+version: '2.0'
 main: top.lqsnow.blockracing.Main
 api-version: 1.19
 authors: [ LQ_Snow ]
