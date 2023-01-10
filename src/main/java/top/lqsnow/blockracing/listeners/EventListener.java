@@ -227,7 +227,7 @@ public class EventListener implements Listener {
                     ConsoleCommandHandler.send("tellraw @a \"\u00a7b" + player.getName() + "已准备！\"");
                     if (prepareList.size() > 1 && prepareList.size() == Bukkit.getOnlinePlayers().size()) {
                         canStart = true;
-                        ConsoleCommandHandler.send("tellraw @a \"\u00a7b所有人都准备好了，输入/start开始游戏吧！\"");
+                        ConsoleCommandHandler.send("tellraw @a \"\u00a7b所有人都准备好了，可以开始游戏了！\"");
                     }
                     return;
                 } else {
