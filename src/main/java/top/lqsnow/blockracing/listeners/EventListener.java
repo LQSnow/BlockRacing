@@ -120,6 +120,11 @@ public class EventListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerRespawn(PlayerRespawnEvent e) {
+        e.getPlayer().sendMessage(ChatColor.AQUA + "提示：如果出生点附近无法放置或破坏方块，是因为服务器带有出生点保护，离开出生点附近即可！");
+    }
+
+    @EventHandler
     public void onClick(InventoryClickEvent e) {
         Player player = (Player) e.getWhoClicked();
         InventoryView inv = player.getOpenInventory();
@@ -377,6 +382,17 @@ public class EventListener implements Listener {
             }
 
             if (clickedItem.getItemMeta().getDisplayName().equals(RANDOMTP)) {
+                if (redTeamPlayer.contains(player)) {
+                    if (redTeamScore < 2) {
+                        player.sendMessage(ChatColor.DARK_RED + "积分不足！");
+                        return;
+                    }
+                } else {
+                    if (blueTeamScore < 2) {
+                        player.sendMessage(ChatColor.DARK_RED + "积分不足！");
+                        return;
+                    }
+                }
                 Player p = (Player) e.getWhoClicked();
                 e.getWhoClicked().closeInventory();
                 World playerWorld = Bukkit.getWorld("world");
@@ -386,7 +402,10 @@ public class EventListener implements Listener {
                 double Y = offset.getY() + 1;
                 offset.setY(Y);
                 p.teleport(offset);
+                ConsoleCommandHandler.send("tellraw @a \"\\u00a7a玩家" + player.getName() + "使用了随机传送！\"");
                 p.sendMessage(ChatColor.GREEN + "已传送到 " + offset.getX() + " " + offset.getY() + " " + offset.getZ());
+                if (redTeamPlayer.contains(player)) redTeamScore -= 2;
+                else blueTeamScore -= 2;
             }
 
             // chestSwitch 箱子选择界面

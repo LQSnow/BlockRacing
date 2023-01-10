@@ -103,7 +103,7 @@ public class InventoryManager {
                 WAYPOINTS, ChatColor.AQUA + "保存或传送至记录点",
                 6, "menu");
         setItem("ENDER_PEARL", 1,
-                RANDOMTP, ChatColor.AQUA + "随机传送",
+                RANDOMTP, ChatColor.AQUA + "花费2积分随机传送",
                 8, "menu");
 
         // chestSwitch

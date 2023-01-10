@@ -22,7 +22,7 @@ public class Restart implements CommandExecutor {
             ConsoleCommandHandler.send("tellraw @a \"\\u00a74" + player.getName() + "已取消重启申请！\"");
         } else {
             typeRestartPlayers.add(player);
-            ConsoleCommandHandler.send("tellraw @a \"\\u00a7b" + player.getName() + "申请重启！服务器中所有玩家申请即可重启游戏！使用/restart命令即可申请！\"");
+            ConsoleCommandHandler.send("tellraw @a \"\\u00a7b" + player.getName() + "申请重启！服务器中所有玩家申请即可重启游戏！使用/restartgame命令即可申请！\"");
             check();
         }
         return true;
