@@ -236,7 +236,7 @@ public class EventListener implements Listener {
                     }
                     return;
                 } else {
-                    ConsoleCommandHandler.send("tellraw @a \"\u00a7c" + player.getName() + "您已经准备过了！\"");
+                    ConsoleCommandHandler.send("tellraw @a \"\u00a7c您已经准备过了！\"");
                     return;
                 }
             }
@@ -406,6 +406,7 @@ public class EventListener implements Listener {
                 p.sendMessage(ChatColor.GREEN + "已传送到 " + offset.getX() + " " + offset.getY() + " " + offset.getZ());
                 if (redTeamPlayer.contains(player)) redTeamScore -= 2;
                 else blueTeamScore -= 2;
+                ScoreboardManager.update();
             }
 
             // chestSwitch 箱子选择界面
