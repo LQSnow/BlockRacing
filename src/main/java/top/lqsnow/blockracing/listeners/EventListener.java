@@ -40,6 +40,7 @@ public class EventListener implements Listener {
     public static HashMap<String, Location> point1 = new HashMap<>();
     public static HashMap<String, Location> point2 = new HashMap<>();
     public static HashMap<String, Location> point3 = new HashMap<>();
+    public static HashMap<Player, Boolean> randomTP = new HashMap<>();
     Random r = new Random();
     public static boolean canStart = false;
     public static ArrayList<Player> editAmountPlayer = new ArrayList<>();
@@ -382,15 +383,18 @@ public class EventListener implements Listener {
             }
 
             if (clickedItem.getItemMeta().getDisplayName().equals(RANDOMTP)) {
-                if (redTeamPlayer.contains(player)) {
-                    if (redTeamScore < 2) {
-                        player.sendMessage(ChatColor.DARK_RED + "积分不足！");
-                        return;
-                    }
-                } else {
-                    if (blueTeamScore < 2) {
-                        player.sendMessage(ChatColor.DARK_RED + "积分不足！");
-                        return;
+                randomTP.putIfAbsent(player, false);
+                if (randomTP.get(player)) {
+                    if (redTeamPlayer.contains(player)) {
+                        if (redTeamScore < 2) {
+                            player.sendMessage(ChatColor.DARK_RED + "积分不足！");
+                            return;
+                        }
+                    } else {
+                        if (blueTeamScore < 2) {
+                            player.sendMessage(ChatColor.DARK_RED + "积分不足！");
+                            return;
+                        }
                     }
                 }
                 Player p = (Player) e.getWhoClicked();
@@ -404,8 +408,10 @@ public class EventListener implements Listener {
                 p.teleport(offset);
                 ConsoleCommandHandler.send("tellraw @a \"\\u00a7a玩家" + player.getName() + "使用了随机传送！\"");
                 p.sendMessage(ChatColor.GREEN + "已传送到 " + offset.getX() + " " + offset.getY() + " " + offset.getZ());
-                if (redTeamPlayer.contains(player)) redTeamScore -= 2;
-                else blueTeamScore -= 2;
+                if (randomTP.get(player)) {
+                    if (redTeamPlayer.contains(player)) redTeamScore -= 2;
+                    else blueTeamScore -= 2;
+                } else randomTP.put(player, true);
                 ScoreboardManager.update();
             }
 
