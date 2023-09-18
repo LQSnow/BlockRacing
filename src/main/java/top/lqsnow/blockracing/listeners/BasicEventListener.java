@@ -41,7 +41,7 @@ public class BasicEventListener implements IListener {
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             ScoreboardManager.setPlayerScoreboard(e.getPlayer());
             GameManager.playerLogin(e.getPlayer());
-            e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0));
+            e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0, false, false));
         }, 40);
         inGamePlayer.add(e.getPlayer());
 
