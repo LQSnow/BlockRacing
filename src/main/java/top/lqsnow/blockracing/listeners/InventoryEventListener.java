@@ -10,7 +10,6 @@ import top.lqsnow.blockracing.Main;
 import top.lqsnow.blockracing.managers.BlockManager;
 import top.lqsnow.blockracing.managers.GameManager;
 import top.lqsnow.blockracing.managers.ScoreboardManager;
-import top.lqsnow.blockracing.utils.ConsoleCommandHandler;
 import top.lqsnow.blockracing.utils.ItemBuilder;
 
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ import java.util.Random;
 import static top.lqsnow.blockracing.listeners.BasicEventListener.editAmountPlayer;
 import static top.lqsnow.blockracing.listeners.BasicEventListener.prepareList;
 import static top.lqsnow.blockracing.managers.BlockManager.*;
-import static top.lqsnow.blockracing.managers.BlockManager.easyBlocks;
 import static top.lqsnow.blockracing.managers.GameManager.*;
 import static top.lqsnow.blockracing.managers.InventoryManager.*;
 import static top.lqsnow.blockracing.managers.InventoryManager.blueWayPoints;
@@ -29,14 +27,16 @@ import static top.lqsnow.blockracing.managers.ScoreboardManager.*;
 import static top.lqsnow.blockracing.managers.ScoreboardManager.blueTeamScore;
 import static top.lqsnow.blockracing.utils.ConsoleCommandHandler.sendAll;
 
-public class InventoryEventListener implements IListener{
+public class InventoryEventListener implements IListener {
 
     private boolean redIsRolled = false;
     private boolean blueIsRolled = false;
+    public static ArrayList<String> redRollPlayers = new ArrayList<>();
+    public static ArrayList<String> blueRollPlayers = new ArrayList<>();
     public static HashMap<String, Location> point1 = new HashMap<>();
     public static HashMap<String, Location> point2 = new HashMap<>();
     public static HashMap<String, Location> point3 = new HashMap<>();
-    public static HashMap<Player, Boolean> randomTP = new HashMap<>();
+    public static HashMap<String, Boolean> randomTP = new HashMap<>();
     Random r = new Random();
     public static boolean canStart = false;
     public static boolean enableNormalBlock = false;
@@ -126,7 +126,7 @@ public class InventoryEventListener implements IListener{
             // 队伍选择
             if (clickedItem.getItemMeta().getDisplayName().equals(ChatColor.RED + "加入红队")) {
                 red.addEntry(player.getName());
-                sendAll("&c" +  player.getName() + "加入了红队！");
+                sendAll("&c" + player.getName() + "加入了红队！");
                 redTeamPlayer.add(player);
                 redTeamPlayerString.add(player.getName());
                 if (blueTeamPlayer.contains(player)) {
@@ -137,7 +137,7 @@ public class InventoryEventListener implements IListener{
                 return;
             } else if (clickedItem.getItemMeta().getDisplayName().equals(ChatColor.BLUE + "加入蓝队")) {
                 blue.addEntry(player.getName());
-                sendAll("&9" +  player.getName() + "加入了蓝队！");
+                sendAll("&9" + player.getName() + "加入了蓝队！");
                 blueTeamPlayer.add(player);
                 blueTeamPlayerString.add(player.getName());
                 if (redTeamPlayer.contains(player)) {
@@ -152,7 +152,7 @@ public class InventoryEventListener implements IListener{
             if (clickedItem.getItemMeta().getDisplayName().equals(ChatColor.YELLOW + "准备")) {
                 if (!prepareList.contains(player)) {
                     prepareList.add(player);
-                    sendAll("&b" +  player.getName() + "已准备！");
+                    sendAll("&b" + player.getName() + "已准备！");
                     if (prepareList.size() > 1 && prepareList.size() == Bukkit.getOnlinePlayers().size()) {
                         canStart = true;
                         sendAll("&b所有人都准备好了，可以开始游戏了！");
@@ -239,35 +239,67 @@ public class InventoryEventListener implements IListener{
             }
             if (clickedItem.getItemMeta().getDisplayName().equals(ROLL)) {
                 if (redTeamPlayer.contains((Player) e.getWhoClicked()) & !redIsRolled) {
-                    for (int i = 0; i < 4; i++) {
-                        if (redCurrentBlocks.size() != 0) {
-                            redCurrentBlocks.remove(0);
-                            redCurrentBlocks.add(easyBlocks[r.nextInt(easyBlocks.length)]);
-                        } else break;
+                    if (!redRollPlayers.contains(e.getWhoClicked().getName())) {
+                        redTeamPlayer.forEach(p -> {
+                            p.sendMessage(ChatColor.AQUA + e.getWhoClicked().getName() + "申请使用ROLL！全队玩家全部申请即可ROLL掉当前方块！");
+                        });
+                        redRollPlayers.add(e.getWhoClicked().getName());
+                    } else {
+                        redTeamPlayer.forEach(p -> {
+                            p.sendMessage(ChatColor.RED + e.getWhoClicked().getName() + "取消申请使用ROLL！");
+                        });
+                        redRollPlayers.remove(e.getWhoClicked().getName());
+                    }
+                    if (redRollPlayers.size() == redTeamPlayer.size()) {
+                        for (int i = 0; i < 4; i++) {
+                            if (redCurrentBlocks.size() != 0) {
+                                redCurrentBlocks.remove(0);
+                                redCurrentBlocks.add(easyBlocks[r.nextInt(easyBlocks.length)]);
+                            } else break;
+                        }
+
+                        sendAll("&c红队Roll掉了所需方块！");
+                        redIsRolled = true;
+                        redTeamScore = 0;
+                        ScoreboardManager.update();
+
+                        setItem("BARRIER", 1,
+                                ROLL, ChatColor.RED + "您的队伍已经使用过ROLL了！",
+                                2, "menu");
                     }
 
-                    sendAll("&c红队Roll掉了所需方块！");
-                    redIsRolled = true;
-                    redTeamScore = 0;
-                    ScoreboardManager.update();
-                } else if (redTeamPlayer.contains((Player) e.getWhoClicked()) & redIsRolled) {
-                    e.getWhoClicked().sendMessage(ChatColor.DARK_RED + "您的队伍已经使用过Roll了！");
-                }
-                if (blueTeamPlayer.contains((Player) e.getWhoClicked()) & !blueIsRolled) {
-                    for (int i = 0; i < 4; i++) {
-                        if (blueCurrentBlocks.size() != 0) {
-                            blueCurrentBlocks.remove(0);
-                            blueCurrentBlocks.add(easyBlocks[r.nextInt(easyBlocks.length)]);
-                        } else break;
+                } else if (blueTeamPlayer.contains((Player) e.getWhoClicked()) & !blueIsRolled) {
+                    if (!blueRollPlayers.contains(e.getWhoClicked().getName())) {
+                        blueTeamPlayer.forEach(p -> {
+                            p.sendMessage(ChatColor.AQUA + e.getWhoClicked().getName() + "申请使用ROLL！全队玩家全部申请即可ROLL掉当前方块！");
+                        });
+                        blueRollPlayers.add(e.getWhoClicked().getName());
+                    } else {
+                        blueTeamPlayer.forEach(p -> {
+                            p.sendMessage(ChatColor.RED + e.getWhoClicked().getName() + "取消申请使用ROLL！");
+                        });
+                        blueRollPlayers.remove(e.getWhoClicked().getName());
                     }
-                    sendAll("&9蓝队Roll掉了所需方块！");
-                    blueIsRolled = true;
-                    blueTeamScore = 0;
-                    ScoreboardManager.update();
-                } else if (blueTeamPlayer.contains((Player) e.getWhoClicked()) & blueIsRolled) {
+                    if (blueRollPlayers.size() == blueTeamPlayer.size()) {
+                        for (int i = 0; i < 4; i++) {
+                            if (blueCurrentBlocks.size() != 0) {
+                                blueCurrentBlocks.remove(0);
+                                blueCurrentBlocks.add(easyBlocks[r.nextInt(easyBlocks.length)]);
+                            } else break;
+                        }
+
+                        sendAll("&c蓝队Roll掉了所需方块！");
+                        blueIsRolled = true;
+                        blueTeamScore = 0;
+                        ScoreboardManager.update();
+
+                        setItem("BARRIER", 1,
+                                ROLL, ChatColor.RED + "您的队伍已经使用过ROLL了！",
+                                2, "menu");
+                    }
+                } else if (redTeamPlayer.contains(((Player) e.getWhoClicked())) || blueTeamPlayer.contains((Player) e.getWhoClicked())) {
                     e.getWhoClicked().sendMessage(ChatColor.DARK_RED + "您的队伍已经使用过Roll了！");
                 }
-                return;
             }
             if (clickedItem.getItemMeta().getDisplayName().equals(WAYPOINTS)) {
                 if (redTeamPlayer.contains((Player) e.getWhoClicked())) {
@@ -305,8 +337,8 @@ public class InventoryEventListener implements IListener{
             }
 
             if (clickedItem.getItemMeta().getDisplayName().equals(RANDOMTP)) {
-                randomTP.putIfAbsent(player, false);
-                if (randomTP.get(player)) {
+                randomTP.putIfAbsent(player.getName(), false);
+                if (randomTP.get(player.getName())) {
                     if (redTeamPlayer.contains(player)) {
                         if (redTeamScore < 2) {
                             player.sendMessage(ChatColor.DARK_RED + "积分不足！");
@@ -322,11 +354,11 @@ public class InventoryEventListener implements IListener{
                 Player p = (Player) e.getWhoClicked();
                 e.getWhoClicked().closeInventory();
                 randomTeleport(p, false);
-                sendAll("&a玩家" +  p.getName() + "使用了随机传送！");
-                if (randomTP.get(player)) {
+                sendAll("&a玩家" + p.getName() + "使用了随机传送！");
+                if (randomTP.get(player.getName())) {
                     if (redTeamPlayer.contains(player)) redTeamScore -= 2;
                     else blueTeamScore -= 2;
-                } else randomTP.put(player, true);
+                } else randomTP.put(player.getName(), true);
                 ScoreboardManager.update();
             }
 

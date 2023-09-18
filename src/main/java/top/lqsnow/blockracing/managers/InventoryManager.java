@@ -95,6 +95,7 @@ public class InventoryManager {
         setItem("CHEST", 1,
                 TEAM_CHEST, ChatColor.AQUA + "打开队伍箱子选择界面",
                 0, "menu");
+
         setItem("TOTEM_OF_UNDYING", 1,
                 ROLL, ChatColor.AQUA + "花费全部积分将当前目标方块全部替换成普通方块（每局每队仅限一次）",
                 2, "menu");

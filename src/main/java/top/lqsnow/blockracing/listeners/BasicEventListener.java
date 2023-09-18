@@ -5,6 +5,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import top.lqsnow.blockracing.Main;
 import top.lqsnow.blockracing.commands.Restart;
 import top.lqsnow.blockracing.managers.BlockManager;
@@ -36,22 +38,18 @@ public class BasicEventListener implements IListener {
 
     @EventHandler
     public void onPlayerLogin(PlayerLoginEvent e) {
-        // 设置记分板
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             ScoreboardManager.setPlayerScoreboard(e.getPlayer());
-        }, 40);
-        // 初始化
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             GameManager.playerLogin(e.getPlayer());
+            e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0));
         }, 40);
-        // 在线列表添加玩家
         inGamePlayer.add(e.getPlayer());
+
 
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
-        // 在线列表移除玩家
         inGamePlayer.remove(e.getPlayer());
         prepareList.remove(e.getPlayer());
 
