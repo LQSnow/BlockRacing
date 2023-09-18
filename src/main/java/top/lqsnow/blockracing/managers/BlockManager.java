@@ -1,29 +1,24 @@
 package top.lqsnow.blockracing.managers;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 
-import static top.lqsnow.blockracing.listeners.EventListener.blockAmount;
-import static top.lqsnow.blockracing.listeners.EventListener.*;
+import static top.lqsnow.blockracing.listeners.BasicEventListener.blockAmount;
+import static top.lqsnow.blockracing.listeners.InventoryEventListener.*;
 
 public class BlockManager {
     // 设置方块库
     public static boolean blockAmountCheckout = false;
     public static int maxBlockAmount;
-    public static String[] easyBlocks;
-    public static String[] normalBlocks;
-    public static String[] hardBlocks;
-    public static String[] dyedBlocks;
-    public static String[] endBlocks;
-    public static String[] blocks;
+    public static String[] easyBlocks, normalBlocks, hardBlocks, dyedBlocks, endBlocks, blocks;
 
     public static void init() {
-        ArrayList<String> var = new ArrayList<>();
-        Collections.addAll(var, easyBlocks);
-        if (enableNormalBlock) Collections.addAll(var, normalBlocks);
-        if (enableHardBlock) Collections.addAll(var, hardBlocks);
-        if (enableDyedBlock) Collections.addAll(var, dyedBlocks);
-        if (enableEndBlock) Collections.addAll(var, endBlocks);
+        List<String> var = new ArrayList<>(Arrays.asList(easyBlocks));
+        if (enableNormalBlock) var.addAll(Arrays.asList(normalBlocks));
+        if (enableHardBlock) var.addAll(Arrays.asList(hardBlocks));
+        if (enableDyedBlock) var.addAll(Arrays.asList(dyedBlocks));
+        if (enableEndBlock) var.addAll(Arrays.asList(endBlocks));
         if (blockAmount > var.size()) {
             blockAmountCheckout = false;
             maxBlockAmount = var.size();

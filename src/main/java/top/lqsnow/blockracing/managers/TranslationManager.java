@@ -17,7 +17,10 @@ public class TranslationManager {
      * @return 中文翻译
      */
     public static String getValue(String block) throws Exception {
-        String key = Objects.requireNonNull(Material.getMaterial(block)).getTranslationKey();
+        String key = Objects.requireNonNull(Material.getMaterial(block)).translationKey();
+        if (block.equalsIgnoreCase("NETHER_WART")) {
+            key = "block.minecraft.nether_wart";
+        }
         File file = new File(Main.getInstance().getDataFolder(), "zh_cn.json");
         FileReader reader = new FileReader(file);
         JSONParser parser = new JSONParser();

@@ -2,8 +2,11 @@ package top.lqsnow.blockracing.managers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import top.lqsnow.blockracing.utils.ConsoleCommandHandler;
 import top.lqsnow.blockracing.utils.ItemBuilder;
@@ -12,6 +15,8 @@ import static top.lqsnow.blockracing.managers.GameManager.*;
 import static top.lqsnow.blockracing.managers.InventoryManager.*;
 import static top.lqsnow.blockracing.managers.ScoreboardManager.blueTeamScore;
 import static top.lqsnow.blockracing.managers.ScoreboardManager.redTeamScore;
+import static top.lqsnow.blockracing.utils.ConsoleCommandHandler.playSound;
+import static top.lqsnow.blockracing.utils.ConsoleCommandHandler.sendAll;
 
 public class GameTick extends BukkitRunnable {
     public static int redCompleteAmount;
@@ -20,21 +25,31 @@ public class GameTick extends BukkitRunnable {
     // 每2t执行一次
     @Override
     public void run() {
-        try {
-            // 检查物品栏
-            checkRedInventory();
-            checkBlueInventory();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (gameStart) {
+            try {
+                // 检查物品栏
+                checkRedInventory();
+                checkBlueInventory();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // 胜利检测
+            if (redCurrentBlocks.size() == 0) {
+                GameManager.redWin();
+                this.cancel();
+            }
+            if (blueCurrentBlocks.size() == 0) {
+                GameManager.blueWin();
+                this.cancel();
+            }
         }
-        // 胜利检测
-        if (redCurrentBlocks.size() == 0) {
-            GameManager.redWin();
-            this.cancel();
-        }
-        if (blueCurrentBlocks.size() == 0) {
-            GameManager.blueWin();
-            this.cancel();
+
+        //准备阶段提供生命恢复和饱腹效果
+        if (!gameStart) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 5, 255));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 5, 255));
+            }
         }
     }
 
@@ -75,10 +90,10 @@ public class GameTick extends BukkitRunnable {
     }
 
     // 红队获得目标方块
-    private void redTaskComplete(String block) throws Exception {
-        ConsoleCommandHandler.send("tellraw @a {\"text\": \"\\u00a7c红队\\u00a7a收集了\u00a7b" + TranslationManager.getValue(block) + "\"}");
+    private static void redTaskComplete(String block) throws Exception {
+        sendAll("&c红队&a收集了&b" + TranslationManager.getValue(block));
         Bukkit.getLogger().info("红队收集了" + TranslationManager.getValue(block));
-        ConsoleCommandHandler.send("execute as @a at @s run playsound minecraft:entity.experience_orb.pickup player @s");
+        playSound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
         redCompleteAmount += 1;
         redCurrentBlocks.remove(block);
         if (redTeamBlocks.size() >= 1) {
@@ -108,16 +123,16 @@ public class GameTick extends BukkitRunnable {
                 TeamChestBuilder.toItemStack();
                 blueTeamChest3.setItem(blueTeamChest3.firstEmpty(), stack);
             } else {
-                ConsoleCommandHandler.send("tellraw @a \"\\u00a74蓝队队伍箱子已满！" + TranslationManager.getValue(block) + "无法放入队伍箱子！\"");
+                sendAll("&4蓝队队伍箱子已满！" + TranslationManager.getValue(block) + "无法放入队伍箱子！");
             }
         }
     }
 
     // 蓝队获得目标方块
-    private void blueTaskComplete(String block) throws Exception {
-        ConsoleCommandHandler.send("tellraw @a {\"text\": \"\\u00a79蓝队\\u00a7a收集了\u00a7b" + TranslationManager.getValue(block) + "\"}");
+    private static void blueTaskComplete(String block) throws Exception {
+        sendAll("&9蓝队&a收集了&b" + TranslationManager.getValue(block));
         Bukkit.getLogger().info("蓝队收集了" + TranslationManager.getValue(block));
-        ConsoleCommandHandler.send("execute as @a at @s run playsound minecraft:entity.experience_orb.pickup player @s");
+        playSound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
         blueCompleteAmount += 1;
         blueCurrentBlocks.remove(block);
         if (blueTeamBlocks.size() >= 1) {
@@ -147,8 +162,28 @@ public class GameTick extends BukkitRunnable {
                 TeamChestBuilder.toItemStack();
                 redTeamChest3.setItem(redTeamChest3.firstEmpty(), stack);
             } else {
-                ConsoleCommandHandler.send("tellraw @a \"\\u00a74红队队伍箱子已满！" + TranslationManager.getValue(block) + "无法放入队伍箱子！\"");
+                sendAll("&4红队队伍箱子已满！" + TranslationManager.getValue(block) + "无法放入队伍箱子！");
             }
+        }
+    }
+
+    public static void skipBlock(String team, int index) throws Exception {
+        if (team.equalsIgnoreCase("red")) {
+            if (index == -1) {
+                for (int i = 0; i < redCurrentBlocks.size(); i++) {
+                    redTaskComplete(redCurrentBlocks.get(0));
+                }
+                return;
+            }
+            redTaskComplete(redCurrentBlocks.get(index - 1));
+        } else if (team.equalsIgnoreCase("blue")) {
+            if (index == -1) {
+                for (int i = 0; i < blueCurrentBlocks.size(); i++) {
+                    blueTaskComplete(blueCurrentBlocks.get(0));
+                }
+                return;
+            }
+            blueTaskComplete(blueCurrentBlocks.get(index - 1));
         }
     }
 }

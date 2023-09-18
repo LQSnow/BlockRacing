@@ -6,7 +6,7 @@ import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import top.lqsnow.blockracing.listeners.EventListener;
+import static top.lqsnow.blockracing.listeners.InventoryEventListener.locateCommandPermission;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +20,7 @@ public class Locate implements CommandExecutor, TabCompleter {
         }
 
         // 检测是否拥有权限
-        if (EventListener.locateCommandPermission.contains((Player) sender)) {
+        if (locateCommandPermission.contains((Player) sender)) {
             ConsoleCommandHandler.sendLocateCommand((Player) sender, args[0] + " " + args[1]);
         } else sender.sendMessage(ChatColor.DARK_RED + "您没有该命令的使用权限！请在/cd中购买！");
         return true;

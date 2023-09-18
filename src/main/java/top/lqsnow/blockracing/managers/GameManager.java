@@ -1,11 +1,14 @@
 package top.lqsnow.blockracing.managers;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.title.Title;
 import org.bukkit.*;
+import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import top.lqsnow.blockracing.Main;
-import top.lqsnow.blockracing.utils.ConsoleCommandHandler;
 import top.lqsnow.blockracing.utils.ItemBuilder;
 
 import java.util.ArrayList;
@@ -14,10 +17,14 @@ import java.util.Objects;
 import java.util.Random;
 
 import static org.bukkit.Bukkit.getServer;
-import static top.lqsnow.blockracing.listeners.EventListener.*;
+import static top.lqsnow.blockracing.listeners.BasicEventListener.*;
 import static top.lqsnow.blockracing.managers.BlockManager.blocks;
 import static top.lqsnow.blockracing.managers.InventoryManager.*;
 import static top.lqsnow.blockracing.managers.ScoreboardManager.*;
+import static top.lqsnow.blockracing.listeners.InventoryEventListener.*;
+import static top.lqsnow.blockracing.utils.ColorUtil.t;
+import static top.lqsnow.blockracing.utils.ConsoleCommandHandler.playSound;
+import static top.lqsnow.blockracing.utils.ConsoleCommandHandler.sendAll;
 
 public class GameManager {
     public static ArrayList<String> redCurrentBlocks = new ArrayList<>();
@@ -36,8 +43,9 @@ public class GameManager {
     // 玩家登录时的设置
     public static void playerLogin(Player player) {
         if (!gameStart) {
-            ConsoleCommandHandler.send("gamemode adventure @a");
-            ConsoleCommandHandler.send("tellraw " + player.getName() + " {\"text\": \"\\u00a7b\\u00a7l欢迎来到方块竞速！按Shift+F打开菜单进行选队和准备！如果没反应，请检查潜行和切换副手的快捷键！\"}");
+            player.setGameMode(GameMode.ADVENTURE);
+            player.sendMessage(t("&b&l欢迎来到方块竞速！按Shift+F打开菜单进行选队和准备！如果没反应，请检查潜行和切换副手的快捷键！"));
+            player.getWorld().setDifficulty(Difficulty.PEACEFUL);
         } else {
             if (redTeamPlayerString.contains(player.getName())) {
                 if (!redTeamPlayer.contains(player)) {
@@ -72,7 +80,7 @@ public class GameManager {
                 settings.setItem(0, stack);
             } catch (Exception e) {
                 Bukkit.getLogger().severe("名为 " + s + " 的物品不存在！请检查配置文件！");
-                ConsoleCommandHandler.send("tellraw @a \"\u00a74" + "名为 " + s + " 的物品不存在！请检查配置文件！" + "\"");
+                sendAll("&4名为 " + s + " 的物品不存在！请检查配置文件！");
                 flag = true;
             }
         }
@@ -88,7 +96,6 @@ public class GameManager {
         else locateCost = 10;
         InventoryManager.setLocateItem();
 
-        BukkitTask gameTick = new GameTick().runTaskTimer(Main.getInstance(), 1L, 2L);
         ScoreboardManager.update();
 
         // 未选队玩家（旁观者）处理
@@ -101,31 +108,25 @@ public class GameManager {
             }
         }
 
-        // 随机传送
-        World playerWorld = Bukkit.getWorld("world");
         for (Player player : var) {
-            double randX = r.nextInt(20000) - 10000;
-            double randZ = r.nextInt(20000) - 10000;
-            Location offset = new Location(playerWorld, randX, 0, randZ).toHighestLocation();
-            double Y = offset.getY() + 1;
-            offset.setY(Y);
-            player.teleport(offset);
-            player.sendMessage(ChatColor.GREEN + "已传送到 " + offset.getX() + " " + offset.getY() + " " + offset.getZ());
+            randomTeleport(player, true);
             player.setHealth(20);
             player.setExp(0);
             player.setLevel(0);
             player.setFoodLevel(20);
             player.setSaturation(10);
-            ConsoleCommandHandler.send("effect clear @a");
-            ConsoleCommandHandler.send("effect give @a fire_resistance 60 0 true");
-            ConsoleCommandHandler.send("effect give @a water_breathing 60 0 true");
-            ConsoleCommandHandler.send("clear @a");
-            ConsoleCommandHandler.send("time set day");
-            ConsoleCommandHandler.send("difficulty easy");
-            for (Player p : var) {
-                ConsoleCommandHandler.send("gamemode survival " + p.getName());
+            player.setGameMode(GameMode.SURVIVAL);
+            for (PotionEffect effect : player.getActivePotionEffects()) {
+                player.removePotionEffect(effect.getType());
             }
+            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, 0, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 60, 0, false, false));
+            player.getInventory().clear();
+
         }
+
+        Bukkit.getWorlds().get(0).setTime(1000);
+        Bukkit.getWorlds().get(0).setDifficulty(Difficulty.EASY);
 
         for (Player p : redTeamPlayer) {
             if (!inGamePlayer.contains(p)) {
@@ -141,10 +142,33 @@ public class GameManager {
                 blue.removeEntry(p.getName());
             }
         }
+
         Bukkit.getLogger().info("红队本局全部方块：");
         Bukkit.getLogger().info(redCurrentBlocks.toString() + redTeamBlocks.toString());
         Bukkit.getLogger().info("蓝队本局全部方块：");
         Bukkit.getLogger().info(blueCurrentBlocks.toString() + blueTeamBlocks.toString());
+        Bukkit.getLogger().info("红队成员：" + redTeamPlayerString.toString());
+        Bukkit.getLogger().info("蓝队成员：" + blueTeamPlayerString.toString());
+    }
+
+
+    // 随机传送
+    public static void randomTeleport(Player player, boolean avoidOcean) {
+        World playerWorld = player.getWorld();
+        double randX = r.nextInt(20000) - 10000;
+        double randZ = r.nextInt(20000) - 10000;
+        Location offset = new Location(playerWorld, randX, 0, randZ).toHighestLocation();
+        double Y = offset.getY() + 1;
+        offset.setY(Y);
+        player.teleport(offset);
+        player.sendMessage(ChatColor.GREEN + "已传送到 " + offset.getX() + " " + offset.getY() + " " + offset.getZ());
+        if (avoidOcean) {
+            Biome biome = player.getLocation().getBlock().getBiome();
+            if (biome == Biome.OCEAN || biome == Biome.DEEP_OCEAN || biome == Biome.DEEP_COLD_OCEAN || biome == Biome.LUKEWARM_OCEAN || biome == Biome.DEEP_FROZEN_OCEAN || biome == Biome.COLD_OCEAN || biome == Biome.WARM_OCEAN || biome == Biome.DEEP_LUKEWARM_OCEAN || biome == Biome.FROZEN_OCEAN) {
+                player.sendMessage(ChatColor.YELLOW + "检测您传送到了海洋，正在重新传送");
+                randomTeleport(player, true);
+            }
+        }
     }
 
     // 设置两个队伍的目标方块
@@ -201,20 +225,20 @@ public class GameManager {
     public static void redWin() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.closeInventory();
+            player.showTitle(Title.title(Component.text(t("&c&l红队获胜！")), Component.empty()));
+            player.setGameMode(GameMode.SPECTATOR);
         }
-        ConsoleCommandHandler.send("tellraw @a \"\\u00a7c\\u00a7l红队获胜！\"");
-        ConsoleCommandHandler.send("title @a title \"\\u00a7c\\u00a7l红队获胜！\"");
-        ConsoleCommandHandler.send("gamemode spectator @a");
-        ConsoleCommandHandler.send("execute as @a at @s run playsound minecraft:ui.toast.challenge_complete player @s");
+        sendAll("&c&l红队获胜！");
+        playSound(Sound.UI_TOAST_CHALLENGE_COMPLETE);
     }
 
     public static void blueWin() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.closeInventory();
+            player.showTitle(Title.title(Component.text(t("&9&l蓝队获胜！")), Component.empty()));
+            player.setGameMode(GameMode.SPECTATOR);
         }
-        ConsoleCommandHandler.send("tellraw @a \"\\u00a79\\u00a7l蓝队获胜！\"");
-        ConsoleCommandHandler.send("title @a title \"\\u00a79\\u00a7l蓝队获胜！\"");
-        ConsoleCommandHandler.send("gamemode spectator @a");
-        ConsoleCommandHandler.send("execute as @a at @s run playsound minecraft:ui.toast.challenge_complete player @s");
+        sendAll("&9&l蓝队获胜！");
+        playSound(Sound.UI_TOAST_CHALLENGE_COMPLETE);
     }
 }

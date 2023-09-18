@@ -1,40 +1,36 @@
 package top.lqsnow.blockracing.listeners;
 
 import org.bukkit.*;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.*;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import top.lqsnow.blockracing.Main;
-import top.lqsnow.blockracing.commands.Restart;
 import top.lqsnow.blockracing.managers.BlockManager;
 import top.lqsnow.blockracing.managers.GameManager;
 import top.lqsnow.blockracing.managers.ScoreboardManager;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import top.lqsnow.blockracing.utils.ConsoleCommandHandler;
 import top.lqsnow.blockracing.utils.ItemBuilder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.Random;
 
-import static top.lqsnow.blockracing.commands.Restart.typeRestartPlayers;
+import static top.lqsnow.blockracing.listeners.BasicEventListener.editAmountPlayer;
+import static top.lqsnow.blockracing.listeners.BasicEventListener.prepareList;
 import static top.lqsnow.blockracing.managers.BlockManager.*;
+import static top.lqsnow.blockracing.managers.BlockManager.easyBlocks;
 import static top.lqsnow.blockracing.managers.GameManager.*;
 import static top.lqsnow.blockracing.managers.InventoryManager.*;
+import static top.lqsnow.blockracing.managers.InventoryManager.blueWayPoints;
 import static top.lqsnow.blockracing.managers.ScoreboardManager.*;
+import static top.lqsnow.blockracing.managers.ScoreboardManager.blueTeamScore;
+import static top.lqsnow.blockracing.utils.ConsoleCommandHandler.sendAll;
 
+public class InventoryEventListener implements IListener{
 
-public class EventListener implements Listener {
-    public static ArrayList<Player> locateCommandPermission = new ArrayList<Player>();
-    public static boolean enableNormalBlock = false;
-    public static boolean enableHardBlock = false;
-    public static boolean enableDyedBlock = false;
-    public static boolean enableEndBlock = false;
-    public static ArrayList<String> redTeamPlayerString = new ArrayList<>();
-    public static ArrayList<String> blueTeamPlayerString = new ArrayList<>();
-    public static int blockAmount = 50;
-    public static List<Player> prepareList = new ArrayList<>();
     private boolean redIsRolled = false;
     private boolean blueIsRolled = false;
     public static HashMap<String, Location> point1 = new HashMap<>();
@@ -43,87 +39,13 @@ public class EventListener implements Listener {
     public static HashMap<Player, Boolean> randomTP = new HashMap<>();
     Random r = new Random();
     public static boolean canStart = false;
-    public static ArrayList<Player> editAmountPlayer = new ArrayList<>();
-    boolean flag = false;
-
-
-    @EventHandler
-    public void onPlayerLogin(PlayerLoginEvent e) {
-        // 设置记分板
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-            ScoreboardManager.setPlayerScoreboard(e.getPlayer());
-        }, 40);
-        // 初始化
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-            GameManager.playerLogin(e.getPlayer());
-        }, 40);
-        // 在线列表添加玩家
-        inGamePlayer.add(e.getPlayer());
-
-    }
-
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent e) {
-        // 在线列表移除玩家
-        inGamePlayer.remove(e.getPlayer());
-        prepareList.remove(e.getPlayer());
-
-        typeRestartPlayers.remove(e.getPlayer());
-        editAmountPlayer.remove(e.getPlayer());
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), Restart::check, 5);
-        Restart.check();
-    }
-
-    @EventHandler
-    public void onPlayerSwap(PlayerSwapHandItemsEvent e) {
-        if (e.getPlayer().isSneaking()) {
-            if (!gameStart) e.getPlayer().openInventory(settings);
-            else e.getPlayer().openInventory(menu);
-            e.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onMessageSend(AsyncPlayerChatEvent e) {
-        if (gameStart) return;
-        if (editAmountPlayer.contains(e.getPlayer())) {
-            if (e.getMessage().equals("quit")) {
-                e.getPlayer().sendMessage(ChatColor.GREEN + "成功退出输入模式！");
-                editAmountPlayer.remove(e.getPlayer());
-                e.setCancelled(true);
-                return;
-            }
-            try {
-                blockAmount = Integer.parseInt(e.getMessage());
-                flag = true;
-            } catch (Exception ex) {
-                e.getPlayer().sendMessage(ChatColor.RED + "请输入正确数字！如果您想退出输入模式，请发送quit");
-                flag = false;
-            } finally {
-                e.setCancelled(true);
-            }
-            if (flag) {
-                if (blockAmount < 10) {
-                    Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-                        ConsoleCommandHandler.send("tellraw @a {\"color\": \"green\",\"text\": \"需要收集的方块数量更改为10\"}");
-                    }, 1L);
-                    blockAmount = 10;
-                } else {
-                    Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-                        ConsoleCommandHandler.send("tellraw @a {\"color\": \"green\",\"text\": \"需要收集的方块数量更改为" + blockAmount + "\"}");
-                    }, 1L);
-
-                }
-                editAmountPlayer.remove(e.getPlayer());
-                ScoreboardManager.update();
-            }
-        }
-    }
-
-    @EventHandler
-    public void onPlayerRespawn(PlayerRespawnEvent e) {
-        e.getPlayer().sendMessage(ChatColor.AQUA + "提示：如果出生点附近无法放置或破坏方块，是因为服务器带有出生点保护，离开出生点附近即可！");
-    }
+    public static boolean enableNormalBlock = false;
+    public static boolean enableHardBlock = false;
+    public static boolean enableDyedBlock = false;
+    public static boolean enableEndBlock = false;
+    public static ArrayList<Player> locateCommandPermission = new ArrayList<Player>();
+    public static ArrayList<String> redTeamPlayerString = new ArrayList<>();
+    public static ArrayList<String> blueTeamPlayerString = new ArrayList<>();
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
@@ -188,14 +110,14 @@ public class EventListener implements Listener {
             } else if (clickedItem.getItemMeta().getDisplayName().equals("末地方块：" + ChatColor.RED + "已禁用")) {
                 setItem("GREEN_CONCRETE", 1,
                         "末地方块：" + ChatColor.GREEN + "已启用",
-                        ChatColor.RED + "点击以禁用染色方块", 31, "settings");
+                        ChatColor.RED + "点击以禁用末地方块", 31, "settings");
                 enableEndBlock = true;
                 ScoreboardManager.update();
                 return;
             } else if (clickedItem.getItemMeta().getDisplayName().equals("末地方块：" + ChatColor.GREEN + "已启用")) {
                 setItem("RED_CONCRETE", 1,
                         "末地方块：" + ChatColor.RED + "已禁用",
-                        ChatColor.GREEN + "点击以启用染色方块", 31, "settings");
+                        ChatColor.GREEN + "点击以启用末地方块", 31, "settings");
                 enableEndBlock = false;
                 ScoreboardManager.update();
                 return;
@@ -204,8 +126,8 @@ public class EventListener implements Listener {
             // 队伍选择
             if (clickedItem.getItemMeta().getDisplayName().equals(ChatColor.RED + "加入红队")) {
                 red.addEntry(player.getName());
-                ConsoleCommandHandler.send("tellraw @a {\"text\": \"\\u00a7c" + player.getName() + "加入了红队！\"}");
-                redTeamPlayer.add((Player) player);
+                sendAll("&c" +  player.getName() + "加入了红队！");
+                redTeamPlayer.add(player);
                 redTeamPlayerString.add(player.getName());
                 if (blueTeamPlayer.contains(player)) {
                     blueTeamPlayer.remove(player);
@@ -215,8 +137,8 @@ public class EventListener implements Listener {
                 return;
             } else if (clickedItem.getItemMeta().getDisplayName().equals(ChatColor.BLUE + "加入蓝队")) {
                 blue.addEntry(player.getName());
-                ConsoleCommandHandler.send("tellraw @a {\"text\": \"\\u00a79" + player.getName() + "加入了蓝队！\"}");
-                blueTeamPlayer.add((Player) player);
+                sendAll("&9" +  player.getName() + "加入了蓝队！");
+                blueTeamPlayer.add(player);
                 blueTeamPlayerString.add(player.getName());
                 if (redTeamPlayer.contains(player)) {
                     redTeamPlayer.remove(player);
@@ -230,14 +152,14 @@ public class EventListener implements Listener {
             if (clickedItem.getItemMeta().getDisplayName().equals(ChatColor.YELLOW + "准备")) {
                 if (!prepareList.contains(player)) {
                     prepareList.add(player);
-                    ConsoleCommandHandler.send("tellraw @a \"\u00a7b" + player.getName() + "已准备！\"");
+                    sendAll("&b" +  player.getName() + "已准备！");
                     if (prepareList.size() > 1 && prepareList.size() == Bukkit.getOnlinePlayers().size()) {
                         canStart = true;
-                        ConsoleCommandHandler.send("tellraw @a \"\u00a7b所有人都准备好了，可以开始游戏了！\"");
+                        sendAll("&b所有人都准备好了，可以开始游戏了！");
                     }
                     return;
                 } else {
-                    ConsoleCommandHandler.send("tellraw @a \"\u00a7c您已经准备过了！\"");
+                    player.sendMessage("&c您已经准备过了！");
                     return;
                 }
             }
@@ -273,7 +195,7 @@ public class EventListener implements Listener {
                         player.sendMessage(ChatColor.RED + "目标方块数量过多！最多只能设置为" + maxBlockAmount);
                         return;
                     }
-                    ConsoleCommandHandler.send("tellraw @a \"\u00a7b游戏开始！\"");
+                    sendAll("&b游戏开始！");
                     player.closeInventory();
                     GameManager.gameStart();
                 }
@@ -294,7 +216,7 @@ public class EventListener implements Listener {
                 ItemBuilder builder = new ItemBuilder(stack);
                 builder.setAmount(1);
                 builder.setDisplayName("点击此处切换至" + ChatColor.GREEN + "普通模式");
-                builder.setLore(ChatColor.GREEN + "普通模式：", ChatColor.GREEN + "两个队伍需要收集的方块及顺序完全随机，", ChatColor.GREEN + "收集方块会将一组该方块给到对方的队伍箱子里！", ChatColor.YELLOW + "极限竞速模式：", ChatColor.YELLOW + "两个队伍需要收集的方块及顺序完全相同，", ChatColor.YELLOW + "收集方块将不会给予一组方块到对方队伍！");
+                builder.setLore(ChatColor.WHITE + "当前模式：" + ChatColor.YELLOW + "极限竞速模式", ChatColor.GREEN + "普通模式：", ChatColor.GREEN + "两个队伍需要收集的方块及顺序完全随机，", ChatColor.GREEN + "收集方块会将一组该方块给到对方的队伍箱子里！", ChatColor.YELLOW + "极限竞速模式：", ChatColor.YELLOW + "两个队伍需要收集的方块及顺序完全相同，", ChatColor.YELLOW + "收集方块将不会给予一组方块到对方队伍！");
                 builder.toItemStack();
                 settings.setItem(34, stack);
                 ScoreboardManager.update();
@@ -304,7 +226,7 @@ public class EventListener implements Listener {
                 ItemBuilder builder = new ItemBuilder(stack);
                 builder.setAmount(1);
                 builder.setDisplayName("点击此处切换至" + ChatColor.YELLOW + "极限竞速模式");
-                builder.setLore(ChatColor.GREEN + "普通模式：", ChatColor.GREEN + "两个队伍需要收集的方块及顺序完全随机，", ChatColor.GREEN + "收集方块会将一组该方块给到对方的队伍箱子里！", ChatColor.YELLOW + "极限竞速模式：", ChatColor.YELLOW + "两个队伍需要收集的方块及顺序完全相同，", ChatColor.YELLOW + "收集方块将不会给予一组方块到对方队伍！");
+                builder.setLore(ChatColor.WHITE + "当前模式：" + ChatColor.GREEN + "普通模式", ChatColor.GREEN + "普通模式：", ChatColor.GREEN + "两个队伍需要收集的方块及顺序完全随机，", ChatColor.GREEN + "收集方块会将一组该方块给到对方的队伍箱子里！", ChatColor.YELLOW + "极限竞速模式：", ChatColor.YELLOW + "两个队伍需要收集的方块及顺序完全相同，", ChatColor.YELLOW + "收集方块将不会给予一组方块到对方队伍！");
                 builder.toItemStack();
                 settings.setItem(34, stack);
                 ScoreboardManager.update();
@@ -324,7 +246,7 @@ public class EventListener implements Listener {
                         } else break;
                     }
 
-                    ConsoleCommandHandler.send("tellraw @a \"\\u00a7c红队Roll掉了所需方块！\"");
+                    sendAll("&c红队Roll掉了所需方块！");
                     redIsRolled = true;
                     redTeamScore = 0;
                     ScoreboardManager.update();
@@ -338,7 +260,7 @@ public class EventListener implements Listener {
                             blueCurrentBlocks.add(easyBlocks[r.nextInt(easyBlocks.length)]);
                         } else break;
                     }
-                    ConsoleCommandHandler.send("tellraw @a \"\\u00a79蓝队Roll掉了所需方块！\"");
+                    sendAll("&9蓝队Roll掉了所需方块！");
                     blueIsRolled = true;
                     blueTeamScore = 0;
                     ScoreboardManager.update();
@@ -366,7 +288,7 @@ public class EventListener implements Listener {
                         redTeamScore -= locateCost;
                         ScoreboardManager.update();
                         locateCommandPermission.add((Player) e.getWhoClicked());
-                        ConsoleCommandHandler.send("tellraw @a \"\\u00a7a" + e.getWhoClicked().getName() + "购买了定位命令使用权限！\"");
+                        sendAll("&a" + e.getWhoClicked().getName() + "购买了定位命令使用权限！");
                     } else {
                         e.getWhoClicked().sendMessage(ChatColor.DARK_RED + "积分不足！");
                     }
@@ -375,7 +297,7 @@ public class EventListener implements Listener {
                         blueTeamScore -= locateCost;
                         ScoreboardManager.update();
                         locateCommandPermission.add((Player) e.getWhoClicked());
-                        ConsoleCommandHandler.send("tellraw @a \"\\u00a7a" + e.getWhoClicked().getName() + "购买了定位命令使用权限！\"");
+                        sendAll("&a" + e.getWhoClicked().getName() + "购买了定位命令使用权限！");
                     } else {
                         e.getWhoClicked().sendMessage(ChatColor.DARK_RED + "积分不足！");
                     }
@@ -399,15 +321,8 @@ public class EventListener implements Listener {
                 }
                 Player p = (Player) e.getWhoClicked();
                 e.getWhoClicked().closeInventory();
-                World playerWorld = Bukkit.getWorld("world");
-                double randX = r.nextInt(20000) - 10000;
-                double randZ = r.nextInt(20000) - 10000;
-                Location offset = new Location(playerWorld, randX, 0, randZ).toHighestLocation();
-                double Y = offset.getY() + 1;
-                offset.setY(Y);
-                p.teleport(offset);
-                ConsoleCommandHandler.send("tellraw @a \"\\u00a7a玩家" + player.getName() + "使用了随机传送！\"");
-                p.sendMessage(ChatColor.GREEN + "已传送到 " + offset.getX() + " " + offset.getY() + " " + offset.getZ());
+                randomTeleport(p, false);
+                sendAll("&a玩家" +  p.getName() + "使用了随机传送！");
                 if (randomTP.get(player)) {
                     if (redTeamPlayer.contains(player)) redTeamScore -= 2;
                     else blueTeamScore -= 2;
@@ -582,5 +497,16 @@ public class EventListener implements Listener {
                 }
             }
         }
+    }
+
+
+    @Override
+    public void register() {
+
+    }
+
+    @Override
+    public void unregister() {
+        InventoryClickEvent.getHandlerList().unregister(Main.getInstance());
     }
 }

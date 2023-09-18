@@ -14,3 +14,6 @@ commands:
   restartgame:
     usage: "/restartgame"
     description: "Restart the game."
+  debug:
+    usage: "/debug"
+    description: "Debug."

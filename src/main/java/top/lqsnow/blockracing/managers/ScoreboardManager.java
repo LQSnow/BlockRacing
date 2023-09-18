@@ -12,8 +12,8 @@ import org.bukkit.scoreboard.Team;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static top.lqsnow.blockracing.listeners.EventListener.blockAmount;
-import static top.lqsnow.blockracing.listeners.EventListener.*;
+import static top.lqsnow.blockracing.listeners.BasicEventListener.blockAmount;
+import static top.lqsnow.blockracing.listeners.InventoryEventListener.*;
 import static top.lqsnow.blockracing.managers.BlockManager.*;
 import static top.lqsnow.blockracing.managers.GameManager.*;
 import static top.lqsnow.blockracing.managers.GameTick.blueCompleteAmount;
@@ -57,7 +57,7 @@ public class ScoreboardManager {
         setSlot(8, ChatColor.GREEN + "Shift+F打开菜单");
         setSlot(7, ChatColor.GREEN + "如果无法打开，请检查潜行和切换副手的快捷键");
         setSlot(6, "");
-        setSlot(5, ChatColor.YELLOW + "当前模式：" + (extremeMode ? "极限竞速模式" : "普通模式"));
+        setSlot(5, ChatColor.YELLOW + "当前模式：" + (extremeMode ? ChatColor.RED + "极限竞速模式" : ChatColor.GREEN + "普通模式"));
         setSlot(4, ChatColor.YELLOW + "目标方块数量：" + blockAmount);
         setSlot(3, ChatColor.YELLOW + "目标方块库：简单方块" + (enableNormalBlock ? "+中等方块" : "") + (enableHardBlock ? "+困难方块" : "") + (enableDyedBlock ? "+染色方块" : "") + (enableEndBlock ? "+末地方块" : ""));
         setSlot(2, "");

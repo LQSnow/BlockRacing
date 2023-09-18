@@ -1,5 +1,6 @@
 package top.lqsnow.blockracing.utils;
 
+import org.bukkit.Sound;
 import top.lqsnow.blockracing.Main;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -11,19 +12,11 @@ import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;
 
-import static top.lqsnow.blockracing.listeners.EventListener.locateCommandPermission;
+import static top.lqsnow.blockracing.listeners.InventoryEventListener.*;
+import static top.lqsnow.blockracing.utils.ColorUtil.t;
 
 public class ConsoleCommandHandler {
     private static String msg;
-
-    /**
-     * 向控制台发送指令
-     *
-     * @param command 指令
-     */
-    public static void send(String command) {
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-    }
 
     /**
      * 发送locate指令并将结果返回给玩家
@@ -58,6 +51,18 @@ public class ConsoleCommandHandler {
             }, 5);
         } catch (CommandException e) {
             player.sendMessage(ChatColor.DARK_RED + "指令输入错误！");
+        }
+    }
+
+    public static void sendAll(String msg) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.sendMessage(t(msg));
+        }
+    }
+
+    public static void playSound(Sound sound) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.playSound(player, sound, 1F, 1F);
         }
     }
 }
