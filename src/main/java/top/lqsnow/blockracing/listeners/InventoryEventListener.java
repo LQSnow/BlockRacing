@@ -17,20 +17,18 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Random;
 
-import static top.lqsnow.blockracing.listeners.BasicEventListener.editAmountPlayer;
-import static top.lqsnow.blockracing.listeners.BasicEventListener.prepareList;
+import static top.lqsnow.blockracing.listeners.BasicEventListener.*;
 import static top.lqsnow.blockracing.managers.BlockManager.*;
 import static top.lqsnow.blockracing.managers.GameManager.*;
 import static top.lqsnow.blockracing.managers.InventoryManager.*;
-import static top.lqsnow.blockracing.managers.InventoryManager.blueWayPoints;
 import static top.lqsnow.blockracing.managers.ScoreboardManager.*;
-import static top.lqsnow.blockracing.managers.ScoreboardManager.blueTeamScore;
+import static top.lqsnow.blockracing.utils.ColorUtil.t;
 import static top.lqsnow.blockracing.utils.ConsoleCommandHandler.sendAll;
 
 public class InventoryEventListener implements IListener {
 
-    private boolean redIsRolled = false;
-    private boolean blueIsRolled = false;
+    private int redRollCount;
+    private int blueRollCount;
     public static ArrayList<String> redRollPlayers = new ArrayList<>();
     public static ArrayList<String> blueRollPlayers = new ArrayList<>();
     public static HashMap<String, Location> point1 = new HashMap<>();
@@ -67,64 +65,76 @@ public class InventoryEventListener implements IListener {
             // 难度选择
             if (clickedItem.getItemMeta().getDisplayName().equals("中等难度方块：" + ChatColor.RED + "已禁用")) {
                 setItem("GREEN_CONCRETE", 1,
-                        "中等难度方块：" + ChatColor.GREEN + "已启用",
-                        ChatColor.RED + "点击以禁用中等难度方块", 28, "settings");
+                        "中等难度方块：" + ChatColor.GREEN + "已启用", 28, "settings",
+                        ChatColor.RED + "点击以禁用中等难度方块");
                 enableNormalBlock = true;
+                setBlockAmount(false);
                 ScoreboardManager.update();
                 return;
             } else if (clickedItem.getItemMeta().getDisplayName().equals("中等难度方块：" + ChatColor.GREEN + "已启用")) {
                 setItem("RED_CONCRETE", 1,
-                        "中等难度方块：" + ChatColor.RED + "已禁用",
-                        ChatColor.GREEN + "点击以启用中等难度方块", 28, "settings");
+                        "中等难度方块：" + ChatColor.RED + "已禁用", 28, "settings",
+                        ChatColor.GREEN + "点击以启用中等难度方块");
                 enableNormalBlock = false;
+                setBlockAmount(false);
                 ScoreboardManager.update();
                 return;
             } else if (clickedItem.getItemMeta().getDisplayName().equals("困难难度方块：" + ChatColor.RED + "已禁用")) {
                 setItem("GREEN_CONCRETE", 1,
-                        "困难难度方块：" + ChatColor.GREEN + "已启用",
-                        ChatColor.RED + "点击以禁用困难难度方块", 29, "settings");
+                        "困难难度方块：" + ChatColor.GREEN + "已启用", 29, "settings",
+                        ChatColor.RED + "点击以禁用困难难度方块");
                 enableHardBlock = true;
+                setBlockAmount(false);
                 ScoreboardManager.update();
                 return;
             } else if (clickedItem.getItemMeta().getDisplayName().equals("困难难度方块：" + ChatColor.GREEN + "已启用")) {
                 setItem("RED_CONCRETE", 1,
-                        "困难难度方块：" + ChatColor.RED + "已禁用",
-                        ChatColor.GREEN + "点击以启用困难难度方块", 29, "settings");
+                        "困难难度方块：" + ChatColor.RED + "已禁用", 29, "settings",
+                        ChatColor.GREEN + "点击以启用困难难度方块");
                 enableHardBlock = false;
+                setBlockAmount(false);
                 ScoreboardManager.update();
                 return;
             } else if (clickedItem.getItemMeta().getDisplayName().equals("染色方块：" + ChatColor.RED + "已禁用")) {
                 setItem("GREEN_CONCRETE", 1,
-                        "染色方块：" + ChatColor.GREEN + "已启用",
-                        ChatColor.RED + "点击以禁用染色方块", 30, "settings");
+                        "染色方块：" + ChatColor.GREEN + "已启用", 30, "settings",
+                        ChatColor.RED + "点击以禁用染色方块");
                 enableDyedBlock = true;
+                setBlockAmount(false);
                 ScoreboardManager.update();
                 return;
             } else if (clickedItem.getItemMeta().getDisplayName().equals("染色方块：" + ChatColor.GREEN + "已启用")) {
                 setItem("RED_CONCRETE", 1,
-                        "染色方块：" + ChatColor.RED + "已禁用",
-                        ChatColor.GREEN + "点击以启用染色方块", 30, "settings");
+                        "染色方块：" + ChatColor.RED + "已禁用", 30, "settings",
+                        ChatColor.GREEN + "点击以启用染色方块");
                 enableDyedBlock = false;
+                setBlockAmount(false);
                 ScoreboardManager.update();
                 return;
             } else if (clickedItem.getItemMeta().getDisplayName().equals("末地方块：" + ChatColor.RED + "已禁用")) {
                 setItem("GREEN_CONCRETE", 1,
-                        "末地方块：" + ChatColor.GREEN + "已启用",
-                        ChatColor.RED + "点击以禁用末地方块", 31, "settings");
+                        "末地方块：" + ChatColor.GREEN + "已启用", 31, "settings",
+                        ChatColor.RED + "点击以禁用末地方块");
                 enableEndBlock = true;
+                setBlockAmount(false);
                 ScoreboardManager.update();
                 return;
             } else if (clickedItem.getItemMeta().getDisplayName().equals("末地方块：" + ChatColor.GREEN + "已启用")) {
                 setItem("RED_CONCRETE", 1,
-                        "末地方块：" + ChatColor.RED + "已禁用",
-                        ChatColor.GREEN + "点击以启用末地方块", 31, "settings");
+                        "末地方块：" + ChatColor.RED + "已禁用", 31, "settings",
+                        ChatColor.GREEN + "点击以启用末地方块");
                 enableEndBlock = false;
+                setBlockAmount(false);
                 ScoreboardManager.update();
                 return;
             }
 
             // 队伍选择
             if (clickedItem.getItemMeta().getDisplayName().equals(ChatColor.RED + "加入红队")) {
+                if (redTeamPlayer.contains(player)) {
+                    player.sendMessage(t("&c您已经加入红队了！"));
+                    return;
+                }
                 red.addEntry(player.getName());
                 sendAll("&c" + player.getName() + "加入了红队！");
                 redTeamPlayer.add(player);
@@ -136,6 +146,10 @@ public class InventoryEventListener implements IListener {
                 }
                 return;
             } else if (clickedItem.getItemMeta().getDisplayName().equals(ChatColor.BLUE + "加入蓝队")) {
+                if (blueTeamPlayer.contains(player)) {
+                    player.sendMessage(t("&c您已经加入蓝队了！"));
+                    return;
+                }
                 blue.addEntry(player.getName());
                 sendAll("&9" + player.getName() + "加入了蓝队！");
                 blueTeamPlayer.add(player);
@@ -159,7 +173,7 @@ public class InventoryEventListener implements IListener {
                     }
                     return;
                 } else {
-                    player.sendMessage("&c您已经准备过了！");
+                    player.sendMessage(t("&c您已经准备过了！"));
                     return;
                 }
             }
@@ -190,8 +204,7 @@ public class InventoryEventListener implements IListener {
                         return;
                     }
                     // 目标方块数量检测
-                    BlockManager.init();
-                    if (!blockAmountCheckout) {
+                    if (blockAmount > maxBlockAmount) {
                         player.sendMessage(ChatColor.RED + "目标方块数量过多！最多只能设置为" + maxBlockAmount);
                         return;
                     }
@@ -238,7 +251,7 @@ public class InventoryEventListener implements IListener {
                 return;
             }
             if (clickedItem.getItemMeta().getDisplayName().equals(ROLL)) {
-                if (redTeamPlayer.contains((Player) e.getWhoClicked()) & !redIsRolled) {
+                if (redTeamPlayer.contains((Player) e.getWhoClicked()) & redRollCount < 3) {
                     if (!redRollPlayers.contains(e.getWhoClicked().getName())) {
                         redTeamPlayer.forEach(p -> {
                             p.sendMessage(ChatColor.AQUA + e.getWhoClicked().getName() + "申请使用ROLL！全队玩家全部申请即可ROLL掉当前方块！");
@@ -259,16 +272,15 @@ public class InventoryEventListener implements IListener {
                         }
 
                         sendAll("&c红队Roll掉了所需方块！");
-                        redIsRolled = true;
+                        redRollCount++;
                         redTeamScore = 0;
                         ScoreboardManager.update();
 
-                        setItem("BARRIER", 1,
-                                ROLL, ChatColor.RED + "您的队伍已经使用过ROLL了！",
-                                2, "menu");
+                        setItem("BARRIER", 1, ROLL, 2, "menu",
+                                ChatColor.RED + "您的队伍已经使用过3次ROLL了！");
                     }
 
-                } else if (blueTeamPlayer.contains((Player) e.getWhoClicked()) & !blueIsRolled) {
+                } else if (blueTeamPlayer.contains((Player) e.getWhoClicked()) & blueRollCount < 3) {
                     if (!blueRollPlayers.contains(e.getWhoClicked().getName())) {
                         blueTeamPlayer.forEach(p -> {
                             p.sendMessage(ChatColor.AQUA + e.getWhoClicked().getName() + "申请使用ROLL！全队玩家全部申请即可ROLL掉当前方块！");
@@ -289,13 +301,12 @@ public class InventoryEventListener implements IListener {
                         }
 
                         sendAll("&c蓝队Roll掉了所需方块！");
-                        blueIsRolled = true;
+                        blueRollCount++;
                         blueTeamScore = 0;
                         ScoreboardManager.update();
 
-                        setItem("BARRIER", 1,
-                                ROLL, ChatColor.RED + "您的队伍已经使用过ROLL了！",
-                                2, "menu");
+                        setItem("BARRIER", 1, ROLL, 2, "menu",
+                                ChatColor.RED + "您的队伍已经使用过3次ROLL了！");
                     }
                 } else if (redTeamPlayer.contains(((Player) e.getWhoClicked())) || blueTeamPlayer.contains((Player) e.getWhoClicked())) {
                     e.getWhoClicked().sendMessage(ChatColor.DARK_RED + "您的队伍已经使用过Roll了！");

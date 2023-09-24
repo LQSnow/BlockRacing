@@ -37,15 +37,11 @@ public class BasicEventListener implements IListener {
 
 
     @EventHandler
-    public void onPlayerLogin(PlayerLoginEvent e) {
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-            ScoreboardManager.setPlayerScoreboard(e.getPlayer());
-            GameManager.playerLogin(e.getPlayer());
-            e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0, false, false));
-        }, 40);
+    public void onPlayerJoin(PlayerJoinEvent e) {
+        ScoreboardManager.setPlayerScoreboard(e.getPlayer());
+        GameManager.playerLogin(e.getPlayer());
+        e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0, false, false));
         inGamePlayer.add(e.getPlayer());
-
-
     }
 
     @EventHandler
@@ -55,7 +51,6 @@ public class BasicEventListener implements IListener {
 
         typeRestartPlayers.remove(e.getPlayer());
         editAmountPlayer.remove(e.getPlayer());
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), Restart::check, 5);
         Restart.check();
     }
 
@@ -88,18 +83,8 @@ public class BasicEventListener implements IListener {
                 e.setCancelled(true);
             }
             if (flag) {
-                BlockManager.init();
-                if (blockAmount < 10) {
-                    sendAll("&a需要收集的方块数量更改为10" + blockAmount);
-                    blockAmount = 10;
-                } else if (blockAmount > maxBlockAmount) {
-                    sendAll("&a需要收集的方块数量更改为" + maxBlockAmount);
-                    blockAmount = maxBlockAmount;
-                } else {
-                    sendAll("&a需要收集的方块数量更改为" + blockAmount);
-                }
+                setBlockAmount(true);
                 editAmountPlayer.remove(e.getPlayer());
-                ScoreboardManager.update();
             }
         }
     }
@@ -110,7 +95,19 @@ public class BasicEventListener implements IListener {
         if (!gameStart) e.getPlayer().setGameMode(GameMode.SURVIVAL);
     }
 
-
+    public static void setBlockAmount(Boolean sendMessage) {
+        BlockManager.init();
+        if (blockAmount < 10) {
+            sendAll("&a需要收集的方块数量更改为10");
+            blockAmount = 10;
+        } else if (blockAmount > maxBlockAmount) {
+            sendAll("&a需要收集的方块数量更改为" + maxBlockAmount);
+            blockAmount = maxBlockAmount;
+        } else {
+            if (sendMessage) sendAll("&a需要收集的方块数量更改为" + blockAmount);
+        }
+        ScoreboardManager.update();
+    }
 
     @Override
     public void register() {

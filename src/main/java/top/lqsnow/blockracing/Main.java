@@ -7,10 +7,7 @@ import org.bukkit.World;
 import top.lqsnow.blockracing.commands.*;
 import top.lqsnow.blockracing.listeners.BasicEventListener;
 import top.lqsnow.blockracing.listeners.ListenerManager;
-import top.lqsnow.blockracing.managers.ConfigManager;
-import top.lqsnow.blockracing.managers.GameTick;
-import top.lqsnow.blockracing.managers.InventoryManager;
-import top.lqsnow.blockracing.managers.ScoreboardManager;
+import top.lqsnow.blockracing.managers.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -55,7 +52,6 @@ public class Main extends JavaPlugin {
         }
 
         // 初始化菜单
-        PlayerProfile redProfile = Bukkit.createProfile("InventoryHolder");
         InventoryManager.init();
 
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
@@ -65,6 +61,9 @@ public class Main extends JavaPlugin {
             world.setGameRule(GameRule.SEND_COMMAND_FEEDBACK, false);
             world.setTime(1000);
         }, 5);
+
+        // 初始化方块管理器
+        BlockManager.init();
 
         new GameTick().runTaskTimer(Main.getInstance(), 0L, 2L);
     }

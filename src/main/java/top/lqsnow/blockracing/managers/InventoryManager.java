@@ -55,87 +55,59 @@ public class InventoryManager {
     // 初始化
     public static void init() {
         // settings
-        setItem("RED_WOOL", 1,
-                ChatColor.RED + "加入红队",
-                ChatColor.RED + "点击此处加入红队", 10, "settings");
-        setItem("BLUE_WOOL", 1,
-                ChatColor.BLUE + "加入蓝队",
-                ChatColor.BLUE + "点击此处加入蓝队", 12, "settings");
-        setItem("EMERALD", 1,
-                ChatColor.YELLOW + "准备",
-                ChatColor.BLUE + "点击此处准备开始游戏", 14, "settings");
-        setItem("DIAMOND", 1,
-                ChatColor.AQUA + "开始游戏",
-                ChatColor.AQUA + "点击此处开始游戏", 16, "settings");
-        setItem("NAME_TAG", 1,
-                ChatColor.YELLOW + "目标方块数量",
-                ChatColor.YELLOW + "点击此处修改目标方块数量", 33, "settings");
-        setItem("RED_CONCRETE", 1,
-                "中等难度方块：" + ChatColor.RED + "已禁用",
-                ChatColor.GREEN + "点击以启用中等难度方块", 28, "settings");
-        setItem("RED_CONCRETE", 1,
-                "困难难度方块：" + ChatColor.RED + "已禁用",
-                ChatColor.GREEN + "点击以启用困难难度方块", 29, "settings");
-        setItem("RED_CONCRETE", 1,
-                "染色方块：" + ChatColor.RED + "已禁用",
-                ChatColor.GREEN + "点击以启用染色方块", 30, "settings");
-        setItem("RED_CONCRETE", 1,
-                "末地方块：" + ChatColor.RED + "已禁用",
-                ChatColor.GREEN + "点击以启用末地方块", 31, "settings");
-        ItemStack stack = new ItemStack(Objects.requireNonNull(Material.RED_CONCRETE));
-        ItemBuilder builder = new ItemBuilder(stack);
-        builder.setAmount(1);
-        builder.setDisplayName("点击此处切换至" + ChatColor.YELLOW + "极限竞速模式");
-        builder.setLore(ChatColor.GREEN + "普通模式：", ChatColor.GREEN + "两个队伍需要收集的方块及顺序完全随机，", ChatColor.GREEN + "收集方块会将一组该方块给到对方的队伍箱子里！", ChatColor.YELLOW + "极限竞速模式：", ChatColor.YELLOW + "两个队伍需要收集的方块及顺序完全相同，", ChatColor.YELLOW + "收集方块将不会给予一组方块到对方队伍！");
-        builder.toItemStack();
-        settings.setItem(34, stack);
-
+        setItem("RED_WOOL", 1, ChatColor.RED + "加入红队", 10, "settings",
+                ChatColor.RED + "点击此处加入红队");
+        setItem("BLUE_WOOL", 1, ChatColor.BLUE + "加入蓝队", 12, "settings",
+                ChatColor.BLUE + "点击此处加入蓝队");
+        setItem("EMERALD", 1, ChatColor.YELLOW + "准备", 14, "settings",
+                ChatColor.BLUE + "点击此处准备开始游戏");
+        setItem("DIAMOND", 1, ChatColor.AQUA + "开始游戏", 16, "settings",
+                ChatColor.AQUA + "点击此处开始游戏");
+        setItem("NAME_TAG", 1, ChatColor.YELLOW + "目标方块数量", 33, "settings",
+                ChatColor.YELLOW + "点击此处修改目标方块数量");
+        setItem("RED_CONCRETE", 1, "中等难度方块：" + ChatColor.RED + "已禁用", 28, "settings",
+                ChatColor.GREEN + "点击以启用中等难度方块");
+        setItem("RED_CONCRETE", 1, "困难难度方块：" + ChatColor.RED + "已禁用", 29, "settings",
+                ChatColor.GREEN + "点击以启用困难难度方块");
+        setItem("RED_CONCRETE", 1, "染色方块：" + ChatColor.RED + "已禁用", 30, "settings",
+                ChatColor.GREEN + "点击以启用染色方块");
+        setItem("RED_CONCRETE", 1, "末地方块：" + ChatColor.RED + "已禁用", 31, "settings",
+                ChatColor.GREEN + "点击以启用末地方块");
+        setItem("RED_CONCRETE", 1, "点击此处切换至" + ChatColor.YELLOW + "极限竞速模式", 34, "settings",
+                ChatColor.GREEN + "普通模式：", ChatColor.GREEN + "两个队伍需要收集的方块及顺序完全随机，", ChatColor.GREEN + "收集方块会将一组该方块给到对方的队伍箱子里！", ChatColor.YELLOW + "极限竞速模式：", ChatColor.YELLOW + "两个队伍需要收集的方块及顺序完全相同，", ChatColor.YELLOW + "收集方块将不会给予一组方块到对方队伍！");
 
         // menu
-        setItem("CHEST", 1,
-                TEAM_CHEST, ChatColor.AQUA + "打开队伍箱子选择界面",
-                0, "menu");
-
-        setItem("TOTEM_OF_UNDYING", 1,
-                ROLL, ChatColor.AQUA + "花费全部积分将当前目标方块全部替换成普通方块（每局每队仅限一次）",
-                2, "menu");
-        setItem("MAP", 1,
-                WAYPOINTS, ChatColor.AQUA + "保存或传送至记录点",
-                6, "menu");
-        setItem("ENDER_PEARL", 1,
-                RANDOMTP, ChatColor.AQUA + "花费2积分随机传送，首次免费",
-                8, "menu");
+        setItem("CHEST", 1, TEAM_CHEST, 0, "menu",
+                ChatColor.AQUA + "打开队伍箱子选择界面");
+        setItem("TOTEM_OF_UNDYING", 1, ROLL, 2, "menu",
+                ChatColor.AQUA + "花费全部积分将当前目标方块全部替换成普通方块（每局每队仅限三次）");
+        setItem("MAP", 1, WAYPOINTS, 6, "menu",
+                ChatColor.AQUA + "保存或传送至记录点");
+        setItem("ENDER_PEARL", 1, RANDOMTP, 8, "menu",
+                ChatColor.AQUA + "花费2积分随机传送，首次免费");
 
         // chestSwitch
-        setItem("CHEST", 1,
-                TEAM_CHEST1, ChatColor.AQUA + "队伍箱子1",
-                0, "chestSwitch");
-        setItem("CHEST", 1,
-                TEAM_CHEST2, ChatColor.AQUA + "队伍箱子2",
-                1, "chestSwitch");
-        setItem("CHEST", 1,
-                TEAM_CHEST3, ChatColor.AQUA + "队伍箱子3",
-                2, "chestSwitch");
+        setItem("CHEST", 1, TEAM_CHEST1, 0, "chestSwitch",
+                ChatColor.AQUA + "队伍箱子1");
+        setItem("CHEST", 1, TEAM_CHEST2, 1, "chestSwitch",
+                ChatColor.AQUA + "队伍箱子2");
+        setItem("CHEST", 1, TEAM_CHEST3, 2, "chestSwitch",
+                ChatColor.AQUA + "队伍箱子3");
 
         // WayPoints
-        setItem("MAP", 1,
-                WAYPOINTS1, ChatColor.AQUA + "左键点击创建记录点",
-                0, "redWayPoints");
-        setItem("MAP", 1,
-                WAYPOINTS2, ChatColor.AQUA + "左键点击创建记录点",
-                1, "redWayPoints");
-        setItem("MAP", 1,
-                WAYPOINTS3, ChatColor.AQUA + "左键点击创建记录点",
-                2, "redWayPoints");
-        setItem("MAP", 1,
-                WAYPOINTS1, ChatColor.AQUA + "左键点击创建记录点",
-                0, "blueWayPoints");
-        setItem("MAP", 1,
-                WAYPOINTS2, ChatColor.AQUA + "左键点击创建记录点",
-                1, "blueWayPoints");
-        setItem("MAP", 1,
-                WAYPOINTS3, ChatColor.AQUA + "左键点击创建记录点",
-                2, "blueWayPoints");
+        setItem("MAP", 1, WAYPOINTS1, 0, "redWayPoints",
+                ChatColor.AQUA + "左键点击创建记录点");
+        setItem("MAP", 1, WAYPOINTS2, 1, "redWayPoints",
+                ChatColor.AQUA + "左键点击创建记录点");
+        setItem("MAP", 1, WAYPOINTS3, 2, "redWayPoints",
+                ChatColor.AQUA + "左键点击创建记录点");
+        setItem("MAP", 1, WAYPOINTS1, 0, "blueWayPoints",
+                ChatColor.AQUA + "左键点击创建记录点");
+        setItem("MAP", 1, WAYPOINTS2, 1, "blueWayPoints",
+                ChatColor.AQUA + "左键点击创建记录点");
+        setItem("MAP", 1, WAYPOINTS3, 2, "blueWayPoints",
+                ChatColor.AQUA + "左键点击创建记录点");
+
     }
 
     public static void setLocateItem() {
@@ -149,7 +121,7 @@ public class InventoryManager {
     }
 
     // 添加物品
-    public static void setItem(String material, int amount, String displayName, String lore, int slot, String inv) {
+    public static void setItem(String material, int amount, String displayName, int slot, String inv, String... lore) {
         ItemStack stack = new ItemStack(Objects.requireNonNull(Material.getMaterial(material)));
         ItemBuilder builder = new ItemBuilder(stack);
         builder.setAmount(amount);
