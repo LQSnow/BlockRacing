@@ -30,6 +30,7 @@ public class Main extends JavaPlugin {
         Objects.requireNonNull(Bukkit.getPluginCommand("tp")).setExecutor(new TP());
         Objects.requireNonNull(Bukkit.getPluginCommand("restartgame")).setExecutor(new Restart());
         Objects.requireNonNull(Bukkit.getPluginCommand("debug")).setExecutor(new Debug());
+        Objects.requireNonNull(Bukkit.getPluginCommand("menu")).setExecutor(new Menu());
 
         // 初始化记分板
         ScoreboardManager.createScoreboard();

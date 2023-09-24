@@ -1,11 +1,14 @@
 package top.lqsnow.blockracing.managers;
 
+import com.destroystokyo.paper.event.block.BeaconEffectEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import top.lqsnow.blockracing.Main;
@@ -38,7 +41,7 @@ public class GameManager {
     public static ArrayList<Player> var = new ArrayList<>();
     public static boolean gameStart = false;
     public static int locateCost;
-    public static boolean extremeMode = false;
+    public static int mode;
 
     // 玩家登录时的设置
     public static void playerLogin(Player player) {
@@ -67,7 +70,7 @@ public class GameManager {
     public static void gameStart() {
         gameStart = true;
         editAmountPlayer.clear();
-        if (!extremeMode) setBlocks();
+        if (mode == 0 || mode == 1) setBlocks();
         else setExtremeBlocks();
 
         // 检查方块库是否正常
@@ -110,6 +113,7 @@ public class GameManager {
         }
 
         for (Player player : var) {
+            player.getInventory().clear();
             randomTeleport(player, true);
             player.setHealth(20);
             player.setExp(0);
@@ -120,10 +124,30 @@ public class GameManager {
             for (PotionEffect effect : player.getActivePotionEffects()) {
                 player.removePotionEffect(effect.getType());
             }
-            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, 0, false, false));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 60, 0, false, false));
-            player.getInventory().clear();
+            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1200, 4, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 1200, 4, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 1200, 4, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0, false, false));
+            if (mode == 1) player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 0, false, false));
 
+            if (mode == 1) {
+                ItemStack enchantedPickaxe = new ItemStack(Material.IRON_PICKAXE);
+                enchantedPickaxe.addEnchantment(Enchantment.SILK_TOUCH, 1);
+                player.getInventory().addItem(enchantedPickaxe);
+
+                ItemStack cookedSteak = new ItemStack(Material.COOKED_BEEF, 64);
+                player.getInventory().addItem(cookedSteak);
+
+                ItemStack damagedElytra = new ItemStack(Material.ELYTRA);
+                damagedElytra.setDurability((short) (damagedElytra.getType().getMaxDurability() - 1));
+                player.getInventory().addItem(damagedElytra);
+
+                ItemStack xpBook = new ItemStack(Material.ENCHANTED_BOOK);
+                EnchantmentStorageMeta meta = (EnchantmentStorageMeta) xpBook.getItemMeta();
+                meta.addStoredEnchant(Enchantment.MENDING, 1, true);
+                xpBook.setItemMeta(meta);
+                player.getInventory().addItem(xpBook);
+            }
         }
 
         Bukkit.getWorlds().get(0).setTime(1000);
@@ -150,6 +174,9 @@ public class GameManager {
         Bukkit.getLogger().info(blueCurrentBlocks.toString() + blueTeamBlocks.toString());
         Bukkit.getLogger().info("红队成员：" + redTeamPlayerString.toString());
         Bukkit.getLogger().info("蓝队成员：" + blueTeamPlayerString.toString());
+        if (mode == 0) Bukkit.getLogger().info("本局游戏模式：普通模式");
+        else if (mode == 1) Bukkit.getLogger().info("本局游戏模式：极速模式");
+        else if (mode == 2) Bukkit.getLogger().info("本局游戏模式：竞速模式");
     }
 
 

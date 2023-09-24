@@ -8,9 +8,13 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import top.lqsnow.blockracing.utils.ItemBuilder;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import static top.lqsnow.blockracing.managers.GameManager.locateCost;
+import static top.lqsnow.blockracing.utils.ColorUtil.t;
 
 public class InventoryManager {
     // 常量
@@ -55,26 +59,31 @@ public class InventoryManager {
     // 初始化
     public static void init() {
         // settings
-        setItem("RED_WOOL", 1, ChatColor.RED + "加入红队", 10, "settings",
+        setItem("RED_WOOL", 1, ChatColor.RED + "加入红队", 11, "settings",
                 ChatColor.RED + "点击此处加入红队");
         setItem("BLUE_WOOL", 1, ChatColor.BLUE + "加入蓝队", 12, "settings",
                 ChatColor.BLUE + "点击此处加入蓝队");
-        setItem("EMERALD", 1, ChatColor.YELLOW + "准备", 14, "settings",
+        setItem("EMERALD", 1, ChatColor.YELLOW + "准备", 38, "settings",
                 ChatColor.BLUE + "点击此处准备开始游戏");
-        setItem("DIAMOND", 1, ChatColor.AQUA + "开始游戏", 16, "settings",
+        setItem("DIAMOND", 1, ChatColor.AQUA + "开始游戏", 39, "settings",
                 ChatColor.AQUA + "点击此处开始游戏");
-        setItem("NAME_TAG", 1, ChatColor.YELLOW + "目标方块数量", 33, "settings",
+        setItem("NAME_TAG", 1, ChatColor.YELLOW + "目标方块数量", 24, "settings",
                 ChatColor.YELLOW + "点击此处修改目标方块数量");
-        setItem("RED_CONCRETE", 1, "中等难度方块：" + ChatColor.RED + "已禁用", 28, "settings",
+        setItem("RED_CONCRETE", 1, "中等难度方块：" + ChatColor.RED + "已禁用", 20, "settings",
                 ChatColor.GREEN + "点击以启用中等难度方块");
-        setItem("RED_CONCRETE", 1, "困难难度方块：" + ChatColor.RED + "已禁用", 29, "settings",
+        setItem("RED_CONCRETE", 1, "困难难度方块：" + ChatColor.RED + "已禁用", 21, "settings",
                 ChatColor.GREEN + "点击以启用困难难度方块");
-        setItem("RED_CONCRETE", 1, "染色方块：" + ChatColor.RED + "已禁用", 30, "settings",
+        setItem("RED_CONCRETE", 1, "染色方块：" + ChatColor.RED + "已禁用", 22, "settings",
                 ChatColor.GREEN + "点击以启用染色方块");
-        setItem("RED_CONCRETE", 1, "末地方块：" + ChatColor.RED + "已禁用", 31, "settings",
+        setItem("RED_CONCRETE", 1, "末地方块：" + ChatColor.RED + "已禁用", 23, "settings",
                 ChatColor.GREEN + "点击以启用末地方块");
-        setItem("RED_CONCRETE", 1, "点击此处切换至" + ChatColor.YELLOW + "极限竞速模式", 34, "settings",
-                ChatColor.GREEN + "普通模式：", ChatColor.GREEN + "两个队伍需要收集的方块及顺序完全随机，", ChatColor.GREEN + "收集方块会将一组该方块给到对方的队伍箱子里！", ChatColor.YELLOW + "极限竞速模式：", ChatColor.YELLOW + "两个队伍需要收集的方块及顺序完全相同，", ChatColor.YELLOW + "收集方块将不会给予一组方块到对方队伍！");
+        setItem("GREEN_CONCRETE", 1, t("&a当前模式：普通模式"), 29, "settings",
+                ChatColor.YELLOW + "普通模式：", ChatColor.YELLOW + t("两个队伍需要收集的方块及顺序完全&l随机&r&e，"), ChatColor.YELLOW + "收集方块会将一组该方块给到对方的队伍箱子里！");
+        setItem("YELLOW_CONCRETE", 1, t("&e切换至：极速模式"), 30, "settings",
+                ChatColor.YELLOW + "极速模式：", ChatColor.YELLOW + "游戏方式与普通模式相同，但是开局时", ChatColor.YELLOW + "将会给予玩家部分道具和效果，", ChatColor.YELLOW + "且获得方块时加3分，以加快游戏进度。", ChatColor.AQUA + "物品：精准采集铁镐、熟牛排、损坏的鞘翅、经验修补附魔书", ChatColor.AQUA + "效果：急迫5");
+        setItem("YELLOW_CONCRETE", 1, t("&e切换至：竞速模式"), 31, "settings",
+                ChatColor.YELLOW + "竞速模式：", ChatColor.YELLOW + t("两个队伍需要收集的方块及顺序完全&l相同&r&e，"), ChatColor.YELLOW + t("且收集方块将&l不会&r&e给予一组方块到对方队伍！"));
+        setGlassPane();
 
         // menu
         setItem("CHEST", 1, TEAM_CHEST, 0, "menu",
@@ -144,6 +153,55 @@ public class InventoryManager {
             case "blueWayPoints" -> {
                 blueWayPoints.setItem(slot, stack);
             }
+        }
+    }
+
+    private static void setGlassPane() {
+        // lime
+        ItemStack stack = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
+        ItemBuilder builder = new ItemBuilder(stack);
+        builder.setAmount(1);
+        builder.setDisplayName(" ");
+        builder.toItemStack();
+        List<Integer> green = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53);
+        for (int slot : green) {
+            settings.setItem(slot, stack);
+        }
+
+        // yellow
+        stack = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE);
+        builder = new ItemBuilder(stack);
+        builder.setAmount(1);
+
+        builder.setDisplayName(t("&e选队"));
+        builder.toItemStack();
+        settings.setItem(10, stack);
+        settings.setItem(16, stack);
+
+        builder.setDisplayName(t("&e目标方块库"));
+        builder.toItemStack();
+        settings.setItem(19, stack);
+        settings.setItem(25, stack);
+
+        builder.setDisplayName(t("&e游戏模式"));
+        builder.toItemStack();
+        settings.setItem(28, stack);
+        settings.setItem(34, stack);
+
+        builder.setDisplayName(t("&e准备和开始游戏"));
+        builder.toItemStack();
+        settings.setItem(37, stack);
+        settings.setItem(43, stack);
+
+        // blue
+        stack = new ItemStack(Material.LIGHT_BLUE_STAINED_GLASS_PANE);
+        builder = new ItemBuilder(stack);
+        builder.setAmount(1);
+        builder.setDisplayName(" ");
+        builder.toItemStack();
+        List<Integer> blue = Arrays.asList(13, 14, 15, 32, 33, 40, 41, 42);
+        for (int slot : blue) {
+            settings.setItem(slot, stack);
         }
     }
 }

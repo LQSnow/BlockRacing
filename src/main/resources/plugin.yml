@@ -17,3 +17,6 @@ commands:
   debug:
     usage: "/debug"
     description: "Debug."
+  menu:
+    usage: "/menu"
+    description: "Open the menu."

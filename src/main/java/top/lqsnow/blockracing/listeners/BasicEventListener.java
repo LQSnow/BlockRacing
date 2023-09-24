@@ -1,10 +1,7 @@
 package top.lqsnow.blockracing.listeners;
 
 import org.bukkit.*;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.inventory.InventoryView;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import top.lqsnow.blockracing.Main;
@@ -14,9 +11,6 @@ import top.lqsnow.blockracing.managers.GameManager;
 import top.lqsnow.blockracing.managers.ScoreboardManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import top.lqsnow.blockracing.utils.ConsoleCommandHandler;
-import top.lqsnow.blockracing.utils.ItemBuilder;
 
 import java.util.*;
 
@@ -24,7 +18,6 @@ import static top.lqsnow.blockracing.commands.Restart.typeRestartPlayers;
 import static top.lqsnow.blockracing.managers.BlockManager.*;
 import static top.lqsnow.blockracing.managers.GameManager.*;
 import static top.lqsnow.blockracing.managers.InventoryManager.*;
-import static top.lqsnow.blockracing.managers.ScoreboardManager.*;
 import static top.lqsnow.blockracing.utils.ConsoleCommandHandler.sendAll;
 
 
@@ -41,6 +34,7 @@ public class BasicEventListener implements IListener {
         ScoreboardManager.setPlayerScoreboard(e.getPlayer());
         GameManager.playerLogin(e.getPlayer());
         e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0, false, false));
+        if (mode == 1) e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 0, false, false));
         inGamePlayer.add(e.getPlayer());
     }
 
