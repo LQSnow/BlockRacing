@@ -90,7 +90,7 @@ public class InventoryManager {
         setItem("CHEST", 1, TEAM_CHEST, 0, "menu",
                 ChatColor.AQUA + "打开队伍箱子选择界面");
         setItem("TOTEM_OF_UNDYING", 1, ROLL, 2, "menu",
-                ChatColor.AQUA + "花费全部积分将当前目标方块全部替换成普通方块（每局每队仅限三次）");
+                ChatColor.AQUA + "花费全部积分将当前目标方块全部替换成其他方块（每局每队仅限三次）");
         setItem("MAP", 1, WAYPOINTS, 6, "menu",
                 ChatColor.AQUA + "保存或传送至记录点");
         setItem("ENDER_PEARL", 1, RANDOMTP, 8, "menu",
