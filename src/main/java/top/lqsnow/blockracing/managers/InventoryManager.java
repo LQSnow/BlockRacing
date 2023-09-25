@@ -79,10 +79,11 @@ public class InventoryManager {
                 ChatColor.GREEN + "点击以启用末地方块");
         setItem("GREEN_CONCRETE", 1, t("&a当前模式：普通模式"), 29, "settings",
                 ChatColor.YELLOW + "普通模式：", ChatColor.YELLOW + t("两个队伍需要收集的方块及顺序完全&l随机&r&e，"), ChatColor.YELLOW + "收集方块会将一组该方块给到对方的队伍箱子里！");
-        setItem("YELLOW_CONCRETE", 1, t("&e切换至：极速模式"), 30, "settings",
-                ChatColor.YELLOW + "极速模式：", ChatColor.YELLOW + "游戏方式与普通模式相同，但是开局时", ChatColor.YELLOW + "将会给予玩家部分道具和效果，", ChatColor.YELLOW + "且获得方块时加3分，以加快游戏进度。", ChatColor.AQUA + "物品：精准采集铁镐、熟牛排、损坏的鞘翅、经验修补附魔书", ChatColor.AQUA + "效果：急迫5");
-        setItem("YELLOW_CONCRETE", 1, t("&e切换至：竞速模式"), 31, "settings",
-                ChatColor.YELLOW + "竞速模式：", ChatColor.YELLOW + t("两个队伍需要收集的方块及顺序完全&l相同&r&e，"), ChatColor.YELLOW + t("且收集方块将&l不会&r&e给予一组方块到对方队伍！"));
+        setItem("YELLOW_CONCRETE", 1, t("&e切换至：竞速模式"), 30, "settings",
+                ChatColor.YELLOW + "竞速模式：", ChatColor.YELLOW + t("两个队伍需要收集的方块及顺序将完全&l相同&r&e，"), ChatColor.YELLOW + t("且收集方块将&l不会&r&e给予一组方块到对方队伍！"));
+        setItem("YELLOW_CONCRETE", 1, t("&e当前未开启：极速模式"), 33, "settings",
+                ChatColor.YELLOW + "极速模式：", ChatColor.YELLOW + "开启极速模式后，开局时将会", ChatColor.YELLOW + "给予玩家部分道具和效果，", ChatColor.YELLOW + "且获得方块时加3分，以加快游戏进度。", ChatColor.AQUA + "物品：精准采集铁镐、熟牛排、损坏的鞘翅、经验修补附魔书", ChatColor.AQUA + "效果：急迫5");
+
         setGlassPane();
 
         // menu
@@ -199,7 +200,7 @@ public class InventoryManager {
         builder.setAmount(1);
         builder.setDisplayName(" ");
         builder.toItemStack();
-        List<Integer> blue = Arrays.asList(13, 14, 15, 32, 33, 40, 41, 42);
+        List<Integer> blue = Arrays.asList(13, 14, 15, 31, 32, 40, 41, 42);
         for (int slot : blue) {
             settings.setItem(slot, stack);
         }

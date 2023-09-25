@@ -58,9 +58,8 @@ public class ScoreboardManager {
         setSlot(8, ChatColor.GREEN + "Shift+F打开菜单");
         setSlot(7, ChatColor.GREEN + "如果无法打开，请检查潜行和切换副手的快捷键");
         setSlot(6, "");
-        if (mode == 0) setSlot(5, t("&e当前模式：&a普通模式"));
-        else if (mode == 1) setSlot(5, t("&e当前模式：极速模式"));
-        else if (mode == 2) setSlot(5, t("&e当前模式：&c竞速模式"));
+        if (mode == 0) setSlot(5, (speedMode ? t("&e当前模式：&a普通模式&e+&b极速模式") : t("&e当前模式：&a普通模式")));
+        else if (mode == 1) setSlot(5, (speedMode ? t("&e当前模式：&c竞速模式&e+&b极速模式") : t("&e当前模式：&c竞速模式")));
 
         setSlot(4, ChatColor.YELLOW + "目标方块数量：" + blockAmount);
         setSlot(3, ChatColor.YELLOW + "目标方块库：简单方块" + (enableNormalBlock ? "+中等方块" : "") + (enableHardBlock ? "+困难方块" : "") + (enableDyedBlock ? "+染色方块" : "") + (enableEndBlock ? "+末地方块" : ""));
@@ -106,8 +105,7 @@ public class ScoreboardManager {
             setSlot(2, setDifficultyDisplay(blueCurrentBlocks.get(3)));
         }
 
-        if (mode == 1) setSlot(13, ChatColor.YELLOW + "当前游戏模式为极速模式！");
-        if (mode == 2) setSlot(13, ChatColor.YELLOW + "当前游戏模式为竞速模式！");
+        if (mode == 1) setSlot(13, ChatColor.YELLOW + "当前游戏模式为竞速模式！");
         setSlot(12, "&c红队：&e" + redTeamScore + "分" + "\u00a7b  (" + redCompleteAmount + "/" + blockAmount + ")");
         setSlot(7, "-------------------");
         setSlot(6, "&9蓝队：&e" + blueTeamScore + "分" + "\u00a7b  (" + blueCompleteAmount + "/" + blockAmount + ")");

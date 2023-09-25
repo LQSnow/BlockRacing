@@ -100,10 +100,10 @@ public class GameTick extends BukkitRunnable {
             redCurrentBlocks.add(redTeamBlocks.get(0));
             redTeamBlocks.remove(0);
         }
-        if (mode == 1) redTeamScore += 3;
+        if (speedMode) redTeamScore += 3;
         else redTeamScore += 1;
         ScoreboardManager.update();
-        if (mode != 2) {
+        if (mode == 0) {
             // 将一组该物品放到蓝队队伍箱子
             if (blueTeamChest1.firstEmpty() != -1) {
                 ItemStack stack = new ItemStack(Material.valueOf(block));
@@ -140,10 +140,10 @@ public class GameTick extends BukkitRunnable {
             blueCurrentBlocks.add(blueTeamBlocks.get(0));
             blueTeamBlocks.remove(0);
         }
-        if (mode == 1) blueTeamScore += 3;
+        if (speedMode) blueTeamScore += 3;
         else blueTeamScore += 1;
         ScoreboardManager.update();
-        if (mode != 2) {
+        if (mode == 0) {
             // 将一组该物品放到红队队伍箱子
             if (redTeamChest1.firstEmpty() != -1) {
                 ItemStack stack = new ItemStack(Material.valueOf(block));

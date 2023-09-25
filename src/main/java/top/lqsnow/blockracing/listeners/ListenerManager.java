@@ -13,8 +13,6 @@ public class ListenerManager {
    public static void enable() {
       log.info("启用监听器管理器...");
       map = new HashMap<>();
-      add("[BlockRacing] BasicEventListener", new BasicEventListener());
-      add("[BlockRacing] InventoryEventListener", new InventoryEventListener());
    }
 
    public static void disable() {

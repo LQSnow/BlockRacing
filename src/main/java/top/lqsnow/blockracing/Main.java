@@ -1,14 +1,12 @@
 package top.lqsnow.blockracing;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
-import org.bukkit.Difficulty;
-import org.bukkit.GameRule;
-import org.bukkit.World;
+import org.bukkit.*;
 import top.lqsnow.blockracing.commands.*;
 import top.lqsnow.blockracing.listeners.BasicEventListener;
 import top.lqsnow.blockracing.listeners.ListenerManager;
+import top.lqsnow.blockracing.listeners.ListenerRegister;
 import top.lqsnow.blockracing.managers.*;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -23,6 +21,7 @@ public class Main extends JavaPlugin {
         instance = this;
         // 注册事件监听器
         ListenerManager.enable();
+        new ListenerRegister();
 
         // 注册命令处理器
         Objects.requireNonNull(Bukkit.getPluginCommand("locate")).setExecutor(new Locate());
@@ -59,12 +58,16 @@ public class Main extends JavaPlugin {
             World world = Bukkit.getWorld("world");
             world.setDifficulty(Difficulty.EASY);
             world.setGameRule(GameRule.KEEP_INVENTORY, true);
-            world.setGameRule(GameRule.SEND_COMMAND_FEEDBACK, false);
             world.setTime(1000);
         }, 5);
 
         // 初始化方块管理器
         BlockManager.init();
+
+        // 设置世界边界
+        World world = Bukkit.getWorlds().get(0);
+        world.getWorldBorder().setCenter(world.getSpawnLocation());
+        world.getWorldBorder().setSize(32);
 
         new GameTick().runTaskTimer(Main.getInstance(), 0L, 2L);
     }

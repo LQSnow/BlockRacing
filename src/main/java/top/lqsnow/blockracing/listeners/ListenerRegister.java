@@ -1,7 +1,6 @@
 package top.lqsnow.blockracing.listeners;
 
 
-
 public class ListenerRegister {
    public ListenerRegister() {
       ListenerManager.add("[BlockRacing] BasicEventListener", new BasicEventListener());

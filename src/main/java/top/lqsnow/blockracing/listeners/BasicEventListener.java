@@ -34,7 +34,7 @@ public class BasicEventListener implements IListener {
         ScoreboardManager.setPlayerScoreboard(e.getPlayer());
         GameManager.playerLogin(e.getPlayer());
         e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0, false, false));
-        if (mode == 1) e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 0, false, false));
+        if (speedMode) e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 0, false, false));
         inGamePlayer.add(e.getPlayer());
     }
 
@@ -86,7 +86,11 @@ public class BasicEventListener implements IListener {
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent e) {
         e.getPlayer().sendMessage(ChatColor.AQUA + "提示：如果出生点附近无法放置或破坏方块，是因为服务器带有出生点保护，离开出生点附近即可！");
-        if (!gameStart) e.getPlayer().setGameMode(GameMode.SURVIVAL);
+        // 隔段时间才能给上效果，如果不延时效果给不上，不知道为啥
+        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+            e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0, false, false));
+            if (gameStart && speedMode) e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 0, false, false));
+        }, 10L);
     }
 
     public static void setBlockAmount(Boolean sendMessage) {
@@ -110,7 +114,7 @@ public class BasicEventListener implements IListener {
 
     @Override
     public void unregister() {
-        PlayerLoginEvent.getHandlerList().unregister(Main.getInstance());
+        PlayerJoinEvent.getHandlerList().unregister(Main.getInstance());
         PlayerQuitEvent.getHandlerList().unregister(Main.getInstance());
         PlayerSwapHandItemsEvent.getHandlerList().unregister(Main.getInstance());
         AsyncPlayerChatEvent.getHandlerList().unregister(Main.getInstance());

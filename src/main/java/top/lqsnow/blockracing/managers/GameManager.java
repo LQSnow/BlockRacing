@@ -42,6 +42,7 @@ public class GameManager {
     public static boolean gameStart = false;
     public static int locateCost;
     public static int mode;
+    public static boolean speedMode;
 
     // 玩家登录时的设置
     public static void playerLogin(Player player) {
@@ -58,6 +59,7 @@ public class GameManager {
             player.setGameMode(GameMode.ADVENTURE);
             player.sendMessage(t("&b&l欢迎来到方块竞速！按Shift+F打开菜单进行选队和准备！如果没反应，请检查潜行和切换副手的快捷键！"));
             player.getWorld().setDifficulty(Difficulty.PEACEFUL);
+            player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
         } else {
             if (!redTeamPlayerString.contains(player.getName()) && !blueTeamPlayerString.contains(player.getName())) {
                 player.setGameMode(GameMode.SPECTATOR);
@@ -70,7 +72,7 @@ public class GameManager {
     public static void gameStart() {
         gameStart = true;
         editAmountPlayer.clear();
-        if (mode == 0 || mode == 1) setBlocks();
+        if (mode == 0) setBlocks();
         else setExtremeBlocks();
 
         // 检查方块库是否正常
@@ -92,6 +94,10 @@ public class GameManager {
             getServer().getPluginManager().disablePlugin(Main.getInstance());
             return;
         }
+
+        World world = Bukkit.getWorlds().get(0);
+        world.getWorldBorder().setCenter(world.getSpawnLocation());
+        world.getWorldBorder().setSize(59999968);
 
         if (blockAmount <= 20) locateCost = 2;
         else if (blockAmount <= 50) locateCost = 3;
@@ -128,9 +134,9 @@ public class GameManager {
             player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 1200, 4, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 1200, 4, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0, false, false));
-            if (mode == 1) player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 0, false, false));
+            if (speedMode) player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 0, false, false));
 
-            if (mode == 1) {
+            if (speedMode) {
                 ItemStack enchantedPickaxe = new ItemStack(Material.IRON_PICKAXE);
                 enchantedPickaxe.addEnchantment(Enchantment.SILK_TOUCH, 1);
                 player.getInventory().addItem(enchantedPickaxe);
@@ -175,8 +181,8 @@ public class GameManager {
         Bukkit.getLogger().info("红队成员：" + redTeamPlayerString.toString());
         Bukkit.getLogger().info("蓝队成员：" + blueTeamPlayerString.toString());
         if (mode == 0) Bukkit.getLogger().info("本局游戏模式：普通模式");
-        else if (mode == 1) Bukkit.getLogger().info("本局游戏模式：极速模式");
-        else if (mode == 2) Bukkit.getLogger().info("本局游戏模式：竞速模式");
+        else if (mode == 1) Bukkit.getLogger().info("本局游戏模式：竞速模式");
+        if (speedMode) Bukkit.getLogger().info("本局已开启极速模式");
     }
 
 
