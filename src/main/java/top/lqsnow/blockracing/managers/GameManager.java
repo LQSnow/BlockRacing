@@ -4,11 +4,14 @@ import com.destroystokyo.paper.event.block.BeaconEffectEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.Repairable;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import top.lqsnow.blockracing.Main;
@@ -134,7 +137,7 @@ public class GameManager {
             player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 1200, 4, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 1200, 4, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0, false, false));
-            if (speedMode) player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 0, false, false));
+            if (speedMode) player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 4, false, false));
 
             if (speedMode) {
                 ItemStack enchantedPickaxe = new ItemStack(Material.IRON_PICKAXE);
@@ -146,6 +149,10 @@ public class GameManager {
 
                 ItemStack damagedElytra = new ItemStack(Material.ELYTRA);
                 damagedElytra.setDurability((short) (damagedElytra.getType().getMaxDurability() - 1));
+                ItemMeta elytraMeta = damagedElytra.getItemMeta();
+                Repairable repairable = (Repairable) elytraMeta;
+                repairable.setRepairCost(15);
+                damagedElytra.setItemMeta(elytraMeta);
                 player.getInventory().addItem(damagedElytra);
 
                 ItemStack xpBook = new ItemStack(Material.ENCHANTED_BOOK);
@@ -188,7 +195,7 @@ public class GameManager {
 
     // 随机传送
     public static void randomTeleport(Player player, boolean avoidOcean) {
-        World playerWorld = player.getWorld();
+        World playerWorld = Bukkit.getWorlds().get(0);
         double randX = r.nextInt(20000) - 10000;
         double randZ = r.nextInt(20000) - 10000;
         Location offset = new Location(playerWorld, randX, 0, randZ).toHighestLocation();

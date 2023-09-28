@@ -103,6 +103,16 @@ zh_cn.json 翻译文件
 
 # 更新日志
 
+### 2023.9.28 - BlockRacing 2.2.1
+
+- 修复了极速模式下急迫效果等级不正确的Bug
+- 修复了随机传送世界错误的Bug
+- /locate指令追加1.20生物群系
+- 极速模式下初始道具中鞘翅的RepairCost改为15
+- 修改了部分物品描述错误
+- /menu指令追加了更多功能
+- 优化了部分代码和执行逻辑
+
 ### 2023.9.25 - BlockRacing 2.2
 
 - Roll次数改为3次，并且不再只能Roll到简单方块（[@BlockyDeer](https://github.com/BlockyDeer)）

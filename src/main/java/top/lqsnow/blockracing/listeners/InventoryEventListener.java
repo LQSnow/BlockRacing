@@ -1,6 +1,7 @@
 package top.lqsnow.blockracing.listeners;
 
 import org.bukkit.*;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -24,15 +25,15 @@ import static top.lqsnow.blockracing.utils.ConsoleCommandHandler.sendAll;
 
 public class InventoryEventListener implements IListener {
 
-    private int redRollCount;
-    private int blueRollCount;
+    private static int redRollCount;
+    private static int blueRollCount;
     public static ArrayList<String> redRollPlayers = new ArrayList<>();
     public static ArrayList<String> blueRollPlayers = new ArrayList<>();
     public static HashMap<String, Location> point1 = new HashMap<>();
     public static HashMap<String, Location> point2 = new HashMap<>();
     public static HashMap<String, Location> point3 = new HashMap<>();
     public static HashMap<String, Boolean> randomTP = new HashMap<>();
-    Random r = new Random();
+    static Random r = new Random();
     public static boolean canStart = false;
     public static boolean enableNormalBlock = false;
     public static boolean enableHardBlock = false;
@@ -252,62 +253,7 @@ public class InventoryEventListener implements IListener {
                 return;
             }
             if (clickedItem.getItemMeta().getDisplayName().equals(ROLL)) {
-                if (redTeamPlayer.contains((Player) e.getWhoClicked()) && redRollCount < 3) {
-                    if (!redRollPlayers.contains(e.getWhoClicked().getName())) {
-                        redTeamPlayer.forEach(p -> {
-                            p.sendMessage(ChatColor.AQUA + e.getWhoClicked().getName() + "申请使用ROLL！全队玩家全部申请即可ROLL掉当前方块！");
-                        });
-                        redRollPlayers.add(e.getWhoClicked().getName());
-                    } else {
-                        redTeamPlayer.forEach(p -> {
-                            p.sendMessage(ChatColor.RED + e.getWhoClicked().getName() + "取消申请使用ROLL！");
-                        });
-                        redRollPlayers.remove(e.getWhoClicked().getName());
-                    }
-                    if (redRollPlayers.size() == redTeamPlayer.size()) {
-                        for (int i = 0; i < 4; i++) {
-                            if (redCurrentBlocks.size() != 0) {
-                                redCurrentBlocks.remove(0);
-                                redCurrentBlocks.add(blocks[r.nextInt(blocks.length)]);
-                            } else break;
-                        }
-
-                        sendAll("&c红队Roll掉了所需方块！");
-                        redRollCount++;
-                        redTeamScore = 0;
-                        redRollPlayers.clear();
-                        ScoreboardManager.update();
-                    }
-
-                } else if (blueTeamPlayer.contains((Player) e.getWhoClicked()) && blueRollCount < 3) {
-                    if (!blueRollPlayers.contains(e.getWhoClicked().getName())) {
-                        blueTeamPlayer.forEach(p -> {
-                            p.sendMessage(ChatColor.AQUA + e.getWhoClicked().getName() + "申请使用ROLL！全队玩家全部申请即可ROLL掉当前方块！");
-                        });
-                        blueRollPlayers.add(e.getWhoClicked().getName());
-                    } else {
-                        blueTeamPlayer.forEach(p -> {
-                            p.sendMessage(ChatColor.RED + e.getWhoClicked().getName() + "取消申请使用ROLL！");
-                        });
-                        blueRollPlayers.remove(e.getWhoClicked().getName());
-                    }
-                    if (blueRollPlayers.size() == blueTeamPlayer.size()) {
-                        for (int i = 0; i < 4; i++) {
-                            if (blueCurrentBlocks.size() != 0) {
-                                blueCurrentBlocks.remove(0);
-                                blueCurrentBlocks.add(blocks[r.nextInt(blocks.length)]);
-                            } else break;
-                        }
-
-                        sendAll("&c蓝队Roll掉了所需方块！");
-                        blueRollCount++;
-                        blueTeamScore = 0;
-                        blueRollPlayers.clear();
-                        ScoreboardManager.update();
-                    }
-                } else if (redTeamPlayer.contains(((Player) e.getWhoClicked())) || blueTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    e.getWhoClicked().sendMessage(ChatColor.DARK_RED + "您的队伍已经使用过3次Roll了！");
-                }
+                roll((Player) e.getWhoClicked());
             }
             if (clickedItem.getItemMeta().getDisplayName().equals(WAYPOINTS)) {
                 if (redTeamPlayer.contains((Player) e.getWhoClicked())) {
@@ -319,55 +265,11 @@ public class InventoryEventListener implements IListener {
             }
 
             if (clickedItem.getItemMeta().getDisplayName().equals(LOCATE)) {
-                if (locateCommandPermission.contains((Player) e.getWhoClicked())) {
-                    e.getWhoClicked().sendMessage(ChatColor.DARK_RED + "您还没有使用locate命令！无法再次购买！");
-                    return;
-                }
-                if (redTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    if (redTeamScore >= locateCost) {
-                        redTeamScore -= locateCost;
-                        ScoreboardManager.update();
-                        locateCommandPermission.add((Player) e.getWhoClicked());
-                        sendAll("&a" + e.getWhoClicked().getName() + "购买了定位命令使用权限！");
-                    } else {
-                        e.getWhoClicked().sendMessage(ChatColor.DARK_RED + "积分不足！");
-                    }
-                } else if (blueTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    if (blueTeamScore >= locateCost) {
-                        blueTeamScore -= locateCost;
-                        ScoreboardManager.update();
-                        locateCommandPermission.add((Player) e.getWhoClicked());
-                        sendAll("&a" + e.getWhoClicked().getName() + "购买了定位命令使用权限！");
-                    } else {
-                        e.getWhoClicked().sendMessage(ChatColor.DARK_RED + "积分不足！");
-                    }
-                }
+                buyLocate((Player) e.getWhoClicked());
             }
 
             if (clickedItem.getItemMeta().getDisplayName().equals(RANDOMTP)) {
-                randomTP.putIfAbsent(player.getName(), false);
-                if (randomTP.get(player.getName())) {
-                    if (redTeamPlayer.contains(player)) {
-                        if (redTeamScore < 2) {
-                            player.sendMessage(ChatColor.DARK_RED + "积分不足！");
-                            return;
-                        }
-                    } else {
-                        if (blueTeamScore < 2) {
-                            player.sendMessage(ChatColor.DARK_RED + "积分不足！");
-                            return;
-                        }
-                    }
-                }
-                Player p = (Player) e.getWhoClicked();
-                e.getWhoClicked().closeInventory();
-                randomTeleport(p, false);
-                sendAll("&a玩家" + p.getName() + "使用了随机传送！");
-                if (randomTP.get(player.getName())) {
-                    if (redTeamPlayer.contains(player)) redTeamScore -= 2;
-                    else blueTeamScore -= 2;
-                } else randomTP.put(player.getName(), true);
-                ScoreboardManager.update();
+                randomTP((Player) e.getWhoClicked());
             }
 
             // chestSwitch 箱子选择界面
@@ -397,97 +299,220 @@ public class InventoryEventListener implements IListener {
             }
 
             // wayPoint 记录点界面
-            if (clickedItem.getItemMeta().getDisplayName().equals(WAYPOINTS1)) {
-                if (redTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    setItem("FILLED_MAP", 1, ACTIVATED_WAYPOINTS1, 0, "redWayPoints",
-                            t("&a维度：") + e.getWhoClicked().getWorld().getName(),
-                            t("&a坐标：") + e.getWhoClicked().getLocation().getBlockX() + ", " + e.getWhoClicked().getLocation().getBlockY() + ", " + e.getWhoClicked().getLocation().getBlockZ(),
-                            t("&b左键点击传送，右键点击删除"));
-                    point1.put("red", e.getWhoClicked().getLocation());
-                } else if (blueTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    setItem("FILLED_MAP", 1, ACTIVATED_WAYPOINTS1, 0, "blueWayPoints",
-                            t("&a维度：") + e.getWhoClicked().getWorld().getName(),
-                            t("&a坐标：") + e.getWhoClicked().getLocation().getBlockX() + ", " + e.getWhoClicked().getLocation().getBlockY() + ", " + e.getWhoClicked().getLocation().getBlockZ(),
-                            t("&b左键点击传送，右键点击删除"));
-                    point1.put("blue", e.getWhoClicked().getLocation());
+            operateWaypoints(clickedItem, player, e.isLeftClick(), e.isRightClick());
+        }
+    }
+    
+    public static void roll(Player player) {
+        if (redTeamPlayer.contains(player) && redRollCount < 3) {
+            if (!redRollPlayers.contains(player.getName())) {
+                redTeamPlayer.forEach(p -> {
+                    p.sendMessage(ChatColor.AQUA + player.getName() + "申请使用ROLL！全队玩家全部申请即可ROLL掉当前方块！");
+                });
+                redRollPlayers.add(player.getName());
+            } else {
+                redTeamPlayer.forEach(p -> {
+                    p.sendMessage(ChatColor.RED + player.getName() + "取消申请使用ROLL！");
+                });
+                redRollPlayers.remove(player.getName());
+            }
+            if (redRollPlayers.size() == redTeamPlayer.size()) {
+                for (int i = 0; i < 4; i++) {
+                    if (redCurrentBlocks.size() != 0) {
+                        redCurrentBlocks.remove(0);
+                        redCurrentBlocks.add(blocks[r.nextInt(blocks.length)]);
+                    } else break;
                 }
-            } else if (clickedItem.getItemMeta().getDisplayName().equals(WAYPOINTS2)) {
-                if (redTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    setItem("FILLED_MAP", 1, ACTIVATED_WAYPOINTS2, 1, "redWayPoints",
-                            t("&a维度：") + e.getWhoClicked().getWorld().getName(),
-                            t("&a坐标：") + e.getWhoClicked().getLocation().getBlockX() + ", " + e.getWhoClicked().getLocation().getBlockY() + ", " + e.getWhoClicked().getLocation().getBlockZ(),
-                            t("&b左键点击传送，右键点击删除"));
-                    point2.put("red", e.getWhoClicked().getLocation());
-                } else if (blueTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    setItem("FILLED_MAP", 1, ACTIVATED_WAYPOINTS2, 1, "blueWayPoints",
-                            t("&a维度：") + e.getWhoClicked().getWorld().getName(),
-                            t("&a坐标：") + e.getWhoClicked().getLocation().getBlockX() + ", " + e.getWhoClicked().getLocation().getBlockY() + ", " + e.getWhoClicked().getLocation().getBlockZ(),
-                            t("&b左键点击传送，右键点击删除"));
-                    point2.put("blue", e.getWhoClicked().getLocation());
+
+                sendAll("&c红队Roll掉了所需方块！");
+                redRollCount++;
+                redTeamScore = 0;
+                redRollPlayers.clear();
+                ScoreboardManager.update();
+            }
+
+        } else if (blueTeamPlayer.contains(player) && blueRollCount < 3) {
+            if (!blueRollPlayers.contains(player.getName())) {
+                blueTeamPlayer.forEach(p -> {
+                    p.sendMessage(ChatColor.AQUA + player.getName() + "申请使用ROLL！全队玩家全部申请即可ROLL掉当前方块！");
+                });
+                blueRollPlayers.add(player.getName());
+            } else {
+                blueTeamPlayer.forEach(p -> {
+                    p.sendMessage(ChatColor.RED + player.getName() + "取消申请使用ROLL！");
+                });
+                blueRollPlayers.remove(player.getName());
+            }
+            if (blueRollPlayers.size() == blueTeamPlayer.size()) {
+                for (int i = 0; i < 4; i++) {
+                    if (blueCurrentBlocks.size() != 0) {
+                        blueCurrentBlocks.remove(0);
+                        blueCurrentBlocks.add(blocks[r.nextInt(blocks.length)]);
+                    } else break;
                 }
-            } else if (clickedItem.getItemMeta().getDisplayName().equals(WAYPOINTS3)) {
-                if (redTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    setItem("FILLED_MAP", 1, ACTIVATED_WAYPOINTS3, 2, "redWayPoints",
-                            t("&a维度：") + e.getWhoClicked().getWorld().getName(),
-                            t("&a坐标：") + e.getWhoClicked().getLocation().getBlockX() + ", " + e.getWhoClicked().getLocation().getBlockY() + ", " + e.getWhoClicked().getLocation().getBlockZ(),
-                            t("&b左键点击传送，右键点击删除"));
-                    point3.put("red", e.getWhoClicked().getLocation());
-                } else if (blueTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    setItem("FILLED_MAP", 1, ACTIVATED_WAYPOINTS3, 2, "blueWayPoints",
-                            t("&a维度：") + e.getWhoClicked().getWorld().getName(),
-                            t("&a坐标：") + e.getWhoClicked().getLocation().getBlockX() + ", " + e.getWhoClicked().getLocation().getBlockY() + ", " + e.getWhoClicked().getLocation().getBlockZ(),
-                            t("&b左键点击传送，右键点击删除"));
-                    point3.put("blue", e.getWhoClicked().getLocation());
+
+                sendAll("&c蓝队Roll掉了所需方块！");
+                blueRollCount++;
+                blueTeamScore = 0;
+                blueRollPlayers.clear();
+                ScoreboardManager.update();
+            }
+        } else if (redTeamPlayer.contains((player)) || blueTeamPlayer.contains(player)) {
+            player.sendMessage(ChatColor.DARK_RED + "您的队伍已经使用过3次Roll了！");
+        }
+    }
+    
+    public static void buyLocate(Player player) {
+        if (locateCommandPermission.contains(player)) {
+            player.sendMessage(ChatColor.DARK_RED + "您还没有使用locate命令！无法再次购买！");
+            return;
+        }
+        if (redTeamPlayer.contains(player)) {
+            if (redTeamScore >= locateCost) {
+                redTeamScore -= locateCost;
+                ScoreboardManager.update();
+                locateCommandPermission.add(player);
+                sendAll("&a" + player.getName() + "购买了定位命令使用权限！");
+            } else {
+                player.sendMessage(ChatColor.DARK_RED + "积分不足！");
+            }
+        } else if (blueTeamPlayer.contains(player)) {
+            if (blueTeamScore >= locateCost) {
+                blueTeamScore -= locateCost;
+                ScoreboardManager.update();
+                locateCommandPermission.add(player);
+                sendAll("&a" + player.getName() + "购买了定位命令使用权限！");
+            } else {
+                player.sendMessage(ChatColor.DARK_RED + "积分不足！");
+            }
+        }
+    }
+    
+    public static void randomTP(Player player) {
+        randomTP.putIfAbsent(player.getName(), false);
+        if (randomTP.get(player.getName())) {
+            if (redTeamPlayer.contains(player)) {
+                if (redTeamScore < 2) {
+                    player.sendMessage(ChatColor.DARK_RED + "积分不足！");
+                    return;
                 }
-            } else if ((clickedItem.getItemMeta().getDisplayName().equals(ACTIVATED_WAYPOINTS1)) & e.isLeftClick()) {
-                if (redTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    (e.getWhoClicked()).teleport(point1.get("red"));
-                } else if (blueTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    (e.getWhoClicked()).teleport(point1.get("blue"));
-                }
-            } else if ((clickedItem.getItemMeta().getDisplayName().equals(ACTIVATED_WAYPOINTS2)) & e.isLeftClick()) {
-                if (redTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    (e.getWhoClicked()).teleport(point2.get("red"));
-                } else if (blueTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    (e.getWhoClicked()).teleport(point2.get("blue"));
-                }
-            } else if ((clickedItem.getItemMeta().getDisplayName().equals(ACTIVATED_WAYPOINTS3)) & e.isLeftClick()) {
-                if (redTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    (e.getWhoClicked()).teleport(point3.get("red"));
-                } else if (blueTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    (e.getWhoClicked()).teleport(point3.get("blue"));
-                }
-            }else if ((clickedItem.getItemMeta().getDisplayName().equals(ACTIVATED_WAYPOINTS1)) && e.isRightClick()) {
-                if (redTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    setItem("MAP", 1, WAYPOINTS1, 0, "redWayPoints",
-                            ChatColor.AQUA + "左键点击创建记录点");
-                    point1.remove("red");
-                } else if (blueTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    setItem("MAP", 1, WAYPOINTS1, 0, "blueWayPoints",
-                            ChatColor.AQUA + "左键点击创建记录点");
-                    point1.remove("blue");
-                }
-            } else if ((clickedItem.getItemMeta().getDisplayName().equals(ACTIVATED_WAYPOINTS2)) && e.isRightClick()) {
-                if (redTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    setItem("MAP", 1, WAYPOINTS2, 1, "redWayPoints",
-                            ChatColor.AQUA + "左键点击创建记录点");
-                    point2.remove("red");
-                } else if (blueTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    setItem("MAP", 1, WAYPOINTS2, 1, "blueWayPoints",
-                            ChatColor.AQUA + "左键点击创建记录点");
-                    point2.remove("blue");
-                }
-            } else if ((clickedItem.getItemMeta().getDisplayName().equals(ACTIVATED_WAYPOINTS3)) && e.isRightClick()) {
-                if (redTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    setItem("MAP", 1, WAYPOINTS3, 2, "redWayPoints",
-                            ChatColor.AQUA + "左键点击创建记录点");
-                    point3.remove("red");
-                } else if (blueTeamPlayer.contains((Player) e.getWhoClicked())) {
-                    setItem("MAP", 1, WAYPOINTS3, 2, "blueWayPoints",
-                            ChatColor.AQUA + "左键点击创建记录点");
-                    point3.remove("blue");
+            } else {
+                if (blueTeamScore < 2) {
+                    player.sendMessage(ChatColor.DARK_RED + "积分不足！");
+                    return;
                 }
             }
+        }
+        player.closeInventory();
+        randomTeleport(player, false);
+        sendAll("&a玩家" + player.getName() + "使用了随机传送！");
+        if (randomTP.get(player.getName())) {
+            if (redTeamPlayer.contains(player)) redTeamScore -= 2;
+            else blueTeamScore -= 2;
+        } else randomTP.put(player.getName(), true);
+        ScoreboardManager.update();
+    }
+
+    public static void operateWaypoints(ItemStack itemStack, Player player, boolean isLeftClick, boolean isRightClick) {
+        if (itemStack.getItemMeta().getDisplayName().equals(WAYPOINTS1)) {
+            if (redTeamPlayer.contains(player)) {
+                setItem("FILLED_MAP", 1, ACTIVATED_WAYPOINTS1, 0, "redWayPoints",
+                        t("&a维度：") + player.getWorld().getName(),
+                        t("&a坐标：") + player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ(),
+                        t("&b左键点击传送，右键点击删除"));
+                point1.put("red", player.getLocation());
+            } else if (blueTeamPlayer.contains(player)) {
+                setItem("FILLED_MAP", 1, ACTIVATED_WAYPOINTS1, 0, "blueWayPoints",
+                        t("&a维度：") + player.getWorld().getName(),
+                        t("&a坐标：") + player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ(),
+                        t("&b左键点击传送，右键点击删除"));
+                point1.put("blue", player.getLocation());
+            }
+            player.sendMessage(t("&a记录点1已设置为 " + player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ()));
+        } else if (itemStack.getItemMeta().getDisplayName().equals(WAYPOINTS2)) {
+            if (redTeamPlayer.contains(player)) {
+                setItem("FILLED_MAP", 1, ACTIVATED_WAYPOINTS2, 1, "redWayPoints",
+                        t("&a维度：") + player.getWorld().getName(),
+                        t("&a坐标：") + player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ(),
+                        t("&b左键点击传送，右键点击删除"));
+                point2.put("red", player.getLocation());
+            } else if (blueTeamPlayer.contains(player)) {
+                setItem("FILLED_MAP", 1, ACTIVATED_WAYPOINTS2, 1, "blueWayPoints",
+                        t("&a维度：") + player.getWorld().getName(),
+                        t("&a坐标：") + player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ(),
+                        t("&b左键点击传送，右键点击删除"));
+                point2.put("blue", player.getLocation());
+            }
+            player.sendMessage(t("&a记录点2已设置为 " + player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ()));
+        } else if (itemStack.getItemMeta().getDisplayName().equals(WAYPOINTS3)) {
+            if (redTeamPlayer.contains(player)) {
+                setItem("FILLED_MAP", 1, ACTIVATED_WAYPOINTS3, 2, "redWayPoints",
+                        t("&a维度：") + player.getWorld().getName(),
+                        t("&a坐标：") + player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ(),
+                        t("&b左键点击传送，右键点击删除"));
+                point3.put("red", player.getLocation());
+            } else if (blueTeamPlayer.contains(player)) {
+                setItem("FILLED_MAP", 1, ACTIVATED_WAYPOINTS3, 2, "blueWayPoints",
+                        t("&a维度：") + player.getWorld().getName(),
+                        t("&a坐标：") + player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ(),
+                        t("&b左键点击传送，右键点击删除"));
+                point3.put("blue", player.getLocation());
+            }
+            player.sendMessage(t("&a记录点3已设置为 " + player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ()));
+        } else if ((itemStack.getItemMeta().getDisplayName().equals(ACTIVATED_WAYPOINTS1)) & isLeftClick) {
+            if (redTeamPlayer.contains(player)) {
+                (player).teleport(point1.get("red"));
+            } else if (blueTeamPlayer.contains(player)) {
+                (player).teleport(point1.get("blue"));
+            }
+            player.sendMessage(t("&b已成功传送至 " +  player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ()));
+        } else if ((itemStack.getItemMeta().getDisplayName().equals(ACTIVATED_WAYPOINTS2)) & isLeftClick) {
+            if (redTeamPlayer.contains(player)) {
+                (player).teleport(point2.get("red"));
+            } else if (blueTeamPlayer.contains(player)) {
+                (player).teleport(point2.get("blue"));
+            }
+            player.sendMessage(t("&b已成功传送至 " +  player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ()));
+        } else if ((itemStack.getItemMeta().getDisplayName().equals(ACTIVATED_WAYPOINTS3)) & isLeftClick) {
+            if (redTeamPlayer.contains(player)) {
+                (player).teleport(point3.get("red"));
+            } else if (blueTeamPlayer.contains(player)) {
+                (player).teleport(point3.get("blue"));
+            }
+            player.sendMessage(t("&b已成功传送至 " +  player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ()));
+        }else if ((itemStack.getItemMeta().getDisplayName().equals(ACTIVATED_WAYPOINTS1)) && isRightClick) {
+            if (redTeamPlayer.contains(player)) {
+                setItem("MAP", 1, WAYPOINTS1, 0, "redWayPoints",
+                        ChatColor.AQUA + "左键点击创建记录点");
+                point1.remove("red");
+            } else if (blueTeamPlayer.contains(player)) {
+                setItem("MAP", 1, WAYPOINTS1, 0, "blueWayPoints",
+                        ChatColor.AQUA + "左键点击创建记录点");
+                point1.remove("blue");
+            }
+            player.sendMessage(t("&c已移除记录点1"));
+        } else if ((itemStack.getItemMeta().getDisplayName().equals(ACTIVATED_WAYPOINTS2)) && isRightClick) {
+            if (redTeamPlayer.contains(player)) {
+                setItem("MAP", 1, WAYPOINTS2, 1, "redWayPoints",
+                        ChatColor.AQUA + "左键点击创建记录点");
+                point2.remove("red");
+            } else if (blueTeamPlayer.contains(player)) {
+                setItem("MAP", 1, WAYPOINTS2, 1, "blueWayPoints",
+                        ChatColor.AQUA + "左键点击创建记录点");
+                point2.remove("blue");
+            }
+            player.sendMessage(t("&c已移除记录点2"));
+        } else if ((itemStack.getItemMeta().getDisplayName().equals(ACTIVATED_WAYPOINTS3)) && isRightClick) {
+            if (redTeamPlayer.contains(player)) {
+                setItem("MAP", 1, WAYPOINTS3, 2, "redWayPoints",
+                        ChatColor.AQUA + "左键点击创建记录点");
+                point3.remove("red");
+            } else if (blueTeamPlayer.contains(player)) {
+                setItem("MAP", 1, WAYPOINTS3, 2, "blueWayPoints",
+                        ChatColor.AQUA + "左键点击创建记录点");
+                point3.remove("blue");
+            }
+            player.sendMessage(t("&c已移除记录点3"));
         }
     }
 

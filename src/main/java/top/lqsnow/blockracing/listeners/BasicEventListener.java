@@ -34,7 +34,7 @@ public class BasicEventListener implements IListener {
         ScoreboardManager.setPlayerScoreboard(e.getPlayer());
         GameManager.playerLogin(e.getPlayer());
         e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0, false, false));
-        if (speedMode) e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 0, false, false));
+        if (speedMode) e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 4, false, false));
         inGamePlayer.add(e.getPlayer());
     }
 
@@ -89,7 +89,7 @@ public class BasicEventListener implements IListener {
         // 隔段时间才能给上效果，如果不延时效果给不上，不知道为啥
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0, false, false));
-            if (gameStart && speedMode) e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 0, false, false));
+            if (gameStart && speedMode) e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 4, false, false));
         }, 10L);
     }
 

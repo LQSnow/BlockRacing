@@ -94,7 +94,7 @@ public class InventoryManager {
         setItem("MAP", 1, WAYPOINTS, 6, "menu",
                 ChatColor.AQUA + "保存或传送至记录点");
         setItem("ENDER_PEARL", 1, RANDOMTP, 8, "menu",
-                ChatColor.AQUA + "花费2积分随机传送，首次免费");
+                ChatColor.AQUA + t("花费2积分在&l主世界&r&b随机传送，首次免费"));
 
         // chestSwitch
         setItem("CHEST", 1, TEAM_CHEST1, 0, "chestSwitch",
