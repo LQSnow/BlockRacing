@@ -1,41 +1,34 @@
 package top.lqsnow.blockracing;
 
-import com.destroystokyo.paper.profile.PlayerProfile;
-import org.bukkit.*;
-import top.lqsnow.blockracing.commands.*;
-import top.lqsnow.blockracing.listeners.BasicEventListener;
-import top.lqsnow.blockracing.listeners.ListenerManager;
-import top.lqsnow.blockracing.listeners.ListenerRegister;
+import org.bukkit.Bukkit;
+import org.mineacademy.fo.plugin.SimplePlugin;
+import top.lqsnow.blockracing.commands.Debug;
+import top.lqsnow.blockracing.commands.Menu;
+import top.lqsnow.blockracing.listeners.BasicListener;
 import top.lqsnow.blockracing.managers.*;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
-import java.util.Objects;
+import java.util.logging.Level;
 
-public class Main extends JavaPlugin {
+import static org.bukkit.Bukkit.getPluginCommand;
+import static org.bukkit.Bukkit.getPluginManager;
+
+
+public class Main extends SimplePlugin {
     private static Main instance;
-    ConfigManager configManager;
 
     @Override
-    public void onEnable() {
+    protected void onPluginStart() {
         instance = this;
-        // 注册事件监听器
-        ListenerManager.enable();
-        new ListenerRegister();
 
-        // 注册命令处理器
-        Objects.requireNonNull(Bukkit.getPluginCommand("locate")).setExecutor(new Locate());
-        Objects.requireNonNull(Bukkit.getPluginCommand("locate")).setTabCompleter(new Locate());
-        Objects.requireNonNull(Bukkit.getPluginCommand("tp")).setExecutor(new TP());
-        Objects.requireNonNull(Bukkit.getPluginCommand("restartgame")).setExecutor(new Restart());
-        Objects.requireNonNull(Bukkit.getPluginCommand("debug")).setExecutor(new Debug());
-        Objects.requireNonNull(Bukkit.getPluginCommand("menu")).setExecutor(new Menu());
+        // Register events
+        getPluginManager().registerEvents(new BasicListener(), this);
 
-        // 初始化记分板
-        ScoreboardManager.createScoreboard();
-        ScoreboardManager.setPreScoreboard();
+        // Register commands
+        getPluginCommand("debug").setExecutor(new Debug());
+        getPluginCommand("menu").setExecutor(new Menu());
 
-        // 创建资源文件
+        // Save resources
         if(!getDataFolder().exists()) {
             this.saveResource("EasyBlocks.txt", false);
             this.saveResource("NormalBlocks.txt", false);
@@ -45,38 +38,33 @@ public class Main extends JavaPlugin {
             this.saveResource("zh_cn.json", false);
         }
 
+        // Load managers
+        Config.saveDefaultConfig();
+        Config.load();
+        Message.saveDefaultConfig();
+        Message.load();
+        Setting.getSettings();
+        Team.createTeam();
+        Scoreboard.createScoreboard();
+        Scoreboard.setPreGameScoreboard();
+
         try {
-            configManager = new ConfigManager();
+            new Block();
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.getInstance().getLogger().log(Level.SEVERE, "[BlockRacing] Error reading the default configuration file!", e);
         }
 
-        // 初始化菜单
-        InventoryManager.init();
-
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-            World world = Bukkit.getWorld("world");
-            world.setDifficulty(Difficulty.EASY);
-            world.setGameRule(GameRule.KEEP_INVENTORY, true);
-            world.setTime(1000);
-        }, 5);
-
-        // 初始化方块管理器
-        BlockManager.init();
-
-        // 设置世界边界
-        World world = Bukkit.getWorlds().get(0);
-        world.getWorldBorder().setCenter(world.getSpawnLocation());
-        world.getWorldBorder().setSize(32);
-
-        new GameTick().runTaskTimer(Main.getInstance(), 0L, 2L);
+        Bukkit.getLogger().info("[BlockRacing] Load Complete!");
     }
 
     @Override
-    public void onDisable() {
-        ListenerManager.disable();
+    protected void onPluginStop() {
+        super.onPluginStop();
+        Config.saveConfig();
     }
 
-    public static Main getInstance() {return instance;}
+    public static Main getInstance() {
+        return instance;
+    }
 
 }

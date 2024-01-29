@@ -1,0 +1,155 @@
+package top.lqsnow.blockracing.managers;
+
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import top.lqsnow.blockracing.Main;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
+
+public enum Message {
+    // scoreboard
+    SCOREBOARD_MODE_NORMAL("scoreboard.game-mode.normal"),
+    SCOREBOARD_MODE_RACING("scoreboard.game-mode.racing"),
+    SCOREBOARD_MODE_SPEED("scoreboard.game-mode.speed"),
+    SCOREBOARD_BLOCKS_EASY("scoreboard.blocks.easy"),
+    SCOREBOARD_BLOCKS_MEDIUM("scoreboard.blocks.medium"),
+    SCOREBOARD_BLOCKS_HARD("scoreboard.blocks.hard"),
+    SCOREBOARD_BLOCKS_DYED("scoreboard.blocks.dyed"),
+    SCOREBOARD_BLOCKS_END("scoreboard.blocks.end"),
+    SCOREBOARD_PREGAME_TITLE("scoreboard.pregame.title"),
+    SCOREBOARD_PREGAME_SLOT11("scoreboard.pregame.slot11"),
+    SCOREBOARD_PREGAME_SLOT10("scoreboard.pregame.slot10"),
+    SCOREBOARD_PREGAME_SLOT9("scoreboard.pregame.slot9"),
+    SCOREBOARD_PREGAME_SLOT8("scoreboard.pregame.slot8"),
+    SCOREBOARD_PREGAME_SLOT7("scoreboard.pregame.slot7"),
+    SCOREBOARD_PREGAME_SLOT6("scoreboard.pregame.slot6"),
+    SCOREBOARD_PREGAME_SLOT5("scoreboard.pregame.slot5"),
+    SCOREBOARD_PREGAME_SLOT4("scoreboard.pregame.slot4"),
+    SCOREBOARD_PREGAME_SLOT3("scoreboard.pregame.slot3"),
+    SCOREBOARD_PREGAME_SLOT2("scoreboard.pregame.slot2"),
+    SCOREBOARD_PREGAME_SLOT1("scoreboard.pregame.slot1"),
+    SCOREBOARD_INGAME_TITLE("scoreboard.ingame.title"),
+
+    // team
+    TEAM_RED_NAME("team.red.name"),
+    TEAM_RED_PREFIX("team.red.prefix"),
+    TEAM_RED_CHAT("team.red.chat"),
+    TEAM_BLUE_NAME("team.blue.name"),
+    TEAM_BLUE_PREFIX("team.blue.prefix"),
+    TEAM_BLUE_CHAT("team.blue.chat"),
+
+    // menu
+    MENU_PREGAME_TITLE("menu.pregame-menu.title"),
+    MENU_JOIN_RED("menu.pregame-menu.join-red"),
+    MENU_JOIN_RED_LORE("menu.pregame-menu.join-red-lore"),
+    MENU_JOIN_BLUE("menu.pregame-menu.join-blue"),
+    MENU_JOIN_BLUE_LORE("menu.pregame-menu.join-blue-lore"),
+    MENU_READY("menu.pregame-menu.ready"),
+    MENU_READY_LORE("menu.pregame-menu.ready-lore"),
+    MENU_START("menu.pregame-menu.start"),
+    MENU_START_LORE("menu.pregame-menu.start-lore"),
+    MENU_BLOCK_AMOUNT("menu.pregame-menu.block-amount"),
+    MENU_BLOCK_AMOUNT_LORE("menu.pregame-menu.block-amount-lore"),
+    MENU_MEDIUM_BLOCKS("menu.pregame-menu.medium-blocks"),
+    MENU_HARD_BLOCKS("menu.pregame-menu.hard-blocks"),
+    MENU_DYED_BLOCKS("menu.pregame-menu.dyed-blocks"),
+    MENU_END_BLOCKS("menu.pregame-menu.end-blocks"),
+    MENU_DISABLED("menu.pregame-menu.disabled"),
+    MENU_ENABLED("menu.pregame-menu.enabled"),
+    MENU_CURRENT_MODE("menu.pregame-menu.current-mode"),
+    MENU_SWITCH_TO("menu.pregame-menu.switch-to"),
+    MENU_NORMAL_MODE("menu.pregame-menu.normal-mode"),
+    MENU_RACING_MODE("menu.pregame-menu.racing-mode"),
+    MENU_SPEED_MODE_ENABLED("menu.pregame-menu.speed-mode-enabled"),
+    MENU_SPEED_MODE_DISABLED("menu.pregame-menu.speed-mode-disabled"),
+    MENU_NORMAL_MODE_LORE("menu.pregame-menu.normal-mode-lore"),
+    MENU_RACING_MODE_LORE("menu.pregame-menu.racing-mode-lore"),
+    MENU_SPEED_MODE_LORE("menu.pregame-menu.speed-mode-lore"),
+    MENU_SELECT_TEAM("menu.pregame-menu.select-team"),
+    MENU_BLOCK_SETTING("menu.pregame-menu.block-setting"),
+    MENU_SELECT_MODE("menu.pregame-menu.select-mode"),
+    MENU_READY_AND_START("menu.pregame-menu.ready-and-start"),
+
+    // notice
+    NOTICE_JOIN_RED("notice.join-red"),
+    NOTICE_JOIN_BLUE("notice.join-blue"),
+    NOTICE_ALREADY_IN_RED("notice.already-in-red"),
+    NOTICE_ALREADY_IN_BLUE("notice.already-in-blue"),
+    NOTICE_READY("notice.ready"),
+    NOTICE_CANCEL_READY("notice.cancel-ready"),
+    NOTICE_ALL_READY("notice.all-ready"),
+    NOTICE_START("notice.start"),
+    NOTICE_EXIST_UNREADY("notice.exist-unready"),
+    NOTICE_UNREADY_PLAYERS("notice.unready-players"),
+    NOTICE_NOT_ENOUGH_PLAYERS("notice.not-enough-players"),
+    NOTICE_EMPTY_TEAM("notice.empty-team"),
+    NOTICE_TOO_MUCH_BLOCKS("notice.too-much-blocks"),
+    NOTICE_SET_BLOCKS("notice.set-blocks"),
+    NOTICE_SET_BLOCKS_QUIT("notice.set-blocks-quit"),
+    NOTICE_SET_BLOCKS_ERROR("notice.set-blocks-error"),
+    NOTICE_SET_BLOCKS_SUCCESS("notice.set-blocks-success"),
+    NOTICE_SPAWN_PROTECT("notice.spawn-protect-notice")
+
+    ;
+
+    private static File file;
+    private String path;
+    private String cacheString;
+    private List<String> cacheStringList;
+
+    Message(String path) {
+        this.path = path;
+    }
+
+    public static void saveDefaultConfig() {
+        File messageFile = new File(Main.getInstance().getDataFolder(), "lang.yml");
+        if (!messageFile.exists()) {
+            Main.getInstance().saveResource("lang.yml", false);
+        }
+    }
+
+    public static void load() {
+        if (file == null) {
+            file = new File(Main.getInstance().getDataFolder(), "lang.yml");
+        }
+
+        for (Message m : values()) {
+            m.cacheString = null;
+            m.cacheStringList = null;
+        }
+    }
+
+    private static FileConfiguration getMessageConfig() {
+        FileConfiguration messageConfig = YamlConfiguration.loadConfiguration(new File(Main.getInstance().getDataFolder(), "lang.yml"));
+
+        try (Reader reader = new InputStreamReader(Main.getInstance().getResource("lang.yml"), StandardCharsets.UTF_8)) {
+            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(reader);
+            messageConfig.setDefaults(defConfig);
+        } catch (IOException e) {
+            Main.getInstance().getLogger().log(Level.SEVERE, "Error reading lang.yml!", e);
+        }
+
+        return messageConfig;
+    }
+
+    public String getString() {
+        return cacheString != null ? cacheString : (cacheString = ChatColor.translateAlternateColorCodes('&', getMessageConfig().getString(path)));
+    }
+
+    public List<String> getStringList() {
+        return cacheStringList != null ? cacheStringList : (cacheStringList = Collections.unmodifiableList(
+                getMessageConfig().getStringList(path).stream()
+                        .map(msg -> ChatColor.translateAlternateColorCodes('&', msg))
+                        .collect(Collectors.toList())
+        ));
+    }
+}

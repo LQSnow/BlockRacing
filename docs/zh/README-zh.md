@@ -1,6 +1,3 @@
-[English](./docs/en/README-en.md) | [简体中文](./docs/zh/README-zh.md)
-
-
 # 方块竞速BlockRacing
 
 这是一个Minecraft多人竞速小游戏，分为两个队伍，先收集完指定方块的队伍获胜。

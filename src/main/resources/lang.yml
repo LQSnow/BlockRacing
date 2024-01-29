@@ -1,0 +1,114 @@
+# BlockRacing 语言文件
+# 该文件存储了游戏中除了方块名的所有语言文字
+# 如果需要翻译方块名，请查看https://github.com/LQSnow/BlockRacing的教程
+# 如需这个文件的翻译，可直接复制文件内容给ChatGPT，让他帮忙翻译
+# BlockRacing language files
+# This file stores all language characters in the game except block names.
+# If you need to translate the block name, please check the tutorial at https://github.com/LQSnow/BlockRacing
+# If you need to translate this file, you can directly copy the file content to ChatGPT and let him help translate it.
+
+# 当前语言: 简体中文
+lang: zh_cn
+
+# 记分板
+# slot项中，引号里没有任何字符表示这一行不显示，引号里加空格表示这一行为空行
+scoreboard:
+  game-mode:
+    normal: "&a普通模式"
+    racing: "&3竞速模式"
+    speed: "&9极速模式"
+  blocks:
+    easy: "&a简单"
+    medium: "&e中等"
+    hard: "&c困难"
+    dyed: "&d染色"
+    end: "&e末地"
+  pregame:
+    title: "&b&l方块竞速"
+    slot11: ""
+    slot10: "&a&lShift+F打开菜单"
+    slot9: "&e如果无法打开，"
+    slot8: "&e请检查&l潜行&e和&l切换副手&e的快捷键"
+    slot7: " "
+    slot6: "&b当前模式：&e%game_mode%"
+    slot5: "&b目标方块数量：&e%block_amount%"
+    slot4: "&b目标方块库："
+    slot3: "%blocks%"
+    slot2: " "
+    slot1: "&e&lEnjoy the game!"
+  ingame:
+    title: "&b&l方块竞速"
+
+# 队伍
+team:
+  red:
+    name: "&c红队"
+    prefix: "&c[红队]"
+    chat: "&c[红队] %s: &f%s"
+  blue:
+    name: "&9蓝队"
+    prefix: "&9[蓝队]"
+    chat: "&9[蓝队] %s: &f%s"
+
+# 菜单
+menu:
+  pregame-menu:
+    title: "&0准备菜单"
+    join-red: "&c加入红队"
+    join-red-lore: "&c点击此处加入红队"
+    join-blue: "&9加入蓝队"
+    join-blue-lore: "&9点击此处加入蓝队"
+    ready: "&e准备"
+    ready-lore: "&9点击此处准备"
+    start: "&b开始游戏"
+    start-lore: "&9点击此处开始游戏"
+    block-amount: "&e目标方块数量："
+    block-amount-lore: "&e点击此处更改目标方块数量"
+    medium-blocks: "&e中等方块："
+    hard-blocks: "&e困难方块："
+    dyed-blocks: "&e染色方块："
+    end-blocks: "&e末地方块："
+    disabled: "&c已禁用"
+    enabled: "&a已启用"
+    current-mode: "&a当前模式："
+    switch-to: "&e切换至："
+    normal-mode: "&a普通模式"
+    racing-mode: "&3竞速模式"
+    speed-mode-enabled: "&a当前已开启：&9极速模式"
+    speed-mode-disabled: "&e当前未开启：&9极速模式"
+    normal-mode-lore:
+      - "&e两个队伍需要收集的方块及顺序完全&l随机&r&e，"
+      - "&e收集方块会将一组该方块给到对方的队伍箱子里！"
+    racing-mode-lore:
+      - "&e两个队伍需要收集的方块及顺序将完全&l相同&r&e，"
+      - "&e且收集方块将&l不会&r&e给予一组方块到对方队伍！"
+    speed-mode-lore:
+      - "&a开启极速模式后，开局时将会&l给予玩家部分物品和效果&e，"
+      - "&e且获得方块时加3分，以加快游戏进度。"
+      - "&b物品：精准采集铁镐、熟牛排、损坏的鞘翅、经验修补附魔书"
+      - "&b效果：急迫V"
+    select-team: "&a选队"
+    block-setting: "&a方块设置"
+    select-mode: "&a模式选择"
+    ready-and-start: "&a准备和开始游戏"
+
+# 提示
+notice:
+  join-red: "&c%player% 加入了红队！"
+  join-blue: "&9%player% 加入了蓝队！"
+  already-in-red: "&c您已经加入红队了！"
+  already-in-blue: "&9您已经加入蓝队了！"
+  ready: "&a%player% 已准备！"
+  cancel-ready: "&c%player% 已取消准备！"
+  all-ready: "&b所有人都准备好了，可以开始游戏了！"
+  start: "&b游戏开始！"
+  exist-unready: "&c游戏无法开始！还有玩家未准备！"
+  unready-players: "&c未准备的玩家："
+  not-enough-players: "&c游戏无法开始！至少需要两个人！"
+  empty-team: "&c游戏无法开始！有队伍空无一人！"
+  too-much-blocks: "&c目标方块数量过多！最多只能设置为："
+  set-blocks: "&e请直接发送目标方块数量，发送quit取消输入"
+  set-blocks-quit: "&a成功退出输入模式！"
+  set-blocks-error: "&c请输入正确数字！如果您想退出输入模式，请发送quit"
+  set-blocks-success: "&a需要收集的方块数量更改为："
+  spawn-protect-notice: "&b提示：如果出生点附近无法放置或破坏方块，是因为服务器带有出生点保护，离开出生点附近即可！"
