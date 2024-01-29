@@ -31,7 +31,7 @@ public class Main extends SimplePlugin {
         // Save resources
         if(!getDataFolder().exists()) {
             this.saveResource("EasyBlocks.txt", false);
-            this.saveResource("NormalBlocks.txt", false);
+            this.saveResource("MediumBlocks.txt", false);
             this.saveResource("HardBlocks.txt", false);
             this.saveResource("DyedBlocks.txt", false);
             this.saveResource("EndBlocks.txt", false);
@@ -51,7 +51,7 @@ public class Main extends SimplePlugin {
         try {
             new Block();
         } catch (IOException e) {
-            Main.getInstance().getLogger().log(Level.SEVERE, "[BlockRacing] Error reading the default configuration file!", e);
+            Main.getInstance().getLogger().log(Level.SEVERE, "[BlockRacing] Error reading the block files!", e);
         }
 
         Bukkit.getLogger().info("[BlockRacing] Load Complete!");

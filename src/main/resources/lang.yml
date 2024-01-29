@@ -112,3 +112,4 @@ notice:
   set-blocks-error: "&c请输入正确数字！如果您想退出输入模式，请发送quit"
   set-blocks-success: "&a需要收集的方块数量更改为："
   spawn-protect-notice: "&b提示：如果出生点附近无法放置或破坏方块，是因为服务器带有出生点保护，离开出生点附近即可！"
+  exist-error-block: "&4名为 %s 的物品不存在！请检查配置文件！"

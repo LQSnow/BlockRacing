@@ -97,7 +97,8 @@ public enum Message {
     NOTICE_SET_BLOCKS_QUIT("notice.set-blocks-quit"),
     NOTICE_SET_BLOCKS_ERROR("notice.set-blocks-error"),
     NOTICE_SET_BLOCKS_SUCCESS("notice.set-blocks-success"),
-    NOTICE_SPAWN_PROTECT("notice.spawn-protect-notice")
+    NOTICE_SPAWN_PROTECT("notice.spawn-protect-notice"),
+    NOTICE_ERROR_BLOCK("notice.exist-error-block"),
 
     ;
 

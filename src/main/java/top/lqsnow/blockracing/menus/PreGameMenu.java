@@ -256,7 +256,7 @@ public class PreGameMenu extends Menu {
         this.start = new Button() {
             @Override
             public void onClickedInMenu(Player player, Menu menu, ClickType click) {
-                Game.startGame();
+                Game.checkStartDemands(player);
             }
 
             @Override
