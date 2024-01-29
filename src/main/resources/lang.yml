@@ -1,10 +1,10 @@
 # BlockRacing 语言文件
 # 该文件存储了游戏中除了方块名的所有语言文字
-# 如果需要翻译方块名，请查看https://github.com/LQSnow/BlockRacing的教程
+# 如果需要翻译方块名，请查看 https://github.com/LQSnow/BlockRacing/blob/3.0/docs/zh/README-zh.md 的教程
 # 如需这个文件的翻译，可直接复制文件内容给ChatGPT，让他帮忙翻译
 # BlockRacing language files
 # This file stores all language characters in the game except block names.
-# If you need to translate the block name, please check the tutorial at https://github.com/LQSnow/BlockRacing
+# If you need to translate the block name, please check the tutorial at https://github.com/LQSnow/BlockRacing/blob/3.0/docs/en/README-en.md
 # If you need to translate this file, you can directly copy the file content to ChatGPT and let him help translate it.
 
 # 当前语言: 简体中文
@@ -12,6 +12,9 @@ lang: zh_cn
 
 # 记分板
 # slot项中，引号里没有任何字符表示这一行不显示，引号里加空格表示这一行为空行
+# 注意！最终显示在记分板上的每一行，总字符数不能超过30，这是一行的最大显示范围！
+# 这个显示范围包含颜色代码和空格，占位符替换的文字也包含在内！
+# 超出范围的文字将无法显示！
 scoreboard:
   game-mode:
     normal: "&a普通模式"
@@ -38,6 +41,17 @@ scoreboard:
     slot1: "&e&lEnjoy the game!"
   ingame:
     title: "&b&l方块竞速"
+    red-score: "&c红队：&e%score%分  &a(%current_block%/%total_block%)"
+    blue-score: "&9蓝队：&e%score%分  &a(%current_block%/%total_block%)"
+    block-format: "%difficulty% | %block%"
+    dividing-line: "--------------------"
+    bottom-slot: "&e&lEnjoy the game!"
+    block-difficulty:
+      easy: "&a简单"
+      medium: "&e中等"
+      hard: "&c困难"
+      dyed: "&d染色"
+      end: "&e末地"
 
 # 队伍
 team:
@@ -45,10 +59,12 @@ team:
     name: "&c红队"
     prefix: "&c[红队]"
     chat: "&c[红队] %s: &f%s"
+    color: "&c"
   blue:
     name: "&9蓝队"
     prefix: "&9[蓝队]"
     chat: "&9[蓝队] %s: &f%s"
+    color: "&9"
 
 # 菜单
 menu:
@@ -91,6 +107,47 @@ menu:
     block-setting: "&a方块设置"
     select-mode: "&a模式选择"
     ready-and-start: "&a准备和开始游戏"
+  game-menu:
+    title: "&0主菜单"
+    team-chest: "&a队伍箱子"
+    team-chest-lore: "&b打开队伍箱子选择界面"
+    roll: "&e轮换"
+    roll-lore: "&b花费全部积分将当前目标方块全部替换成其他方块（每局每队仅限三次）"
+    locate: "&b定位"
+    locate-lore:
+      - "&b花费3积分获得一次locate命令使用权限"
+      - "&c注意！如果距离过远可能会引发服务器卡顿！"
+    waypoints: "&d记录点"
+    waypoints-lore: "&b保存或传送至记录点"
+    random-tp: "&9随机传送"
+    random-tp-lore: "&b花费2积分在&l主世界&r&b随机传送，首次免费"
+  team-chest-select-menu:
+    title: "&0队伍箱子选择"
+    chest1: "&b队伍箱子1"
+    chest2: "&b队伍箱子2"
+    chest3: "&b队伍箱子3"
+  team-chest:
+    red-chest1: "&c红队队伍箱子1"
+    red-chest2: "&c红队队伍箱子2"
+    red-chest3: "&c红队队伍箱子3"
+    blue-chest1: "&9蓝队队伍箱子1"
+    blue-chest2: "&9蓝队队伍箱子2"
+    blue-chest3: "&9蓝队队伍箱子3"
+  way-point:
+    title: "&0记录点"
+    empty:
+      waypoint1: "&d记录点1"
+      waypoint2: "&d记录点2"
+      waypoint3: "&d记录点3"
+      lore: "&b左键点击创建记录点"
+    filled:
+      waypoint1: "&6记录点1"
+      waypoint2: "&6记录点2"
+      waypoint3: "&6记录点3"
+      lore:
+        - "&a维度：%dimension%"
+        - "&a坐标：%coords%"
+        - "&b左键点击传送，右键点击删除"
 
 # 提示
 notice:
@@ -113,3 +170,13 @@ notice:
   set-blocks-success: "&a需要收集的方块数量更改为："
   spawn-protect-notice: "&b提示：如果出生点附近无法放置或破坏方块，是因为服务器带有出生点保护，离开出生点附近即可！"
   exist-error-block: "&4名为 %s 的物品不存在！请检查配置文件！"
+  not-enough-score: "&c积分不足！"
+  random-tp: "&a玩家%player%使用了随机传送！"
+  red-collect: "&c红队&a收集了 &b%block% &a(来自&c%player%&a)"
+  blue-collect: "&9蓝队&a收集了 &b%block% &a(来自&9%player%&a)"
+  team-chest-full: "&c%team%队伍箱子已满！%block%无法放入队伍箱子！"
+  red-win: "&c&l红队获胜！"
+  blue-win: "&9&l蓝队获胜！"
+
+# 如果你不知道这是什么，不要改
+lang-version: 3.0.0

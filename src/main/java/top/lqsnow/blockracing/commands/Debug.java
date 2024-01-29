@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.lqsnow.blockracing.Main;
 import top.lqsnow.blockracing.managers.Block;
+import top.lqsnow.blockracing.managers.Game;
 import top.lqsnow.blockracing.managers.Message;
 import top.lqsnow.blockracing.managers.Scoreboard;
 
@@ -36,13 +37,16 @@ public class Debug implements CommandExecutor, TabCompleter {
 
         if (args[0].equalsIgnoreCase("reload")) {
             Message.load();
-            try {
-                Block.reloadBlock();
-            } catch (IOException e) {
-                Main.getInstance().getLogger().log(Level.SEVERE, "[BlockRacing] Error reading the block files!", e);
+            if (Game.getCurrentGameState().equals(Game.GameState.PREGAME)) {
+                try {
+                    Block.reloadBlock();
+                } catch (IOException e) {
+                    Main.getInstance().getLogger().log(Level.SEVERE, "[BlockRacing] Error reading the block files!", e);
+                }
             }
             Scoreboard.updateScoreboard();
         }
+
 
         return true;
     }

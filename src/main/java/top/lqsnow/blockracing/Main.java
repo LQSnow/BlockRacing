@@ -48,11 +48,9 @@ public class Main extends SimplePlugin {
         Scoreboard.createScoreboard();
         Scoreboard.setPreGameScoreboard();
 
-        try {
-            new Block();
-        } catch (IOException e) {
-            Main.getInstance().getLogger().log(Level.SEVERE, "[BlockRacing] Error reading the block files!", e);
-        }
+        new Block();
+        new Gui();
+        new Game.runTick().runTaskTimer(this, 0L, 2L);
 
         Bukkit.getLogger().info("[BlockRacing] Load Complete!");
     }

@@ -7,6 +7,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Team;
+import top.lqsnow.blockracing.utils.TranslationUtil;
+
+import static top.lqsnow.blockracing.managers.Game.*;
+import static top.lqsnow.blockracing.managers.Block.*;
 
 
 public class Scoreboard {
@@ -50,7 +54,52 @@ public class Scoreboard {
     }
 
     public static void setInGameScoreboard() {
+        // Generate scoreboard
+        // Set title
+        setTitle(Message.SCOREBOARD_INGAME_TITLE.getString());
+        // Set red team score display
+        setSlot(12, Message.SCOREBOARD_RED_SCORE.getString().replace("%score%", String.valueOf(redTeamScore)).replace("%current_block%", String.valueOf(redTeamCurrentBlockAmount)).replace("%total_block%", String.valueOf(redTeamTotalBlockAmount)));
+        // Clean red team blocks display
+        for (int i = Math.min(redTeamRemainingBlocks.size(), 4); i < 4; i++) {
+            int slotIndex = 11 - i;
+            setSlot(slotIndex, "");
+        }
+        // Set red team blocks display
+        for (int i = 0; i < Math.min(redTeamRemainingBlocks.size(), 4); i++) {
+            int slotIndex = 11 - i;
+            setSlot(slotIndex, getBlockDisplay(redTeamRemainingBlocks.get(i)));
+        }
+        // Set dividing line
+        setSlot(7, Message.SCOREBOARD_DIVIDING_LINE.getString());
+        // Set blue team score display
+        setSlot(6, Message.SCOREBOARD_BLUE_SCORE.getString().replace("%score%", String.valueOf(blueTeamScore)).replace("%current_block%", String.valueOf(blueTeamCurrentBlockAmount)).replace("%total_block%", String.valueOf(blueTeamTotalBlockAmount)));
+        // Clean blue team blocks display
+        for (int i = Math.min(blueTeamRemainingBlocks.size(), 4); i < 4; i++) {
+            int slotIndex = 5 - i;
+            setSlot(slotIndex, "");
+        }
+        // Set blue team blocks display
+        for (int i = 0; i < Math.min(blueTeamRemainingBlocks.size(), 4); i++) {
+            int slotIndex = 5 - i;
+            setSlot(slotIndex, getBlockDisplay(blueTeamRemainingBlocks.get(i)));
+        }
+        // Set bottom display
+        setSlot(1, Message.SCOREBOARD_BOTTOM_SLOT.getString());
+    }
 
+    public static String getBlockDisplay(String block) {
+        if (easyBlocks.contains(block)) {
+            return String.format(Message.SCOREBOARD_BLOCK_FORMAT.getString().replace("%difficulty%", Message.SCOREBOARD_BLOCK_DIFFICULTY_EASY.getString()).replace("%block%", TranslationUtil.getValue(block)));
+        } else if (mediumBlocks.contains(block)) {
+            return String.format(Message.SCOREBOARD_BLOCK_FORMAT.getString().replace("%difficulty%", Message.SCOREBOARD_BLOCK_DIFFICULTY_MEDIUM.getString()).replace("%block%", TranslationUtil.getValue(block)));
+        } else if (hardBlocks.contains(block)) {
+            return String.format(Message.SCOREBOARD_BLOCK_FORMAT.getString().replace("%difficulty%", Message.SCOREBOARD_BLOCK_DIFFICULTY_HARD.getString()).replace("%block%", TranslationUtil.getValue(block)));
+        } else if (dyedBlocks.contains(block)) {
+            return String.format(Message.SCOREBOARD_BLOCK_FORMAT.getString().replace("%difficulty%", Message.SCOREBOARD_BLOCK_DIFFICULTY_DYED.getString()).replace("%block%", TranslationUtil.getValue(block)));
+        } else if (endBlocks.contains(block)) {
+            return String.format(Message.SCOREBOARD_BLOCK_FORMAT.getString().replace("%difficulty%", Message.SCOREBOARD_BLOCK_DIFFICULTY_END.getString()).replace("%block%", TranslationUtil.getValue(block)));
+        }
+        return null;
     }
 
     public static void showScoreboard(Player player) {
@@ -58,8 +107,11 @@ public class Scoreboard {
     }
 
     public static void updateScoreboard() {
-        setPreGameScoreboard();
-        setInGameScoreboard();
+        if (getCurrentGameState().equals(GameState.PREGAME)) {
+            setPreGameScoreboard();
+        } else if (getCurrentGameState().equals(GameState.INGAME)) {
+            setInGameScoreboard();
+        }
     }
 
 
@@ -67,7 +119,7 @@ public class Scoreboard {
      * https://github.com/Andy-K-Sparklight/PluginDiaryCode/blob/master/RarityCommons/src/main/java/rarityeg/commons/ScoreHelper.java
      * Help build up a scoreboard.
      * Considering RarityCommons isn't designed for Paper only,
-     * we won't make migrations before Bukkit and Spigot support Kyori Powered Adventure.
+     * we won't make migrations before Bukkit and Spigot support Kyori Poweblue Adventure.
      *
      * @author crisdev333
      * @author RarityEG

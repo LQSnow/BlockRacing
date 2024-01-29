@@ -11,49 +11,59 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.logging.Level;
 
 import static top.lqsnow.blockracing.managers.Gui.checkBlockInventory;
+import static top.lqsnow.blockracing.managers.Team.blueTeamPlayers;
+import static top.lqsnow.blockracing.managers.Team.redTeamPlayers;
 import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
 
 public class Block {
-    public static String[] easyBlocks, mediumBlocks, hardBlocks, dyedBlocks, endBlocks, blocks;
+    public static List<String> easyBlocks, mediumBlocks, hardBlocks, dyedBlocks, endBlocks, blocks;
     public static List<String> allBlocks = new ArrayList<>();
     public static int maxBlockAmount;
-    public static List<String> redTeamBlocks;
-    public static List<String> blueTeamBlocks;
+    public static List<String> redTeamBlocks = new ArrayList<>();
+    public static List<String> blueTeamBlocks = new ArrayList<>();
+    public static List<String> redTeamRemainingBlocks = new ArrayList<>();
+    public static List<String> blueTeamRemainingBlocks = new ArrayList<>();
 
-    public Block() throws IOException {
-        easyBlocks = readFile("EasyBlocks.txt");
-        mediumBlocks = readFile("MediumBlocks.txt");
-        hardBlocks = readFile("HardBlocks.txt");
-        dyedBlocks = readFile("DyedBlocks.txt");
-        endBlocks = readFile("EndBlocks.txt");
+    public Block() {
+        easyBlocks = List.of(readFile("EasyBlocks.txt"));
+        mediumBlocks = List.of(readFile("MediumBlocks.txt"));
+        hardBlocks = List.of(readFile("HardBlocks.txt"));
+        dyedBlocks = List.of(readFile("DyedBlocks.txt"));
+        endBlocks = List.of(readFile("EndBlocks.txt"));
+        addUpBlocks();
     }
 
     public static void addUpBlocks() {
         allBlocks.clear();
-        allBlocks.addAll(Arrays.asList(easyBlocks));
-        if (Setting.isEnableMediumBlock()) allBlocks.addAll(Arrays.asList(mediumBlocks));
-        if (Setting.isEnableHardBlock()) allBlocks.addAll(Arrays.asList(hardBlocks));
-        if (Setting.isEnableDyedBlock()) allBlocks.addAll(Arrays.asList(dyedBlocks));
-        if (Setting.isEnableEndBlock()) allBlocks.addAll(Arrays.asList(endBlocks));
-        maxBlockAmount = allBlocks.size();
-        blocks = allBlocks.toArray(new String[0]);
+        allBlocks.addAll(List.copyOf(easyBlocks));
+        if (Setting.isEnableMediumBlock()) allBlocks.addAll(List.copyOf(mediumBlocks));
+        if (Setting.isEnableHardBlock()) allBlocks.addAll(List.copyOf(hardBlocks));
+        if (Setting.isEnableDyedBlock()) allBlocks.addAll(List.copyOf(dyedBlocks));
+        if (Setting.isEnableEndBlock()) allBlocks.addAll(List.copyOf(endBlocks));
+        blocks = List.copyOf(allBlocks);
+        maxBlockAmount = blocks.size();
     }
 
     public static void setupBlocks() {
         if (Setting.getCurrentGameMode().equals(Setting.GameMode.NORMAL)) {
-            redTeamBlocks = new ArrayList<>(generateBlocks());
-            blueTeamBlocks = new ArrayList<>(generateBlocks());
+            redTeamBlocks = generateBlocks();
+            blueTeamBlocks = generateBlocks();
         } else if (Setting.getCurrentGameMode().equals(Setting.GameMode.RACING)) {
             List<String> blocks = generateBlocks();
-            redTeamBlocks = new ArrayList<>(blocks);
-            blueTeamBlocks = new ArrayList<>(blocks);
+            redTeamBlocks = List.copyOf(blocks);
+            blueTeamBlocks = List.copyOf(blocks);
         }
+        redTeamRemainingBlocks.addAll(List.copyOf(redTeamBlocks));
+        blueTeamRemainingBlocks.addAll(List.copyOf(blueTeamBlocks));
+        Bukkit.getLogger().info("[BlockRacing] Blocks generate complete.");
+        Bukkit.getLogger().info("Red team blocks: " + redTeamBlocks.toString());
+        Bukkit.getLogger().info("Blue team blocks: " + blueTeamBlocks.toString());
+        Bukkit.getLogger().info("Red team players: " + redTeamPlayers.toString());
+        Bukkit.getLogger().info("Blue team players: " + blueTeamPlayers.toString());
     }
 
     private static List<String> generateBlocks() {
@@ -61,12 +71,12 @@ public class Block {
         addUpBlocks();
 
         // Create temporary file to generate blocks
-        List<String> blocksTemp = new ArrayList<>(List.of(blocks));
-        List<String> easyTemp = new ArrayList<>(List.of(easyBlocks));
-        List<String> mediumTemp = new ArrayList<>(List.of(mediumBlocks));
-        List<String> hardTemp = new ArrayList<>(List.of(hardBlocks));
-        List<String> dyedTemp = new ArrayList<>(List.of(dyedBlocks));
-        List<String> endTemp = new ArrayList<>(List.of(endBlocks));
+        List<String> blocksTemp = new ArrayList<>(blocks);
+        List<String> easyTemp = new ArrayList<>(easyBlocks);
+        List<String> mediumTemp = new ArrayList<>(mediumBlocks);
+        List<String> hardTemp = new ArrayList<>(hardBlocks);
+        List<String> dyedTemp = new ArrayList<>(dyedBlocks);
+        List<String> endTemp = new ArrayList<>(endBlocks);
 
         // Choose blocks
         int blockAmount = Setting.getBlockAmount();
@@ -74,11 +84,26 @@ public class Block {
 
         for (int i = 0; i < blockAmount; i++) {
             // Calculate weights for each difficulty
-            int easyWeight = calculateEasyBlocksWeight((float) i / blockAmount);
-            int mediumWeight = Setting.isEnableMediumBlock() ? calculateMediumBlocksWeight((float) i / blockAmount) : 0;
-            int hardWeight = Setting.isEnableHardBlock() ? calculateHardBlocksWeight((float) i / blockAmount) : 0;
-            int dyedWeight = Setting.isEnableDyedBlock() ? calculateDyedBlocksWeight((float) i / blockAmount) : 0;
-            int endWeight = Setting.isEnableEndBlock() ? calculateEndBlocksWeight((float) i / blockAmount) : 0;
+            int easyWeight = 0;
+            int mediumWeight = 0;
+            int hardWeight = 0;
+            int dyedWeight = 0;
+            int endWeight = 0;
+
+            if (easyTemp.size() != 0) easyWeight = calculateEasyBlocksWeight((float) i / blockAmount);
+
+            if (mediumTemp.size() != 0)
+                mediumWeight = Setting.isEnableMediumBlock() ? calculateMediumBlocksWeight((float) i / blockAmount) : 0;
+
+            if (hardTemp.size() != 0)
+                hardWeight = Setting.isEnableHardBlock() ? calculateHardBlocksWeight((float) i / blockAmount) : 0;
+
+            if (dyedTemp.size() != 0)
+                dyedWeight = Setting.isEnableDyedBlock() ? calculateDyedBlocksWeight((float) i / blockAmount) : 0;
+
+            if (endTemp.size() != 0)
+                endWeight = Setting.isEnableEndBlock() ? calculateEndBlocksWeight((float) i / blockAmount) : 0;
+
 
             // Choose difficulty based on weights
             String difficulty = chooseDifficulty(easyWeight, mediumWeight, hardWeight, dyedWeight, endWeight);
@@ -136,13 +161,6 @@ public class Block {
             default -> throw new IllegalArgumentException("Invalid difficulty");
         };
     }
-
-    // Method to remove the selected block from the corresponding difficulty list
-    private static void removeFromTempList(String difficulty, String block, List<String> easyTemp, List<String> mediumTemp,
-                                           List<String> hardTemp, List<String> dyedTemp, List<String> endTemp) {
-
-    }
-
 
     // Method to select a random block from a list
     private static String selectRandomBlockFromList(List<String> blockList) {
@@ -212,23 +230,28 @@ public class Block {
     }
 
     public static void reloadBlock() throws IOException {
-        easyBlocks = readFile("EasyBlocks.txt");
-        mediumBlocks = readFile("MediumBlocks.txt");
-        hardBlocks = readFile("HardBlocks.txt");
-        dyedBlocks = readFile("DyedBlocks.txt");
-        endBlocks = readFile("EndBlocks.txt");
+        easyBlocks = List.of(readFile("EasyBlocks.txt"));
+        mediumBlocks = List.of(readFile("MediumBlocks.txt"));
+        hardBlocks = List.of(readFile("HardBlocks.txt"));
+        dyedBlocks = List.of(readFile("DyedBlocks.txt"));
+        endBlocks = List.of(readFile("EndBlocks.txt"));
         addUpBlocks();
     }
 
-    public static String[] readFile(String fileName) throws IOException {
-        File file = new File(Main.getInstance().getDataFolder(), fileName);
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        List<String> lines = new ArrayList<>();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            if (!line.equals("")) lines.add(line);
+    public static String[] readFile(String fileName) {
+        try {
+            File file = new File(Main.getInstance().getDataFolder(), fileName);
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            List<String> lines = new ArrayList<>();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.equals("")) lines.add(line);
+            }
+            reader.close();
+            return lines.toArray(new String[0]);
+        } catch (IOException e) {
+            Main.getInstance().getLogger().log(Level.SEVERE, "[BlockRacing] Error reading blocks file!", e);
         }
-        reader.close();
-        return lines.toArray(new String[0]);
+        return null;
     }
 }

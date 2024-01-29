@@ -17,7 +17,8 @@ public enum Config {
     END_BLOCK("end-block"),
     BLOCK_AMOUNT("block-amount"),
     GAME_MODE("game-mode"),
-    SPEED_MODE("speed-mode");
+    SPEED_MODE("speed-mode"),
+    CONFIG_VERSION("config-version");
 
     private static File file;
     private static FileConfiguration config;

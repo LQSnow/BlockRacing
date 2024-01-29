@@ -22,3 +22,6 @@ game-mode: normal
 # 物品：精准采集铁镐、熟牛排、损坏的鞘翅、经验修补附魔书
 # 效果：急迫V
 speed-mode: false
+
+# 如果你不知道这是什么，不要改
+config-version: 3.0.0
