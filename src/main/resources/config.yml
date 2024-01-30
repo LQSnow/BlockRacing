@@ -23,5 +23,5 @@ game-mode: normal
 # 效果：急迫V
 speed-mode: false
 
-# 如果你不知道这是什么，不要改
+# 如果你不知道这是什么，不要动它
 config-version: 3.0.0

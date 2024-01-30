@@ -15,8 +15,6 @@ import java.util.*;
 import java.util.logging.Level;
 
 import static top.lqsnow.blockracing.managers.Gui.checkBlockInventory;
-import static top.lqsnow.blockracing.managers.Team.blueTeamPlayers;
-import static top.lqsnow.blockracing.managers.Team.redTeamPlayers;
 import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
 
 public class Block {
@@ -62,8 +60,6 @@ public class Block {
         Bukkit.getLogger().info("[BlockRacing] Blocks generate complete.");
         Bukkit.getLogger().info("Red team blocks: " + redTeamBlocks.toString());
         Bukkit.getLogger().info("Blue team blocks: " + blueTeamBlocks.toString());
-        Bukkit.getLogger().info("Red team players: " + redTeamPlayers.toString());
-        Bukkit.getLogger().info("Blue team players: " + blueTeamPlayers.toString());
     }
 
     private static List<String> generateBlocks() {
@@ -197,20 +193,23 @@ public class Block {
     }
 
     // Calculate weight for dyed blocks
-    // Weight remains constant at 20 regardless of progress
+    // Weight remains constant at 10 regardless of progress
     public static int calculateDyedBlocksWeight(float progress) {
-        return 20;
+        return 10;
     }
 
     // Calculate weight for end blocks
-    // Weight is 1 for progress from 0 to 0.8,
+    // Weight is 0 for progress from 0 to 0.8 (Unless only the end block is left),
     // then increases to 60 as progress goes from 0.8 to 1
     public static int calculateEndBlocksWeight(float progress) {
-        if (progress <= 0.8) {
-            return 1;
+        float prop = (float) endBlocks.size() / blocks.size();
+        if (progress <= 1 - prop) {
+            if (progress <= 0.8) return 0;
+            if (progress > 0.8) return (int) (60 * (progress - 0.8) / 0.2);
         } else {
-            return (int) (1 + 59 * (progress - 0.8) / 0.2);
+            return 60;
         }
+        return 0;
     }
 
     // Check if there are any problems with the blocks imported from the file
@@ -229,7 +228,7 @@ public class Block {
         return flag;
     }
 
-    public static void reloadBlock() throws IOException {
+    public static void reloadBlock() {
         easyBlocks = List.of(readFile("EasyBlocks.txt"));
         mediumBlocks = List.of(readFile("MediumBlocks.txt"));
         hardBlocks = List.of(readFile("HardBlocks.txt"));

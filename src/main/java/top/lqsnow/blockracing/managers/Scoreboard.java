@@ -60,12 +60,12 @@ public class Scoreboard {
         // Set red team score display
         setSlot(12, Message.SCOREBOARD_RED_SCORE.getString().replace("%score%", String.valueOf(redTeamScore)).replace("%current_block%", String.valueOf(redTeamCurrentBlockAmount)).replace("%total_block%", String.valueOf(redTeamTotalBlockAmount)));
         // Clean red team blocks display
-        for (int i = Math.min(redTeamRemainingBlocks.size(), 4); i < 4; i++) {
+        for (int i = getCurrentBlocks("red").size(); i < 4; i++) {
             int slotIndex = 11 - i;
             setSlot(slotIndex, "");
         }
         // Set red team blocks display
-        for (int i = 0; i < Math.min(redTeamRemainingBlocks.size(), 4); i++) {
+        for (int i = 0; i < getCurrentBlocks("red").size(); i++) {
             int slotIndex = 11 - i;
             setSlot(slotIndex, getBlockDisplay(redTeamRemainingBlocks.get(i)));
         }
@@ -74,12 +74,12 @@ public class Scoreboard {
         // Set blue team score display
         setSlot(6, Message.SCOREBOARD_BLUE_SCORE.getString().replace("%score%", String.valueOf(blueTeamScore)).replace("%current_block%", String.valueOf(blueTeamCurrentBlockAmount)).replace("%total_block%", String.valueOf(blueTeamTotalBlockAmount)));
         // Clean blue team blocks display
-        for (int i = Math.min(blueTeamRemainingBlocks.size(), 4); i < 4; i++) {
+        for (int i = getCurrentBlocks("blue").size(); i < 4; i++) {
             int slotIndex = 5 - i;
             setSlot(slotIndex, "");
         }
         // Set blue team blocks display
-        for (int i = 0; i < Math.min(blueTeamRemainingBlocks.size(), 4); i++) {
+        for (int i = 0; i < getCurrentBlocks("blue").size(); i++) {
             int slotIndex = 5 - i;
             setSlot(slotIndex, getBlockDisplay(blueTeamRemainingBlocks.get(i)));
         }

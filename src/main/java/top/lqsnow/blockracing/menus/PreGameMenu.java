@@ -1,6 +1,5 @@
 package top.lqsnow.blockracing.menus;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -15,9 +14,9 @@ import top.lqsnow.blockracing.managers.Setting;
 import top.lqsnow.blockracing.managers.Team;
 
 import static top.lqsnow.blockracing.listeners.BasicListener.editAmountPlayer;
+import static top.lqsnow.blockracing.managers.Gui.updateMenu;
 import static top.lqsnow.blockracing.managers.Scoreboard.updateScoreboard;
 import static top.lqsnow.blockracing.managers.Team.redTeam;
-import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
 
 public class PreGameMenu extends Menu {
 
@@ -67,7 +66,6 @@ public class PreGameMenu extends Menu {
             @Override
             public void onClickedInMenu(Player player, Menu menu, ClickType click) {
                 Team.joinTeam(player, redTeam);
-                sendAll(Message.NOTICE_JOIN_RED.getString().replace("%player%", player.getName()));
             }
 
             @Override
@@ -81,7 +79,6 @@ public class PreGameMenu extends Menu {
             @Override
             public void onClickedInMenu(Player player, Menu menu, ClickType click) {
                 Team.joinTeam(player, Team.blueTeam);
-                sendAll(Message.NOTICE_JOIN_BLUE.getString().replace("%player%", player.getName()));
             }
 
             @Override
@@ -265,18 +262,6 @@ public class PreGameMenu extends Menu {
             }
         };
 
-    }
-
-    // Update menu
-    public static void updateMenu(Menu menu) {
-        Bukkit.getOnlinePlayers().forEach((Player player) -> {
-            try {
-                Menu playerMenu = Menu.getMenu(player);
-                if (playerMenu.getClass().equals(menu.getClass())) {
-                    playerMenu.restartMenu();
-                }
-            } catch (NullPointerException ignored) {}
-        });
     }
 
     // Generate background glass pane

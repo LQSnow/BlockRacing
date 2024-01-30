@@ -8,9 +8,12 @@ commands:
   tp:
     usage: "/tp <Teammate>"
     description: "TP to teammate."
-  locate:
-    usage: "/locate <Structure | Biome>"
-    description: "Locate structure or biome."
+  locatestructure:
+    usage: "/locate <Structure>"
+    description: "Locate structure."
+  locatebiome:
+    usage: "/locate <Biome>"
+    description: "Locate biome."
   restartgame:
     usage: "/restartgame"
     description: "Restart the game."
@@ -21,3 +24,6 @@ commands:
   menu:
     usage: "/menu"
     description: "Open the menu."
+  waypoint:
+    usage: "/waypoint"
+    description: "Run waypoint commands."

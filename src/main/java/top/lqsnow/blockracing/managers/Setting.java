@@ -1,13 +1,24 @@
 package top.lqsnow.blockracing.managers;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class Setting {
+    @Getter
     private static boolean enableMediumBlock;
+    @Getter
     private static boolean enableHardBlock;
+    @Getter
     private static boolean enableDyedBlock;
+    @Getter
     private static boolean enableEndBlock;
+    @Getter
     private static int blockAmount;
+    @Getter
     private static boolean speedMode;
     public enum GameMode {NORMAL, RACING}
+    @Getter
+    @Setter
     private static GameMode currentGameMode = GameMode.NORMAL;
 
     public static void getSettings(){
@@ -20,25 +31,9 @@ public class Setting {
         setCurrentGameMode(GameMode.valueOf(Config.GAME_MODE.getString().toUpperCase()));
     }
 
-    public static void setCurrentGameMode(GameMode mode) {
-        currentGameMode = mode;
-    }
-
-    public static GameMode getCurrentGameMode(){
-        return currentGameMode;
-    }
-
-    public static boolean isEnableMediumBlock() {
-        return enableMediumBlock;
-    }
-
     public static void setEnableMediumBlock(boolean enableMediumBlock) {
         Setting.enableMediumBlock = enableMediumBlock;
         Config.MEDIUM_BLOCK.setBoolean(enableMediumBlock);
-    }
-
-    public static boolean isEnableHardBlock() {
-        return enableHardBlock;
     }
 
     public static void setEnableHardBlock(boolean enableHardBlock) {
@@ -46,17 +41,9 @@ public class Setting {
         Config.HARD_BLOCK.setBoolean(enableHardBlock);
     }
 
-    public static boolean isEnableDyedBlock() {
-        return enableDyedBlock;
-    }
-
     public static void setEnableDyedBlock(boolean enableDyedBlock) {
         Setting.enableDyedBlock = enableDyedBlock;
         Config.DYED_BLOCK.setBoolean(enableDyedBlock);
-    }
-
-    public static boolean isEnableEndBlock() {
-        return enableEndBlock;
     }
 
     public static void setEnableEndBlock(boolean enableEndBlock) {
@@ -64,17 +51,9 @@ public class Setting {
         Config.END_BLOCK.setBoolean(enableEndBlock);
     }
 
-    public static int getBlockAmount() {
-        return blockAmount;
-    }
-
     public static void setBlockAmount(int blockAmount) {
         Setting.blockAmount = blockAmount;
         Config.BLOCK_AMOUNT.setInt(blockAmount);
-    }
-
-    public static boolean isSpeedMode() {
-        return speedMode;
     }
 
     public static void setSpeedMode(boolean speedMode) {

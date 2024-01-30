@@ -3,19 +3,17 @@ package top.lqsnow.blockracing.listeners;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.*;
 import top.lqsnow.blockracing.managers.*;
 import top.lqsnow.blockracing.menus.PreGameMenu;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static top.lqsnow.blockracing.managers.Gui.updateMenu;
 import static top.lqsnow.blockracing.managers.Scoreboard.updateScoreboard;
 import static top.lqsnow.blockracing.managers.Team.isPlayerInBlueTeam;
 import static top.lqsnow.blockracing.managers.Team.isPlayerInRedTeam;
-import static top.lqsnow.blockracing.menus.PreGameMenu.updateMenu;
 import static top.lqsnow.blockracing.utils.ColorUtil.t;
 import static top.lqsnow.blockracing.managers.Block.*;
 import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
@@ -29,15 +27,21 @@ public class BasicListener implements Listener {
     }
 
     @EventHandler
+    private void onPlayerQuit(PlayerQuitEvent event) {
+        Game.playerQuit(event.getPlayer());
+    }
+
+    @EventHandler
     private void onPlayerSwapHand(PlayerSwapHandItemsEvent event) {
         // Open menu
         if (event.getPlayer().isSneaking()) {
+            event.setCancelled(true);
             Gui.openMenu(event.getPlayer());
         }
     }
 
     @EventHandler
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
+    private void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
 
         // Change block amount

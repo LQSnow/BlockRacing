@@ -111,7 +111,7 @@ public enum Message {
     MENU_BLUE_CHEST1("menu.team-chest.blue-chest1"),
     MENU_BLUE_CHEST2("menu.team-chest.blue-chest2"),
     MENU_BLUE_CHEST3("menu.team-chest.blue-chest3"),
-    MENU_WAYPOINT_TITLE("menu.way-point.empty.waypoint1"),
+    MENU_WAYPOINT_TITLE("menu.way-point.title"),
     MENU_WAYPOINT_EMPTY_1("menu.way-point.empty.waypoint1"),
     MENU_WAYPOINT_EMPTY_2("menu.way-point.empty.waypoint2"),
     MENU_WAYPOINT_EMPTY_3("menu.way-point.empty.waypoint3"),
@@ -120,8 +120,10 @@ public enum Message {
     MENU_WAYPOINT_FILLED_2("menu.way-point.filled.waypoint2"),
     MENU_WAYPOINT_FILLED_3("menu.way-point.filled.waypoint3"),
     MENU_WAYPOINT_FILLED_LORE("menu.way-point.filled.lore"),
+    MENU_ALL_RETURN_BACK("menu.all.return-back"),
 
     // notice
+    NOTICE_WELCOME("notice.welcome"),
     NOTICE_JOIN_RED("notice.join-red"),
     NOTICE_JOIN_BLUE("notice.join-blue"),
     NOTICE_ALREADY_IN_RED("notice.already-in-red"),
@@ -148,12 +150,35 @@ public enum Message {
     NOTICE_TEAM_CHEST_FULL("notice.team-chest-full"),
     NOTICE_RED_WIN("notice.red-win"),
     NOTICE_BLUE_WIN("notice.blue-win"),
+    NOTICE_RED_TEAM_CHEST("notice.red-team-chest"),
+    NOTICE_BLUE_TEAM_CHEST("notice.blue-team-chest"),
+    NOTICE_REMOVE_WAYPOINT("notice.remove-waypoint"),
+    NOTICE_TP_SUCCESS("notice.tp-success"),
+    NOTICE_TP_OCEAN("notice.tp-ocean"),
+    NOTICE_RED_REMOVE_WAYPOINT("notice.red-remove-waypoint"),
+    NOTICE_BLUE_REMOVE_WAYPOINT("notice.blue-remove-waypoint"),
+    NOTICE_CANNOT_ROLL("notice.cannot-roll"),
+    NOTICE_ROLL_REQUEST("notice.roll-request"),
+    NOTICE_ROLL_REQUEST_CANCEL("notice.roll-request-cancel"),
+    NOTICE_RED_ROLL_SUCCESS("notice.red-roll-success"),
+    NOTICE_BLUE_ROLL_SUCCESS("notice.blue-roll-success"),
+    NOTICE_SPECTATOR("notice.spectator"),
+    NOTICE_SPECTATOR_JOIN("notice.spectator-join"),
+    NOTICE_LOCATE_ALREADY_BOUGHT("notice.locate-already-bought"),
+    NOTICE_BUY_LOCATE("notice.buy-locate"),
+    NOTICE_ERROR_COMMAND("notice.error-command"),
+    NOTICE_LOCATE_NO_PERMISSION("notice.locate-no-permission"),
+    NOTICE_RESTART("notice.restart"),
+    NOTICE_RESTART_CANCEL("notice.restart-cancel"),
+    NOTICE_GAME_NOT_START("notice.game-not-start"),
+    NOTICE_TP_PLAYER_SUCCESS("notice.tp-player-success"),
+    NOTICE_SPECTATOR_TP_PLAYER_SUCCESS("notice.spectator-tp-player-success"),
+    NOTICE_PLAYER_NOT_EXIST("notice.player-not-exist"),
+    NOTICE_PLAYER_NOT_IN_SAME_TEAM("notice.player-not-in-same-team"),
 
     // other
     MESSAGE_LANG("lang"),
-    MESSAGE_VERSION("lang-version")
-
-    ;
+    MESSAGE_VERSION("lang-version");
 
     private static File file;
     private String path;

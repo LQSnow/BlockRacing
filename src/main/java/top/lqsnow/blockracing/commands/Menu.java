@@ -11,13 +11,11 @@ import top.lqsnow.blockracing.managers.Gui;
 public class Menu implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             Bukkit.getLogger().info("This command can only be run by a player.");
             return true;
         }
-        Player player = (Player) sender;
         Gui.openMenu(player);
-
 
         return true;
     }

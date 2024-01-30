@@ -1,8 +1,8 @@
 package top.lqsnow.blockracing.utils;
 
-import github.scarsz.discordsrv.dependencies.json.JSONObject;
-import github.scarsz.discordsrv.dependencies.json.simple.parser.JSONParser;
 import org.bukkit.Material;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import top.lqsnow.blockracing.Main;
 import top.lqsnow.blockracing.managers.Message;
 

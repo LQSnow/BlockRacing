@@ -1,6 +1,5 @@
 package top.lqsnow.blockracing.menus;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -14,9 +13,13 @@ import top.lqsnow.blockracing.managers.Game;
 import top.lqsnow.blockracing.managers.Message;
 import top.lqsnow.blockracing.managers.Scoreboard;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import static top.lqsnow.blockracing.managers.Game.*;
 import static top.lqsnow.blockracing.managers.Gui.*;
-import static top.lqsnow.blockracing.managers.Team.redTeamPlayers;
+import static top.lqsnow.blockracing.managers.Team.*;
 import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
 
 public class GameMenu extends Menu {
@@ -53,7 +56,7 @@ public class GameMenu extends Menu {
 
             @Override
             public ItemStack getItem() {
-                return ItemCreator.of(CompMaterial.TOTEM_OF_UNDYING, Message.MENU_ROLL.getString(), Message.MENU_ROLL_LORE.getStringList()).make();
+                return ItemCreator.of(CompMaterial.TOTEM_OF_UNDYING, Message.MENU_ROLL.getString(), Message.MENU_ROLL_LORE.getString()).make();
             }
         };
 
@@ -67,37 +70,40 @@ public class GameMenu extends Menu {
 
             @Override
             public ItemStack getItem() {
-                return ItemCreator.of(CompMaterial.COMPASS, Message.MENU_LOCATE.getString(), Message.MENU_LOCATE_LORE.getStringList()).make();
+                return ItemCreator.of(CompMaterial.COMPASS, Message.MENU_LOCATE.getString(), replacePlaceholders(Message.MENU_LOCATE_LORE.getStringList())).make();
             }
         };
 
         // Open waypoint menu
-        this.waypoint = new ButtonMenu(new WaypointMenu(), ItemCreator.of(CompMaterial.PAPER, Message.MENU_WAYPOINTS.getString(), Message.MENU_WAYPOINTS_LORE.getStringList()).make());
+        this.waypoint = new Button() {
+            @Override
+            public void onClickedInMenu(Player player, Menu menu, ClickType click) {
+                if (redTeamPlayers.contains(player.getName())) new RedWaypointMenu().displayTo(player);
+                else if (blueTeamPlayers.contains(player.getName())) new BlueWaypointMenu().displayTo(player);
+            }
+
+            @Override
+            public ItemStack getItem() {
+                return ItemCreator.of(CompMaterial.PAPER, Message.MENU_WAYPOINTS.getString(), Message.MENU_WAYPOINTS_LORE.getStringList()).make();
+            }
+        };
 
         // Random tp
         this.randomTP = new Button() {
             @Override
             public void onClickedInMenu(Player player, Menu menu, ClickType click) {
                 if (freeRandomTPList.contains(player.getName())) {
-                    Game.randomTP(player, false);
+                    Game.RandomTeleport(player, false);
                     freeRandomTPList.remove(player.getName());
                 } else {
-                    if (redTeamPlayers.contains(player.getName())) {
-                        if (redTeamScore < 2){
-                            player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString());
-                            return;
-                        }
-                    } else {
-                        if (blueTeamScore < 2){
-                            player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString());
-                            return;
-                        }
+                    if (redTeamScore < 2) {
+                        player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString());
+                        return;
                     }
                     player.closeInventory();
-                    randomTP(player, false);
-                    sendAll(Message.NOTICE_RANDOM_TP.getString().replace("%player%", redTeamPlayers.contains(player.getName()) ? Message.TEAM_RED_COLOR.getString() + player.getName() : Message.TEAM_BLUE_COLOR.getString() + player.getName()));
-                    if (redTeamPlayers.contains(player)) redTeamScore -= 2;
-                    else blueTeamScore -= 2;
+                    RandomTeleport(player, false);
+                    sendAll(Message.NOTICE_RANDOM_TP.getString().replace("%player%", Message.TEAM_RED_COLOR.getString() + player.getName()));
+                    redTeamScore -= 2;
                     Scoreboard.updateScoreboard();
                 }
             }
@@ -121,6 +127,9 @@ public class GameMenu extends Menu {
         @Position(2)
         private final Button teamChest3;
 
+        @Position(8)
+        private final Button back;
+
         TeamChestSelectMenu() {
             super(GameMenu.this);
 
@@ -130,7 +139,7 @@ public class GameMenu extends Menu {
             this.teamChest1 = new Button() {
                 @Override
                 public void onClickedInMenu(Player player, Menu menu, ClickType click) {
-                    player.openInventory(redTeamChest1);
+                    openTeamChest(player, 1);
                 }
 
                 @Override
@@ -142,7 +151,7 @@ public class GameMenu extends Menu {
             this.teamChest2 = new Button() {
                 @Override
                 public void onClickedInMenu(Player player, Menu menu, ClickType click) {
-                    player.openInventory(redTeamChest2);
+                    openTeamChest(player, 2);
                 }
 
                 @Override
@@ -154,7 +163,7 @@ public class GameMenu extends Menu {
             this.teamChest3 = new Button() {
                 @Override
                 public void onClickedInMenu(Player player, Menu menu, ClickType click) {
-                    player.openInventory(redTeamChest3);
+                    openTeamChest(player, 3);
                 }
 
                 @Override
@@ -162,23 +171,43 @@ public class GameMenu extends Menu {
                     return ItemCreator.of(CompMaterial.CHEST, Message.MENU_TEAM_CHEST_SELECT_CHEST3.getString()).make();
                 }
             };
+
+            this.back = new Button() {
+                @Override
+                public void onClickedInMenu(Player player, Menu menu, ClickType click) {
+                    new GameMenu().displayTo(player);
+                }
+
+                @Override
+                public ItemStack getItem() {
+                    return ItemCreator.of(CompMaterial.ARROW, Message.MENU_ALL_RETURN_BACK.getString()).make();
+                }
+            };
+
         }
 
+        @Override
+        protected boolean addReturnButton() {
+            return false;
+        }
     }
 
     // Waypoint menu
-    private class WaypointMenu extends Menu {
+    private class RedWaypointMenu extends Menu {
 
         @Position(0)
         private final Button waypoint1;
-        // TODO
-//        @Position(1)
-//        private final Button waypoint2;
-//
-//        @Position(2)
-//        private final Button waypoint3;
 
-        WaypointMenu() {
+        @Position(1)
+        private final Button waypoint2;
+
+        @Position(2)
+        private final Button waypoint3;
+
+        @Position(8)
+        private final Button back;
+
+        RedWaypointMenu() {
             super(GameMenu.this);
 
             setTitle(Message.MENU_WAYPOINT_TITLE.getString());
@@ -187,15 +216,193 @@ public class GameMenu extends Menu {
             this.waypoint1 = new Button() {
                 @Override
                 public void onClickedInMenu(Player player, Menu menu, ClickType click) {
-                    // TODO
+                    boolean isChanged = waypoint(player, 1, click);
+                    if (isChanged) {
+                        updateMenu(RedWaypointMenu.this);
+                    }
                 }
 
                 @Override
                 public ItemStack getItem() {
-                    // TODO
-                    return NO_ITEM;
+                    if (redWaypoint1 != null)
+                        return ItemCreator.of(CompMaterial.FILLED_MAP, Message.MENU_WAYPOINT_FILLED_1.getString(), replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), redWaypoint1.getWorld().getName(), getCoords(redWaypoint1))).make();
+                    else
+                        return ItemCreator.of(CompMaterial.MAP, Message.MENU_WAYPOINT_EMPTY_1.getString(), Message.MENU_WAYPOINT_EMPTY_LORE.getStringList()).make();
+                }
+            };
+
+            this.waypoint2 = new Button() {
+                @Override
+                public void onClickedInMenu(Player player, Menu menu, ClickType click) {
+                    boolean isChanged = waypoint(player, 2, click);
+                    if (isChanged) {
+                        updateMenu(RedWaypointMenu.this);
+                    }
+                }
+
+                @Override
+                public ItemStack getItem() {
+                    if (redWaypoint2 != null)
+                        return ItemCreator.of(CompMaterial.FILLED_MAP, Message.MENU_WAYPOINT_FILLED_2.getString(), replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), redWaypoint2.getWorld().getName(), getCoords(redWaypoint2))).make();
+                    else
+                        return ItemCreator.of(CompMaterial.MAP, Message.MENU_WAYPOINT_EMPTY_2.getString(), Message.MENU_WAYPOINT_EMPTY_LORE.getStringList()).make();
+                }
+            };
+
+            this.waypoint3 = new Button() {
+                @Override
+                public void onClickedInMenu(Player player, Menu menu, ClickType click) {
+                    boolean isChanged = waypoint(player, 3, click);
+                    if (isChanged) {
+                        updateMenu(RedWaypointMenu.this);
+                    }
+                }
+
+                @Override
+                public ItemStack getItem() {
+                    if (redWaypoint3 != null)
+                        return ItemCreator.of(CompMaterial.FILLED_MAP, Message.MENU_WAYPOINT_FILLED_3.getString(), replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), redWaypoint3.getWorld().getName(), getCoords(redWaypoint3))).make();
+                    else
+                        return ItemCreator.of(CompMaterial.MAP, Message.MENU_WAYPOINT_EMPTY_3.getString(), Message.MENU_WAYPOINT_EMPTY_LORE.getStringList()).make();
+                }
+            };
+
+            this.back = new Button() {
+                @Override
+                public void onClickedInMenu(Player player, Menu menu, ClickType click) {
+                    new GameMenu().displayTo(player);
+                }
+
+                @Override
+                public ItemStack getItem() {
+                    return ItemCreator.of(CompMaterial.ARROW, Message.MENU_ALL_RETURN_BACK.getString()).make();
                 }
             };
         }
+
+        @Override
+        protected boolean addReturnButton() {
+            return false;
+        }
+
     }
+
+    private class BlueWaypointMenu extends Menu {
+
+        @Position(0)
+        private final Button waypoint1;
+
+        @Position(1)
+        private final Button waypoint2;
+
+        @Position(2)
+        private final Button waypoint3;
+
+        @Position(8)
+        private final Button back;
+
+        BlueWaypointMenu() {
+            super(GameMenu.this);
+
+            setTitle(Message.MENU_WAYPOINT_TITLE.getString());
+            setSize(1 * 9);
+
+            this.waypoint1 = new Button() {
+                @Override
+                public void onClickedInMenu(Player player, Menu menu, ClickType click) {
+                    boolean isChanged = waypoint(player, 1, click);
+                    if (isChanged) {
+                        updateMenu(BlueWaypointMenu.this);
+                    }
+                }
+
+                @Override
+                public ItemStack getItem() {
+                    if (blueWaypoint1 != null)
+                        return ItemCreator.of(CompMaterial.FILLED_MAP, Message.MENU_WAYPOINT_FILLED_1.getString(), replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), blueWaypoint1.getWorld().getName(), getCoords(blueWaypoint1))).make();
+                    else
+                        return ItemCreator.of(CompMaterial.MAP, Message.MENU_WAYPOINT_EMPTY_1.getString(), Message.MENU_WAYPOINT_EMPTY_LORE.getStringList()).make();
+                }
+            };
+
+            this.waypoint2 = new Button() {
+                @Override
+                public void onClickedInMenu(Player player, Menu menu, ClickType click) {
+                    boolean isChanged = waypoint(player, 2, click);
+                    if (isChanged) {
+                        updateMenu(BlueWaypointMenu.this);
+                    }
+                }
+
+                @Override
+                public ItemStack getItem() {
+                    if (blueWaypoint2 != null)
+                        return ItemCreator.of(CompMaterial.FILLED_MAP, Message.MENU_WAYPOINT_FILLED_2.getString(), replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), blueWaypoint2.getWorld().getName(), getCoords(blueWaypoint2))).make();
+                    else
+                        return ItemCreator.of(CompMaterial.MAP, Message.MENU_WAYPOINT_EMPTY_2.getString(), Message.MENU_WAYPOINT_EMPTY_LORE.getStringList()).make();
+                }
+            };
+
+            this.waypoint3 = new Button() {
+                @Override
+                public void onClickedInMenu(Player player, Menu menu, ClickType click) {
+                    boolean isChanged = waypoint(player, 3, click);
+                    if (isChanged) {
+                        updateMenu(BlueWaypointMenu.this);
+                    }
+                }
+
+                @Override
+                public ItemStack getItem() {
+                    if (blueWaypoint3 != null)
+                        return ItemCreator.of(CompMaterial.FILLED_MAP, Message.MENU_WAYPOINT_FILLED_3.getString(), replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), blueWaypoint3.getWorld().getName(), getCoords(blueWaypoint3))).make();
+                    else
+                        return ItemCreator.of(CompMaterial.MAP, Message.MENU_WAYPOINT_EMPTY_3.getString(), Message.MENU_WAYPOINT_EMPTY_LORE.getStringList()).make();
+                }
+            };
+
+            this.back = new Button() {
+                @Override
+                public void onClickedInMenu(Player player, Menu menu, ClickType click) {
+                    new GameMenu().displayTo(player);
+                }
+
+                @Override
+                public ItemStack getItem() {
+                    return ItemCreator.of(CompMaterial.ARROW, Message.MENU_ALL_RETURN_BACK.getString()).make();
+                }
+            };
+        }
+
+        @Override
+        protected boolean addReturnButton() {
+            return false;
+        }
+    }
+
+    private Collection<String> replacePlaceholders(Collection<String> lore) {
+        List<String> modifiedLore = new ArrayList<>();
+
+        for (String line : lore) {
+            line = line.replace("%score%", String.valueOf(locateCost));
+
+            modifiedLore.add(line);
+        }
+        return modifiedLore;
+    }
+
+    private Collection<String> replacePlaceholders(Collection<String> lore, String dimension, String coords) {
+        List<String> modifiedLore = new ArrayList<>();
+
+        for (String line : lore) {
+            line = line.replace("%dimension%", dimension).replace("%coords%", coords);
+
+            modifiedLore.add(line);
+        }
+        return modifiedLore;
+    }
+
+
+
+
 }

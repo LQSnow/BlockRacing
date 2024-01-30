@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static top.lqsnow.blockracing.managers.Scoreboard.scoreboard;
+import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
 
 public class Team {
     public static org.bukkit.scoreboard.Team redTeam = scoreboard.registerNewTeam("red");
@@ -25,20 +26,30 @@ public class Team {
 
     public static void joinTeam(Player player, org.bukkit.scoreboard.Team team) {
         if (team.equals(redTeam)) {
+            if (redTeamPlayers.contains(player.getName())) {
+                player.sendMessage(Message.NOTICE_ALREADY_IN_RED.getString());
+                return;
+            }
             if (blueTeamPlayers.contains(player.getName())) {
                 blueTeam.removeEntry(player.getName());
                 blueTeamPlayers.remove(player.getName());
             }
             redTeam.addEntry(player.getName());
             redTeamPlayers.add(player.getName());
+            sendAll(Message.NOTICE_JOIN_RED.getString().replace("%player%", player.getName()));
         }
         else if (team.equals(blueTeam)) {
+            if (blueTeamPlayers.contains(player.getName())) {
+                player.sendMessage(Message.NOTICE_ALREADY_IN_BLUE.getString());
+                return;
+            }
             if (redTeamPlayers.contains(player.getName())) {
                 redTeam.removeEntry(player.getName());
                 redTeamPlayers.remove(player.getName());
             }
             blueTeam.addEntry(player.getName());
             blueTeamPlayers.add(player.getName());
+            sendAll(Message.NOTICE_JOIN_BLUE.getString().replace("%player%", player.getName()));
         }
     }
 

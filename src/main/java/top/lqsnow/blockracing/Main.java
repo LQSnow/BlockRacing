@@ -1,14 +1,13 @@
 package top.lqsnow.blockracing;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Difficulty;
+import org.bukkit.GameRule;
+import org.bukkit.World;
 import org.mineacademy.fo.plugin.SimplePlugin;
-import top.lqsnow.blockracing.commands.Debug;
-import top.lqsnow.blockracing.commands.Menu;
+import top.lqsnow.blockracing.commands.*;
 import top.lqsnow.blockracing.listeners.BasicListener;
 import top.lqsnow.blockracing.managers.*;
-
-import java.io.IOException;
-import java.util.logging.Level;
 
 import static org.bukkit.Bukkit.getPluginCommand;
 import static org.bukkit.Bukkit.getPluginManager;
@@ -26,7 +25,15 @@ public class Main extends SimplePlugin {
 
         // Register commands
         getPluginCommand("debug").setExecutor(new Debug());
+        getPluginCommand("debug").setTabCompleter(new Debug());
         getPluginCommand("menu").setExecutor(new Menu());
+        getPluginCommand("waypoint").setExecutor(new WayPoint());
+        getPluginCommand("locatestructure").setExecutor(new LocateStructure());
+        getPluginCommand("locatestructure").setTabCompleter(new LocateStructure());
+        getPluginCommand("locatebiome").setExecutor(new LocateBiome());
+        getPluginCommand("locatebiome").setTabCompleter(new LocateBiome());
+        getPluginCommand("restartgame").setExecutor(new Restart());
+        getPluginCommand("tp").setExecutor(new Teleport());
 
         // Save resources
         if(!getDataFolder().exists()) {
@@ -47,11 +54,23 @@ public class Main extends SimplePlugin {
         Team.createTeam();
         Scoreboard.createScoreboard();
         Scoreboard.setPreGameScoreboard();
-
         new Block();
-        new Gui();
-        new Game.runTick().runTaskTimer(this, 0L, 2L);
+        new Game.runPer2Tick().runTaskTimer(this, 0L, 2L);
 
+        // Init world settings
+        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+            World world = Bukkit.getWorlds().get(0);
+            world.setDifficulty(Difficulty.PEACEFUL);
+            world.setGameRule(GameRule.KEEP_INVENTORY, true);
+            world.setTime(1000);
+        }, 5);
+
+        // Set world border
+        World world = Bukkit.getWorlds().get(0);
+        world.getWorldBorder().setCenter(world.getSpawnLocation());
+        world.getWorldBorder().setSize(32);
+
+        // Complete
         Bukkit.getLogger().info("[BlockRacing] Load Complete!");
     }
 
