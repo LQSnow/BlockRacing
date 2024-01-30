@@ -1,0 +1,210 @@
+# BlockRacing language files
+# This file stores all language characters in the game except block names.
+# If you need to translate the block name, please follow the tutorial at https://github.com/LQSnow/BlockRacing/blob/3.0/docs/en/README-en.md
+# If you need to translate this file, you can directly copy the file content to ChatGPT and let him help translate it.
+
+# Current language: English
+lang: en_us
+
+# Scoreboard
+# In slot settings, If there are no characters in the quotation marks, the line will not be displayed. If there is only one space in the quotation marks, it means that this line is empty.
+# Notice! The total number of characters in each line finally displayed on the scoreboard cannot exceed 30, which is the maximum display range of a line!
+# This display range includes color codes and spaces, and the text replaced by placeholders is also included!
+# Text beyond the range will not be displayed!
+scoreboard:
+  game-mode:
+    normal: "&aNormal"
+    racing: "&3Racing"
+    speed: "&9Speed"
+  blocks:
+    easy: "&aEZ"
+    medium: "&eMID"
+    hard: "&cHARD"
+    dyed: "&dDYED"
+    end: "&eEND"
+  pregame:
+    title: "&b&lBlock Racing"
+    slot11: "&a&lShift+F to open the menu"
+    slot10: "&eIf it doesn't work,"
+    slot9: "&epls check the key binds of"
+    slot8: "&e&lSneak &e& &e&lSwap offhand"
+    slot7: " "
+    slot6: "&bCurrent mode: &e%game_mode%"
+    slot5: "&bBlock amount: &e%block_amount%"
+    slot4: "&bBlocks: "
+    slot3: "%blocks%"
+    slot2: " "
+    slot1: "&e&lEnjoy the game!"
+  ingame:
+    title: "&b&lBlock Racing"
+    red-score: "&cRed：&e%score% Points  &b(%current_block%/%total_block%)"
+    blue-score: "&9Blue：&e%score% Points  &b(%current_block%/%total_block%)"
+    block-format: "%difficulty% | %block%"
+    dividing-line: "----------------"
+    bottom-slot: "&e&lEnjoy the game!"
+    block-difficulty:
+      easy: "&aEASY"
+      medium: "&eMID "
+      hard: "&cHARD"
+      dyed: "&dDYED"
+      end: "&eEND "
+
+# Team
+team:
+  red:
+    name: "&RedTeam"
+    prefix: "&c[RedTeam]"
+    chat: "&c[RedTeam] %s: &f%s"
+    color: "&c"
+  blue:
+    name: "&BlueTeam"
+    prefix: "&9[BlueTeamv]"
+    chat: "&9[BlueTeam] %s: &f%s"
+    color: "&9"
+
+# Menu
+menu:
+  pregame-menu:
+    title: "&0Preparation Menu"
+    join-red: "&cJoin Red Team"
+    join-red-lore: "&cClick here to join the Red Team"
+    join-blue: "&9Join Blue Team"
+    join-blue-lore: "&9Click here to join the Blue Team"
+    ready: "&eReady"
+    ready-lore: "&9Click here to ready up"
+    start: "&bStart Game"
+    start-lore: "&9Click here to start the game"
+    block-amount: "&eTarget Block Amount: "
+    block-amount-lore: "&eClick here to change the target block amount"
+    medium-blocks: "&eMedium Blocks: "
+    hard-blocks: "&eHard Blocks: "
+    dyed-blocks: "&eDyed Blocks: "
+    end-blocks: "&eEnd Blocks: "
+    disabled: "&cDisabled"
+    enabled: "&aEnabled"
+    current-mode: "&aCurrent Mode: "
+    switch-to: "&eSwitch to: "
+    normal-mode: "&aNormal Mode"
+    racing-mode: "&3Racing Mode"
+    speed-mode-enabled: "&aCurrently Enabled: &9Speed Mode"
+    speed-mode-disabled: "&eCurrently Disabled: &9Speed Mode"
+    normal-mode-lore:
+      - "&eThe blocks that both teams need to collect are completely &lrandom&r&e,"
+      - "&eCollecting a block will give 64 blocks of that block to the opponent's team chest!"
+    racing-mode-lore:
+      - "&eThe blocks that both teams need to collect and the order will be completely &lsynchronized&r&e,"
+      - "&eand collecting blocks will &lnot&r&e give 64 blocks of that block to the opposing team!"
+    speed-mode-lore:
+      - "&aAfter enabling Speed Mode, players will be &lgiven certain items and effects&e at the start,"
+      - "&eand gaining blocks will earn 3 points, speeding up the game progress."
+      - "&bItems: Silk Touch Iron Pickaxe, Cooked Beef, Damaged Elytra, Enchanted Book of Mending"
+      - "&bEffects: Haste V"
+    select-team: "&aSelect Team"
+    block-setting: "&aBlock Setting"
+    select-mode: "&aMode Selection"
+    ready-and-start: "&aReady and Start Game"
+  game-menu:
+    title: "&0Main Menu"
+    team-chest: "&aTeam Chest"
+    team-chest-lore: "&bOpen the team chest selection menu"
+    roll: "&eRoll"
+    roll-lore: "&bReplace all current target blocks with other blocks (limited to three times per game)"
+    locate: "&bLocate"
+    locate-lore:
+      - "&bSpend %score% points to gain permission to use the locate command"
+      - "&aUse /locatebiome to query biome locations"
+      - "&aUse /locatestructure to query structure locations"
+      - "&cNote! Ensure correct syntax and that the structure exists in the current dimension!"
+      - "&cOnce the command is sent, points will be deducted whether or not coordinates are obtained!"
+    waypoints: "&dWaypoints"
+    waypoints-lore: "&bSave or teleport to waypoints"
+    random-tp: "&9Random Teleport"
+    random-tp-lore: "&bSpend 2 points to &lrandomly teleport&r&b in the &lOverworld&r&b, first time is free"
+  team-chest-select-menu:
+    title: "&0Team Chest Selection"
+    chest1: "&bTeam Chest 1"
+    chest2: "&bTeam Chest 2"
+    chest3: "&bTeam Chest 3"
+  team-chest:
+    red-chest1: "&cRed Team Chest 1"
+    red-chest2: "&cRed Team Chest 2"
+    red-chest3: "&cRed Team Chest 3"
+    blue-chest1: "&9Blue Team Chest 1"
+    blue-chest2: "&9Blue Team Chest 2"
+    blue-chest3: "&9Blue Team Chest 3"
+  way-point:
+    title: "&0Waypoints"
+    empty:
+      waypoint1: "&dWaypoint 1"
+      waypoint2: "&dWaypoint 2"
+      waypoint3: "&dWaypoint 3"
+      lore: "&bLeft-click to create a waypoint"
+    filled:
+      waypoint1: "&6Waypoint 1"
+      waypoint2: "&6Waypoint 2"
+      waypoint3: "&6Waypoint 3"
+      lore:
+        - "&aDimension: %dimension%"
+        - "&aCoordinates: %coords%"
+        - "&bLeft-click to teleport, right-click to delete"
+        - "&bDeleting waypoints requires confirmation in the chat"
+  all:
+    return-back: "&cReturn"
+
+# Notices
+notice:
+  welcome: "&b&lWelcome to Block Racing! Press Shift+F to open the menu for team selection and preparation! If there's no response, check the sneak and offhand switch shortcuts!"
+  join-red: "&c%player% joined the Red Team!"
+  join-blue: "&9%player% joined the Blue Team!"
+  already-in-red: "&cYou are already on the Red Team!"
+  already-in-blue: "&cYou are already on the Blue Team!"
+  ready: "&a%player% is ready!"
+  cancel-ready: "&c%player% canceled their ready status!"
+  all-ready: "&bEveryone is ready. The game can now begin!"
+  start: "&bThe game has started!"
+  exist-unready: "&cThe game cannot start! Some players are not ready!"
+  unready-players: "&cUnready players: "
+  not-enough-players: "&cThe game cannot start! At least two players are needed!"
+  empty-team: "&cThe game cannot start! One team is empty!"
+  too-much-blocks: "&cToo many target blocks! Maximum allowed is: "
+  set-blocks: "&ePlease directly send the target block amount, send 'quit' to cancel input"
+  set-blocks-quit: "&aSuccessfully exited input mode!"
+  set-blocks-error: "&cPlease enter a valid number! Send 'quit' to exit input mode if needed."
+  set-blocks-success: "&aChanged the required block amount to: "
+  spawn-protect-notice: "&bNote: If you can't place or break blocks near spawn, it's due to spawn protection. Move away from spawn!"
+  exist-error-block: "&4Item named %s does not exist! Check the configuration file!"
+  not-enough-score: "&cInsufficient points!"
+  random-tp: "&aPlayer %player% used random teleport! Team points -2"
+  red-collect: "&cRed Team&a collected &b%block% &a(from &c%player%&a)"
+  blue-collect: "&9Blue Team&a collected &b%block% &a(from &9%player%&a)"
+  team-chest-full: "%team%&c team chest is full! %block% cannot be placed in the team chest!"
+  red-win: "&c&lRed Team Wins!"
+  blue-win: "&9&lBlue Team Wins!"
+  red-team-chest: "&cRed Team Chest"
+  blue-team-chest: "&9Blue Team Chest"
+  remove-waypoint: "&a&nClick here to delete waypoint %index%"
+  tp-success: "&aTeleported to %x% %y% %z%"
+  tp-ocean: "&eDetected teleportation to ocean, reteleporting"
+  red-remove-waypoint: "&bPlayer &c%player% &bremoved waypoint %index%!"
+  blue-remove-waypoint: "&bPlayer &9%player% &bremoved waypoint %index%!"
+  cannot-roll: "&cYour team has already rolled blocks 3 times this game, cannot roll again!"
+  roll-request: "&bPlayer %player% requests to roll blocks! All online players in the team must agree to proceed!"
+  roll-request-cancel: "&cPlayer %player% canceled the block roll request!"
+  red-roll-success: "&cRed Team&a successfully rolled the blocks!"
+  blue-roll-success: "&9Blue Team&a successfully rolled the blocks!"
+  spectator: "&cThe game has started, since you haven't selected a team, you are now a spectator!"
+  spectator-join: "&cThe game has started, you are now a spectator!"
+  locate-already-bought: "&cYou have already purchased the locate command once! Please use it before buying again!"
+  buy-locate: "&a%player% purchased the locate command permission!"
+  error-command: "&cIncorrect command input!"
+  locate-no-permission: "&cYou don't have permission to use that command! Purchase it in the menu!"
+  restart: "&b%player% requested a restart! The game will restart if all players on the server agree! Use /restartgame to apply!"
+  restart-cancel: "&cRestart request canceled!"
+  game-not-start: "&cThe game has not started!"
+  tp-player-success: "&a[Team Teleport] &fSuccessfully teleported to %player%"
+  spectator-tp-player-success: "&e[Spectator Teleport] &fSuccessfully teleported to %player%"
+  player-not-exist: "&cPlayer does not exist!"
+  player-not-in-same-team: "&cPlayer is not on the same team!"
+
+# If you don't know what this is, don't touch it
+lang-version: 3.0
