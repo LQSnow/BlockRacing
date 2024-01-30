@@ -35,7 +35,7 @@ public class Teleport implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 player.teleport(target);
-                sender.sendMessage(Message.NOTICE_TP_PLAYER_SUCCESS.getString().replace("%player%", target.getName()));
+                sender.sendMessage(Message.NOTICE_SPECTATOR_TP_PLAYER_SUCCESS.getString().replace("%player%", target.getName()));
                 return true;
             } else {
                 sender.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());

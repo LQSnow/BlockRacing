@@ -11,7 +11,7 @@
 lang: zh_cn
 
 # 记分板
-# slot项中，引号里没有任何字符表示这一行不显示，引号里加空格表示这一行为空行
+# slot项中，如果引号里没有任何字符表示这一行不显示，如果引号里加空格表示这一行为空行
 # 注意！最终显示在记分板上的每一行，总字符数不能超过30，这是一行的最大显示范围！
 # 这个显示范围包含颜色代码和空格，占位符替换的文字也包含在内！
 # 超出范围的文字将无法显示！
@@ -44,7 +44,7 @@ scoreboard:
     red-score: "&c红队：&e%score%分  &b(%current_block%/%total_block%)"
     blue-score: "&9蓝队：&e%score%分  &b(%current_block%/%total_block%)"
     block-format: "%difficulty% | %block%"
-    dividing-line: "----------------------------"
+    dividing-line: "----------------"
     bottom-slot: "&e&lEnjoy the game!"
     block-difficulty:
       easy: "&a简单"
@@ -211,4 +211,4 @@ notice:
   player-not-in-same-team: "&c玩家不在同一队伍！"
 
 # 如果你不知道这是什么，不要动它
-lang-version: 3.0.0
+lang-version: 3.0

@@ -1,5 +1,6 @@
 package top.lqsnow.blockracing;
 
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
@@ -14,6 +15,7 @@ import static org.bukkit.Bukkit.getPluginManager;
 
 
 public class Main extends SimplePlugin {
+    @Getter
     private static Main instance;
 
     @Override
@@ -36,14 +38,13 @@ public class Main extends SimplePlugin {
         getPluginCommand("tp").setExecutor(new Teleport());
 
         // Save resources
-        if(!getDataFolder().exists()) {
-            this.saveResource("EasyBlocks.txt", false);
-            this.saveResource("MediumBlocks.txt", false);
-            this.saveResource("HardBlocks.txt", false);
-            this.saveResource("DyedBlocks.txt", false);
-            this.saveResource("EndBlocks.txt", false);
-            this.saveResource("zh_cn.json", false);
-        }
+        this.saveResource("EasyBlocks.txt", false);
+        this.saveResource("MediumBlocks.txt", false);
+        this.saveResource("HardBlocks.txt", false);
+        this.saveResource("DyedBlocks.txt", false);
+        this.saveResource("EndBlocks.txt", false);
+        this.saveResource("zh_cn.json", false);
+        this.saveResource("en_us.json", false);
 
         // Load managers
         Config.saveDefaultConfig();
@@ -79,9 +80,4 @@ public class Main extends SimplePlugin {
         super.onPluginStop();
         Config.saveConfig();
     }
-
-    public static Main getInstance() {
-        return instance;
-    }
-
 }

@@ -51,13 +51,13 @@ public class Debug implements CommandExecutor, TabCompleter {
                 return true;
             }
             if (args[1].equalsIgnoreCase("red")) {
-                if (args[2].equalsIgnoreCase("all")) {
+                if (args[2].equalsIgnoreCase("all") || args[2].isEmpty()) {
                     for (int i = 0; i < getCurrentBlocks("red").size(); i++) redTaskComplete(redTeamRemainingBlocks.get(0), "Debug");
                     return true;
                 }
                 redTaskComplete(redTeamRemainingBlocks.get(Integer.parseInt(args[2]) - 1), "Debug");
             } else if (args[1].equalsIgnoreCase("blue")) {
-                if (args[2].equalsIgnoreCase("all")) {
+                if (args[2].equalsIgnoreCase("all") || args[2].isEmpty()) {
                     for (int i = 0; i < getCurrentBlocks("blue").size(); i++) blueTaskComplete(blueTeamRemainingBlocks.get(0), "Debug");
                     return true;
                 }
@@ -78,11 +78,17 @@ public class Debug implements CommandExecutor, TabCompleter {
         // Query block list
         if (args[0].equalsIgnoreCase("getblock")) {
             if (args[1].equalsIgnoreCase("red")) {
-                sender.sendMessage("Red remaining blocks：" + redTeamRemainingBlocks.toString());
-                sender.sendMessage("Red all blocks：" + redTeamBlocks.toString());
+                if (args[2].equalsIgnoreCase("remain")) {
+                    sender.sendMessage("Red remaining blocks：" + redTeamRemainingBlocks.toString());
+                } else if (args[2].equalsIgnoreCase("all")) {
+                    sender.sendMessage("Red all blocks：" + redTeamBlocks.toString());
+                }
             } else if (args[1].equalsIgnoreCase("blue")) {
-                sender.sendMessage("Blue remaining blocks：" + blueTeamRemainingBlocks.toString());
-                sender.sendMessage("Blue all blocks：" + blueTeamBlocks.toString());
+                if (args[2].equalsIgnoreCase("remain")) {
+                    sender.sendMessage("Blue remaining blocks：" + blueTeamRemainingBlocks.toString());
+                } else if (args[2].equalsIgnoreCase("all")) {
+                    sender.sendMessage("Blue all blocks：" + blueTeamBlocks.toString());
+                }
             }
         }
 
@@ -114,8 +120,10 @@ public class Debug implements CommandExecutor, TabCompleter {
             completions.add("reload");
             completions.add("skip");
             completions.add("setscore");
+            completions.add("getblock");
+            completions.add("gettranslation");
         } else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("skip") || args[0].equalsIgnoreCase("setscore")) {
+            if (args[0].equalsIgnoreCase("skip") || args[0].equalsIgnoreCase("setscore") || args[0].equalsIgnoreCase("getblock") || args[0].equalsIgnoreCase("gettranslation")) {
                 completions.add("red");
                 completions.add("blue");
             }
@@ -126,6 +134,14 @@ public class Debug implements CommandExecutor, TabCompleter {
                 completions.add("2");
                 completions.add("3");
                 completions.add("4");
+            } else if (args[0].equalsIgnoreCase("gettranslation")) {
+                completions.add("1");
+                completions.add("2");
+                completions.add("3");
+                completions.add("4");
+            } else if (args[0].equalsIgnoreCase("getblock")) {
+                completions.add("remain");
+                completions.add("all");
             }
         }
 

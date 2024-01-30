@@ -28,6 +28,7 @@ import static top.lqsnow.blockracing.managers.Block.*;
 import static top.lqsnow.blockracing.managers.Gui.*;
 import static top.lqsnow.blockracing.managers.Scoreboard.updateScoreboard;
 import static top.lqsnow.blockracing.managers.Team.*;
+import static top.lqsnow.blockracing.utils.ColorUtil.t;
 import static top.lqsnow.blockracing.utils.CommandUtil.*;
 
 public class Game {
@@ -64,6 +65,7 @@ public class Game {
         if (getCurrentGameState().equals(GameState.PREGAME)) {
             player.setGameMode(GameMode.ADVENTURE);
             player.sendMessage(Message.NOTICE_WELCOME.getString());
+            player.sendMessage(t("&eNot your language? Please follow the tutorial to change the language: https://github.com/LQSnow/BlockRacing/blob/3.0/docs/en/README-en.md"));
             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
         } else if (getCurrentGameState().equals(GameState.INGAME)) {
             if (!redTeamPlayers.contains(player.getName()) && !blueTeamPlayers.contains(player.getName())) {
@@ -121,7 +123,7 @@ public class Game {
         }
 
         // Exist empty team
-        if (redTeamPlayers.size() == 0 || blueTeamPlayers.size() == 0) {
+        if (redTeamPlayers.isEmpty() || blueTeamPlayers.isEmpty()) {
             player.sendMessage(Message.NOTICE_EMPTY_TEAM.getString());
             return;
         }
@@ -409,46 +411,55 @@ public class Game {
             checkBlueInventory();
 
             // Win check
-            if (redTeamRemainingBlocks.size() == 0) {
+            if (redTeamRemainingBlocks.isEmpty()) {
                 redWin();
                 this.cancel();
             }
-            if (blueTeamRemainingBlocks.size() == 0) {
+            if (blueTeamRemainingBlocks.isEmpty()) {
                 blueWin();
                 this.cancel();
             }
 
             // Roll check
-            Set<String> redSet = new HashSet<>(redRollPlayers);
-            Set<String> blueSet = new HashSet<>(blueRollPlayers);
-            Set<String> redOnlineSet = new HashSet<>(getOnlineTeamPlayers("red"));
-            Set<String> blueOnlineSet = new HashSet<>(getOnlineTeamPlayers("blue"));
-            if (redSet.containsAll(redOnlineSet)) {
-                List<String> b = new ArrayList<>(blocks);
-                b.removeAll(redTeamBlocks);
-                Random random = new Random();
-                int rollAmount = getCurrentBlocks("red").size();
-                for (int i = 0; i < rollAmount; i++) {
-                    redTeamRemainingBlocks.set(i, b.get(random.nextInt(b.size())));
-                }
-                sendAll(Message.NOTICE_RED_ROLL_SUCCESS.getString());
-                redTeamRollCount += 1;
-                redRollPlayers.clear();
-                updateScoreboard();
+            if (!redRollPlayers.isEmpty()) checkRedRoll();
+            if (!blueRollPlayers.isEmpty()) checkBlueRoll();
+
+        }
+    }
+
+    private static void checkRedRoll() {
+        Set<String> redSet = new HashSet<>(redRollPlayers);
+        Set<String> redOnlineSet = new HashSet<>(getOnlineTeamPlayers("red"));
+        if (!getOnlineTeamPlayers("red").isEmpty() && redSet.containsAll(redOnlineSet)) {
+            List<String> b = new ArrayList<>(blocks);
+            b.removeAll(redTeamBlocks);
+            Random random = new Random();
+            int rollAmount = getCurrentBlocks("red").size();
+            for (int i = 0; i < rollAmount; i++) {
+                redTeamRemainingBlocks.set(i, b.get(random.nextInt(b.size())));
             }
-            if (blueSet.containsAll(blueOnlineSet)) {
-                List<String> b = new ArrayList<>(blocks);
-                b.removeAll(blueTeamBlocks);
-                Random random = new Random();
-                int rollAmount = getCurrentBlocks("blue").size();
-                for (int i = 0; i < rollAmount; i++) {
-                    blueTeamRemainingBlocks.set(i, b.get(random.nextInt(b.size())));
-                }
-                sendAll(Message.NOTICE_BLUE_ROLL_SUCCESS.getString());
-                blueTeamRollCount += 1;
-                blueRollPlayers.clear();
-                updateScoreboard();
+            sendAll(Message.NOTICE_RED_ROLL_SUCCESS.getString());
+            redTeamRollCount += 1;
+            redRollPlayers.clear();
+            updateScoreboard();
+        }
+    }
+
+    private static void checkBlueRoll() {
+        Set<String> blueSet = new HashSet<>(blueRollPlayers);
+        Set<String> blueOnlineSet = new HashSet<>(getOnlineTeamPlayers("blue"));
+        if (!getOnlineTeamPlayers("blue").isEmpty() && blueSet.containsAll(blueOnlineSet)) {
+            List<String> b = new ArrayList<>(blocks);
+            b.removeAll(blueTeamBlocks);
+            Random random = new Random();
+            int rollAmount = getCurrentBlocks("blue").size();
+            for (int i = 0; i < rollAmount; i++) {
+                blueTeamRemainingBlocks.set(i, b.get(random.nextInt(b.size())));
             }
+            sendAll(Message.NOTICE_BLUE_ROLL_SUCCESS.getString());
+            blueTeamRollCount += 1;
+            blueRollPlayers.clear();
+            updateScoreboard();
         }
     }
 

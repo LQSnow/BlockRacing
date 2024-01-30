@@ -3,6 +3,9 @@
 # 服务器关闭时将自动保存本局游戏的设置到该文件
 # 如果服务器已启动，请前往游戏中的设置界面进行设置，不要在这里调整
 
+# 语言
+lang: zh_cn
+
 # 除去easy-block以外的四种额外方块库设置
 medium-block: false
 hard-block: false
@@ -24,4 +27,4 @@ game-mode: normal
 speed-mode: false
 
 # 如果你不知道这是什么，不要动它
-config-version: 3.0.0
+config-version: 3.0

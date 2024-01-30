@@ -1,0 +1,30 @@
+# BlockRacing Game Settings
+# This configuration file is only used to retain settings data after server restarts.
+# Settings for the current game will be automatically saved to this file when the server shuts down.
+# If the server is already running, please go to the in-game settings interface for adjustments, do not modify here.
+
+# Language
+lang: en_us
+
+# Settings for four additional block libraries, excluding the easy block
+medium-block: false
+hard-block: false
+dyed-block: false
+end-block: false
+
+# Total number of blocks to be collected in one game
+block-amount: 50
+
+# Game mode:
+# normal - Normal Mode: Both teams need to collect random blocks in random order, and collecting blocks will give a set of those blocks to the opposing team's chest
+# racing - Racing Mode: Both teams need to collect the same blocks in the same order, and collecting blocks will not give a set of blocks to the opposing team
+game-mode: normal
+
+# Speed mode:
+# When speed mode is enabled, players will be given certain items and effects at the start, and gaining blocks will earn 3 points to accelerate game progress
+# Items: Silk Touch Iron Pickaxe, Cooked Beef, Damaged Elytra, Experience Repair Enchantment Book
+# Effects: Haste V
+speed-mode: false
+
+# If you don't know what this is, don't touch it
+config-version: 3.0
