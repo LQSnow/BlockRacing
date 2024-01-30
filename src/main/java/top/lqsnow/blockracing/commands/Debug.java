@@ -20,6 +20,7 @@ import java.util.List;
 import static top.lqsnow.blockracing.managers.Block.*;
 import static top.lqsnow.blockracing.managers.Game.*;
 import static top.lqsnow.blockracing.managers.Scoreboard.updateScoreboard;
+import static top.lqsnow.blockracing.managers.Team.*;
 
 
 public class Debug implements CommandExecutor, TabCompleter {
@@ -105,6 +106,12 @@ public class Debug implements CommandExecutor, TabCompleter {
             }
         }
 
+        // Get team situation
+        if (args[0].equalsIgnoreCase("getteam")) {
+            player.sendMessage("Red team Players: " + redTeamPlayers.toString());
+            player.sendMessage("Blue team Players: " + blueTeamPlayers.toString());
+        }
+
         return true;
     }
 
@@ -122,6 +129,7 @@ public class Debug implements CommandExecutor, TabCompleter {
             completions.add("setscore");
             completions.add("getblock");
             completions.add("gettranslation");
+            completions.add("getteam");
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("skip") || args[0].equalsIgnoreCase("setscore") || args[0].equalsIgnoreCase("getblock") || args[0].equalsIgnoreCase("gettranslation")) {
                 completions.add("red");
