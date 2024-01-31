@@ -93,7 +93,7 @@ public class GameMenu extends Menu {
             @Override
             public void onClickedInMenu(Player player, Menu menu, ClickType click) {
                 if (freeRandomTPList.contains(player.getName())) {
-                    Game.RandomTeleport(player, false);
+                    Game.randomTeleport(player, false);
                     freeRandomTPList.remove(player.getName());
                 } else {
                     if (redTeamScore < 2) {
@@ -101,7 +101,7 @@ public class GameMenu extends Menu {
                         return;
                     }
                     player.closeInventory();
-                    RandomTeleport(player, false);
+                    randomTeleport(player, false);
                     sendAll(Message.NOTICE_RANDOM_TP.getString().replace("%player%", Message.TEAM_RED_COLOR.getString() + player.getName()));
                     redTeamScore -= 2;
                     Scoreboard.updateScoreboard();
@@ -117,7 +117,7 @@ public class GameMenu extends Menu {
     }
 
     // Team chest select menu
-    private class TeamChestSelectMenu extends Menu {
+    public class TeamChestSelectMenu extends Menu {
         @Position(0)
         private final Button teamChest1;
 
@@ -130,7 +130,7 @@ public class GameMenu extends Menu {
         @Position(8)
         private final Button back;
 
-        TeamChestSelectMenu() {
+        public TeamChestSelectMenu() {
             super(GameMenu.this);
 
             setTitle(Message.MENU_TEAM_CHEST_SELECT_TITLE.getString());
@@ -193,7 +193,7 @@ public class GameMenu extends Menu {
     }
 
     // Waypoint menu
-    private class RedWaypointMenu extends Menu {
+    public class RedWaypointMenu extends Menu {
 
         @Position(0)
         private final Button waypoint1;
@@ -207,7 +207,7 @@ public class GameMenu extends Menu {
         @Position(8)
         private final Button back;
 
-        RedWaypointMenu() {
+        public RedWaypointMenu() {
             super(GameMenu.this);
 
             setTitle(Message.MENU_WAYPOINT_TITLE.getString());
@@ -287,7 +287,7 @@ public class GameMenu extends Menu {
 
     }
 
-    private class BlueWaypointMenu extends Menu {
+    public class BlueWaypointMenu extends Menu {
 
         @Position(0)
         private final Button waypoint1;
@@ -301,7 +301,7 @@ public class GameMenu extends Menu {
         @Position(8)
         private final Button back;
 
-        BlueWaypointMenu() {
+        public BlueWaypointMenu() {
             super(GameMenu.this);
 
             setTitle(Message.MENU_WAYPOINT_TITLE.getString());

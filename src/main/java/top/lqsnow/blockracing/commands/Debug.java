@@ -207,6 +207,9 @@ public class Debug implements CommandExecutor, TabCompleter {
             }
         }
 
+        String prefix = args[args.length - 1].toLowerCase();
+        completions.removeIf(s -> !s.toLowerCase().startsWith(prefix));
+
         return completions;
     }
 }

@@ -194,7 +194,7 @@ public class Game {
     public static void initPlayer(Player player) {
         // General
         player.getInventory().clear();
-        RandomTeleport(player, true);
+        randomTeleport(player, true);
         player.setHealth(20);
         player.setExp(0);
         player.setLevel(0);
@@ -289,7 +289,7 @@ public class Game {
     }
 
     // Random Teleport
-    public static void RandomTeleport(Player player, boolean avoidOcean) {
+    public static void randomTeleport(Player player, boolean avoidOcean) {
         Random random = new Random();
         World playerWorld = Bukkit.getWorlds().get(0);
         double randX = random.nextInt(20000) - 10000;
@@ -303,7 +303,7 @@ public class Game {
             Biome biome = player.getLocation().getBlock().getBiome();
             if (biome == Biome.OCEAN || biome == Biome.DEEP_OCEAN || biome == Biome.DEEP_COLD_OCEAN || biome == Biome.LUKEWARM_OCEAN || biome == Biome.DEEP_FROZEN_OCEAN || biome == Biome.COLD_OCEAN || biome == Biome.WARM_OCEAN || biome == Biome.DEEP_LUKEWARM_OCEAN || biome == Biome.FROZEN_OCEAN) {
                 player.sendMessage(Message.NOTICE_TP_OCEAN.getString());
-                RandomTeleport(player, true);
+                randomTeleport(player, true);
             }
         }
     }
@@ -563,6 +563,7 @@ public class Game {
         }
         sendAll(Message.NOTICE_RED_WIN.getString());
         playSound(Sound.UI_TOAST_CHALLENGE_COMPLETE);
+        setCurrentGameState(GameState.END);
     }
 
     public static void blueWin() {
@@ -573,6 +574,7 @@ public class Game {
         }
         sendAll(Message.NOTICE_BLUE_WIN.getString());
         playSound(Sound.UI_TOAST_CHALLENGE_COMPLETE);
+        setCurrentGameState(GameState.END);
     }
 
     public static List<String> getCurrentBlocks(String team) {

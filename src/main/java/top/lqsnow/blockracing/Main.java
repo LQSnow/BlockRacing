@@ -29,6 +29,7 @@ public class Main extends SimplePlugin {
         getPluginCommand("debug").setExecutor(new Debug());
         getPluginCommand("debug").setTabCompleter(new Debug());
         getPluginCommand("menu").setExecutor(new Menu());
+        getPluginCommand("menu").setTabCompleter(new Menu());
         getPluginCommand("waypoint").setExecutor(new WayPoint());
         getPluginCommand("locatestructure").setExecutor(new LocateStructure());
         getPluginCommand("locatestructure").setTabCompleter(new LocateStructure());
