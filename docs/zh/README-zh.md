@@ -1,6 +1,6 @@
 [English](./docs/en/README-en.md) | [简体中文](./docs/zh/README-zh.md)
 
-[Translation Tutorial](https://github.com/LQSnow/BlockRacing/blob/3.0/docs/zh/TranslationTutorial-en.md) | [翻译教程](https://github.com/LQSnow/BlockRacing/blob/3.0/docs/zh/TranslationTutorial-zh.md)
+[Translation Tutorial](https://github.com/LQSnow/BlockRacing/blob/3.0/docs/en/TranslationTutorial-en.md) | [翻译教程](https://github.com/LQSnow/BlockRacing/blob/3.0/docs/zh/TranslationTutorial-zh.md)
 
 
 # 方块竞速BlockRacing
