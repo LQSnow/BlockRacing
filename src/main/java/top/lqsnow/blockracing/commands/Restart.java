@@ -21,17 +21,17 @@ public class Restart implements CommandExecutor {
         Player player = (Player) sender;
         if (typeRestartPlayers.contains(player)) {
             typeRestartPlayers.remove(player);
-                sendAll(Message.NOTICE_RESTART_CANCEL.getString());
+                sendAll(Message.NOTICE_RESTART_CANCEL.getString().replace("%player%", player.getName()));
             return true;
         }
         typeRestartPlayers.add(player);
-            sendAll(Message.NOTICE_RESTART.getString());
+            sendAll(Message.NOTICE_RESTART.getString().replace("%player%", player.getName()));
         check();
         return true;
     }
 
     public static void check() {
-        if (Bukkit.getOnlinePlayers().size() == 0) return;
+        if (Bukkit.getOnlinePlayers().isEmpty()) return;
         if (typeRestartPlayers.size() == Bukkit.getOnlinePlayers().size()) {
             Bukkit.getServer().shutdown();
         }

@@ -123,7 +123,8 @@ menu:
     waypoints: "&d记录点"
     waypoints-lore: "&b保存或传送至记录点"
     random-tp: "&9随机传送"
-    random-tp-lore: "&b花费2积分在&l主世界&r&b随机传送，首次免费"
+    random-tp-lore:
+      - "&b花费2积分在&l主世界&r&b随机传送，首次免费"
   team-chest-select-menu:
     title: "&0队伍箱子选择"
     chest1: "&b队伍箱子1"
@@ -203,7 +204,7 @@ notice:
   error-command: "&c指令输入错误！"
   locate-no-permission: "&c您没有该命令的使用权限！请在菜单中购买！"
   restart: "&b%player%申请重启！服务器中所有玩家申请即可重启游戏！使用/restartgame命令即可申请！"
-  restart-cancel: "&c已取消重启申请！"
+  restart-cancel: "&c%player%已取消重启申请！"
   game-not-start: "&c游戏未开始！"
   tp-player-success: "&a[队伍传送] &f已成功传送至 %player%"
   spectator-tp-player-success: "&e[旁观者传送] &f已成功传送至 %player%"

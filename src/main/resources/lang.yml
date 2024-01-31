@@ -123,7 +123,8 @@ menu:
     waypoints: "&d记录点"
     waypoints-lore: "&b保存或传送至记录点"
     random-tp: "&9随机传送"
-    random-tp-lore: "&b花费2积分在&l主世界&r&b随机传送，首次免费"
+    random-tp-lore:
+      - "&b花费2积分在&l主世界&r&b随机传送，首次免费"
   team-chest-select-menu:
     title: "&0队伍箱子选择"
     chest1: "&b队伍箱子1"
