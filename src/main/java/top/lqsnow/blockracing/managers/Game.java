@@ -65,7 +65,7 @@ public class Game {
         if (getCurrentGameState().equals(GameState.PREGAME)) {
             player.setGameMode(GameMode.ADVENTURE);
             player.sendMessage(Message.NOTICE_WELCOME.getString());
-            player.sendMessage(t("&eNot your language? Please follow the tutorial to change the language: https://github.com/LQSnow/BlockRacing/blob/3.0/docs/en/README-en.md"));
+            player.sendMessage(t("&eNot your language? Please follow the tutorial to change the language: https://github.com/LQSnow/BlockRacing/blob/3.0/docs/en/TranslationTutorial-en.md"));
             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
         } else if (getCurrentGameState().equals(GameState.INGAME)) {
             // Spectator

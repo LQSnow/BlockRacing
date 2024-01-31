@@ -1,10 +1,10 @@
 # BlockRacing 语言文件
 # 该文件存储了游戏中除了方块名的所有语言文字
-# 如果需要翻译方块名，请查看 https://github.com/LQSnow/BlockRacing/blob/3.0/docs/zh/README-zh.md 的教程
+# 如果需要翻译方块名，请查看 https://github.com/LQSnow/BlockRacing/blob/3.0/docs/zh/TranslationTutorial-zh.md 的教程
 # 如需这个文件的翻译，可直接复制文件内容给ChatGPT，让他帮忙翻译
 # BlockRacing language files
 # This file stores all language characters in the game except block names.
-# If you need to translate the block name, please check the tutorial at https://github.com/LQSnow/BlockRacing/blob/3.0/docs/en/README-en.md
+# If you need to translate the block name, please check the tutorial at https://github.com/LQSnow/BlockRacing/blob/3.0/docs/en/TranslationTutorial-en.md
 # If you need to translate this file, you can directly copy the file content to ChatGPT and let him help translate it.
 
 # 当前语言: 简体中文
