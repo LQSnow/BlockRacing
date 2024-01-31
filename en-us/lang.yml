@@ -211,7 +211,7 @@ notice:
   error-command: "&cIncorrect command input!"
   locate-no-permission: "&cYou don't have permission to use that command! Purchase it in the menu!"
   restart: "&b%player% requested a restart! The game will restart if all players on the server agree! Use /restartgame to apply!"
-  restart-cancel: "&cRestart request canceled!"
+  restart-cancel: "&c%player%'s restart request canceled!"
   game-not-start: "&cThe game has not started!"
   tp-player-success: "&a[Team Teleport] &fSuccessfully teleported to %player%"
   spectator-tp-player-success: "&e[Spectator Teleport] &fSuccessfully teleported to %player%"
