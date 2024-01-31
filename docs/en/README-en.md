@@ -16,7 +16,7 @@ Version: Java 1.20.2
 
 3. Team Teleportation: Players within the same team can freely teleport to each other.
 
-4. Roll: When the required block is too difficult to obtain, teams can spend team points to roll it, limited to three times per game.
+4. Roll Blocks: When the current required blocks are too difficult to obtain, they can be rotated out, limited to three times per game.
 
 5. Locate: Players can spend team points to purchase the locate command for finding biomes or structures.
 
