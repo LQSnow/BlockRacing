@@ -68,9 +68,17 @@ public class Game {
             player.sendMessage(t("&eNot your language? Please follow the tutorial to change the language: https://github.com/LQSnow/BlockRacing/blob/3.0/docs/en/README-en.md"));
             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
         } else if (getCurrentGameState().equals(GameState.INGAME)) {
+            // Spectator
             if (!redTeamPlayers.contains(player.getName()) && !blueTeamPlayers.contains(player.getName())) {
                 player.setGameMode(GameMode.SPECTATOR);
                 player.sendMessage(Message.NOTICE_SPECTATOR_JOIN.getString());
+                return;
+            }
+
+            // Players who choose a team before the start of the game and exit, but enter after the start of the game
+            if (!inGamePlayers.contains(player.getName())) {
+                initPlayer(player);
+                freeRandomTPList.add(player.getName());
             }
         }
 
@@ -172,58 +180,7 @@ public class Game {
         for (String p : inGamePlayers) {
             // General
             Player player = Bukkit.getPlayer(p);
-            player.getInventory().clear();
-            RandomTeleport(player, true);
-            player.setHealth(20);
-            player.setExp(0);
-            player.setLevel(0);
-            player.setFoodLevel(20);
-            player.setSaturation(10);
-            player.setGameMode(GameMode.SURVIVAL);
-            for (PotionEffect effect : player.getActivePotionEffects()) {
-                player.removePotionEffect(effect.getType());
-            }
-            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1200, 4, false, false));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 1200, 4, false, false));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 1200, 4, false, false));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0, false, false));
-
-            // Speed mode
-            if (Setting.isSpeedMode()) {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 4, false, false));
-                player.getInventory().addItem(ItemCreator.of(CompMaterial.IRON_PICKAXE).enchant(Enchantment.SILK_TOUCH, 1).make());
-                player.getInventory().addItem(ItemCreator.of(CompMaterial.COOKED_BEEF).amount(64).make());
-
-                ItemStack damagedElytra = new ItemStack(Material.ELYTRA);
-                damagedElytra.setDurability((short) (damagedElytra.getType().getMaxDurability() - 1));
-                ItemMeta elytraMeta = damagedElytra.getItemMeta();
-                Repairable repairable = (Repairable) elytraMeta;
-                repairable.setRepairCost(15);
-                damagedElytra.setItemMeta(elytraMeta);
-                player.getInventory().addItem(damagedElytra);
-
-                ItemStack xpBook = new ItemStack(Material.ENCHANTED_BOOK);
-                EnchantmentStorageMeta meta = (EnchantmentStorageMeta) xpBook.getItemMeta();
-                meta.addStoredEnchant(Enchantment.MENDING, 1, true);
-                xpBook.setItemMeta(meta);
-                player.getInventory().addItem(xpBook);
-            }
-        }
-
-        // Remove players from the team who are not online when starting the game
-        for (String p : redTeamPlayers) {
-            if (!getOnlinePlayersString().contains(p)) {
-                redTeamPlayers.remove(p);
-                inGamePlayers.remove(p);
-                redTeam.removeEntry(p);
-            }
-        }
-        for (String p : blueTeamPlayers) {
-            if (!getOnlinePlayersString().contains(p)) {
-                blueTeamPlayers.remove(p);
-                inGamePlayers.remove(p);
-                blueTeam.removeEntry(p);
-            }
+            initPlayer(player);
         }
 
         Bukkit.getLogger().info("Red team players: " + redTeamPlayers.toString());
@@ -231,6 +188,47 @@ public class Game {
         if (Setting.getCurrentGameMode().equals(Setting.GameMode.NORMAL)) Bukkit.getLogger().info("Game mode: Normal");
         else if (Setting.getCurrentGameMode().equals(Setting.GameMode.RACING)) Bukkit.getLogger().info("Game mode: Racing");
         Bukkit.getLogger().info(Setting.isSpeedMode() ? "Speed mode: On" : "Speed mode: Off");
+    }
+
+    // Player init
+    public static void initPlayer(Player player) {
+        // General
+        player.getInventory().clear();
+        RandomTeleport(player, true);
+        player.setHealth(20);
+        player.setExp(0);
+        player.setLevel(0);
+        player.setFoodLevel(20);
+        player.setSaturation(10);
+        player.setGameMode(GameMode.SURVIVAL);
+        for (PotionEffect effect : player.getActivePotionEffects()) {
+            player.removePotionEffect(effect.getType());
+        }
+        player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1200, 4, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 1200, 4, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 1200, 4, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0, false, false));
+
+        // Speed mode
+        if (Setting.isSpeedMode()) {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 4, false, false));
+            player.getInventory().addItem(ItemCreator.of(CompMaterial.IRON_PICKAXE).enchant(Enchantment.SILK_TOUCH, 1).make());
+            player.getInventory().addItem(ItemCreator.of(CompMaterial.COOKED_BEEF).amount(64).make());
+
+            ItemStack damagedElytra = new ItemStack(Material.ELYTRA);
+            damagedElytra.setDurability((short) (damagedElytra.getType().getMaxDurability() - 1));
+            ItemMeta elytraMeta = damagedElytra.getItemMeta();
+            Repairable repairable = (Repairable) elytraMeta;
+            repairable.setRepairCost(15);
+            damagedElytra.setItemMeta(elytraMeta);
+            player.getInventory().addItem(damagedElytra);
+
+            ItemStack xpBook = new ItemStack(Material.ENCHANTED_BOOK);
+            EnchantmentStorageMeta meta = (EnchantmentStorageMeta) xpBook.getItemMeta();
+            meta.addStoredEnchant(Enchantment.MENDING, 1, true);
+            xpBook.setItemMeta(meta);
+            player.getInventory().addItem(xpBook);
+        }
     }
 
     // Roll

@@ -1,6 +1,7 @@
 package top.lqsnow.blockracing.commands;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,8 +10,6 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import top.lqsnow.blockracing.managers.Block;
-import top.lqsnow.blockracing.managers.Game;
 import top.lqsnow.blockracing.managers.Message;
 import top.lqsnow.blockracing.utils.TranslationUtil;
 
@@ -21,6 +20,7 @@ import static top.lqsnow.blockracing.managers.Block.*;
 import static top.lqsnow.blockracing.managers.Game.*;
 import static top.lqsnow.blockracing.managers.Scoreboard.updateScoreboard;
 import static top.lqsnow.blockracing.managers.Team.*;
+import static top.lqsnow.blockracing.utils.ColorUtil.t;
 
 
 public class Debug implements CommandExecutor, TabCompleter {
@@ -39,15 +39,15 @@ public class Debug implements CommandExecutor, TabCompleter {
         // Reload
         if (args[0].equalsIgnoreCase("reload")) {
             Message.load();
-            if (Game.getCurrentGameState().equals(Game.GameState.PREGAME)) {
-                Block.reloadBlock();
+            if (getCurrentGameState().equals(GameState.PREGAME)) {
+                reloadBlock();
             }
             updateScoreboard();
         }
 
         // Skip block
         if (args[0].equalsIgnoreCase("skip")) {
-            if (Game.getCurrentGameState().equals(GameState.PREGAME)) {
+            if (getCurrentGameState().equals(GameState.PREGAME)) {
                 player.sendMessage("&cThis command can only be used after the start of the game!");
                 return true;
             }
@@ -98,11 +98,11 @@ public class Debug implements CommandExecutor, TabCompleter {
             if (args[1].equalsIgnoreCase("red")) {
                 String block = getCurrentBlocks("red").get(Integer.parseInt(args[2]) - 1);
                 Material material = Material.getMaterial(block);
-                sender.sendMessage(String.format("The translation of %s is: %s, key: %s"), block, TranslationUtil.getValue(block), material.getTranslationKey());
+                sender.sendMessage(String.format("The translation of %s is: %s, key: %s", block, TranslationUtil.getValue(block), material.getTranslationKey()));
             } else if (args[1].equalsIgnoreCase("blue")) {
                 String block = getCurrentBlocks("blue").get(Integer.parseInt(args[2]) - 1);
                 Material material = Material.getMaterial(block);
-                sender.sendMessage(String.format("The translation of %s is: %s, key: %s"), block, TranslationUtil.getValue(block), material.getTranslationKey());
+                sender.sendMessage(String.format("The translation of %s is: %s, key: %s", block, TranslationUtil.getValue(block), material.getTranslationKey()));
             }
         }
 
@@ -110,6 +110,47 @@ public class Debug implements CommandExecutor, TabCompleter {
         if (args[0].equalsIgnoreCase("getteam")) {
             player.sendMessage("Red team Players: " + redTeamPlayers.toString());
             player.sendMessage("Blue team Players: " + blueTeamPlayers.toString());
+        }
+
+        // Set team member
+        if (args[0].equalsIgnoreCase("setteam")) {
+            if (args[1].equalsIgnoreCase("red") || args[1].equalsIgnoreCase("blue")) {
+                if (args[2].equalsIgnoreCase("add")) {
+                    Player p = Bukkit.getPlayer(args[3]);
+                    if (p == null) {
+                        player.sendMessage(t("&cThe player does not exist!"));
+                        return true;
+                    }
+                    boolean result;
+                    if (args[1].equalsIgnoreCase("red")) {
+                        result = joinTeam(p, redTeam, false);
+                    } else {
+                        result = joinTeam(p, blueTeam, false);
+                    }
+                    if (result) {
+                        player.sendMessage(t(String.format("&aSuccessfully added %s to the %s team", p.getName(), args[1].toLowerCase())));
+                        if (p.getGameMode().equals(GameMode.SPECTATOR)) {
+                            player.sendMessage(t("&eDetected that the player is in spectator mode. If you want him to join the game, please ask him to rejoin the server!"));
+                        }
+                    } else {
+                        player.sendMessage(t(String.format("&cThe player has already joined the %s team!", args[1].toLowerCase())));
+                    }
+                } else if (args[2].equalsIgnoreCase("remove")) {
+                    boolean result = false;
+                    if (args[1].equalsIgnoreCase("red")) {
+                        result = redTeam.removeEntry(player.getName());
+                        redTeamPlayers.remove(player.getName());
+                    } else if (args[1].equalsIgnoreCase("blue")) {
+                        result = blueTeam.removeEntry(player.getName());
+                        blueTeamPlayers.remove(player.getName());
+                    }
+                    if (result) {
+                        player.sendMessage(t("&aSuccessfully removed player from team"));
+                    } else {
+                        player.sendMessage(t("&cThe player does not exist!"));
+                    }
+                }
+            }
         }
 
         return true;
@@ -130,8 +171,9 @@ public class Debug implements CommandExecutor, TabCompleter {
             completions.add("getblock");
             completions.add("gettranslation");
             completions.add("getteam");
+            completions.add("setteam");
         } else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("skip") || args[0].equalsIgnoreCase("setscore") || args[0].equalsIgnoreCase("getblock") || args[0].equalsIgnoreCase("gettranslation")) {
+            if (args[0].equalsIgnoreCase("skip") || args[0].equalsIgnoreCase("setscore") || args[0].equalsIgnoreCase("getblock") || args[0].equalsIgnoreCase("gettranslation") || args[0].equalsIgnoreCase("setteam")) {
                 completions.add("red");
                 completions.add("blue");
             }
@@ -150,6 +192,18 @@ public class Debug implements CommandExecutor, TabCompleter {
             } else if (args[0].equalsIgnoreCase("getblock")) {
                 completions.add("remain");
                 completions.add("all");
+            } else if (args[0].equalsIgnoreCase("setteam")) {
+                completions.add("add");
+                completions.add("remove");
+            }
+        } else if (args.length == 4) {
+            if (args[0].equalsIgnoreCase("setteam")) {
+                if (args[2].equalsIgnoreCase("add")) {
+                    return getOnlinePlayersString();
+                } else if (args[2].equalsIgnoreCase("remove")) {
+                    if (args[1].equalsIgnoreCase("red")) return redTeamPlayers;
+                    else if (args[1].equalsIgnoreCase("blue")) return blueTeamPlayers;
+                }
             }
         }
 

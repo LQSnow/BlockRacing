@@ -24,11 +24,13 @@ public class Team {
         blueTeam.setColor(ChatColor.BLUE);
     }
 
-    public static void joinTeam(Player player, org.bukkit.scoreboard.Team team) {
+    public static boolean joinTeam(Player player, org.bukkit.scoreboard.Team team, boolean sendMessage) {
         if (team.equals(redTeam)) {
             if (redTeamPlayers.contains(player.getName())) {
-                player.sendMessage(Message.NOTICE_ALREADY_IN_RED.getString());
-                return;
+                if (sendMessage) {
+                    player.sendMessage(Message.NOTICE_ALREADY_IN_RED.getString());
+                }
+                return false;
             }
             if (blueTeamPlayers.contains(player.getName())) {
                 blueTeam.removeEntry(player.getName());
@@ -36,12 +38,16 @@ public class Team {
             }
             redTeam.addEntry(player.getName());
             redTeamPlayers.add(player.getName());
-            sendAll(Message.NOTICE_JOIN_RED.getString().replace("%player%", player.getName()));
+            if (sendMessage) {
+                sendAll(Message.NOTICE_JOIN_RED.getString().replace("%player%", player.getName()));
+            }
         }
         else if (team.equals(blueTeam)) {
             if (blueTeamPlayers.contains(player.getName())) {
-                player.sendMessage(Message.NOTICE_ALREADY_IN_BLUE.getString());
-                return;
+                if (sendMessage) {
+                    player.sendMessage(Message.NOTICE_ALREADY_IN_BLUE.getString());
+                }
+                return false;
             }
             if (redTeamPlayers.contains(player.getName())) {
                 redTeam.removeEntry(player.getName());
@@ -49,8 +55,11 @@ public class Team {
             }
             blueTeam.addEntry(player.getName());
             blueTeamPlayers.add(player.getName());
-            sendAll(Message.NOTICE_JOIN_BLUE.getString().replace("%player%", player.getName()));
+            if (sendMessage) {
+                sendAll(Message.NOTICE_JOIN_BLUE.getString().replace("%player%", player.getName()));
+            }
         }
+        return true;
     }
 
     public static boolean isPlayerInRedTeam(Player player) {
