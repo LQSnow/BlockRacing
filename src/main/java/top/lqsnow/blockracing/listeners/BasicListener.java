@@ -1,9 +1,13 @@
 package top.lqsnow.blockracing.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import top.lqsnow.blockracing.Main;
 import top.lqsnow.blockracing.managers.*;
 import top.lqsnow.blockracing.menus.PreGameMenu;
 
@@ -76,6 +80,15 @@ public class BasicListener implements Listener {
         } else if (isPlayerInBlueTeam(player)) {
             event.setFormat(t(Message.TEAM_BLUE_CHAT.getString()));
         }
+    }
+
+    @EventHandler
+    private void onPlayerRespawn(PlayerRespawnEvent event) {
+        event.getPlayer().sendMessage(Message.NOTICE_SPAWN_PROTECT.getString());
+        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+            event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0, false, false));
+            if (Game.getCurrentGameState().equals(Game.GameState.INGAME) && Setting.isSpeedMode()) event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 4, false, false));
+        }, 10L);
     }
 
     public static void setBlockAmount(int blockAmount, Boolean sendMessage) {

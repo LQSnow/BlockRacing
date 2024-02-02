@@ -96,14 +96,26 @@ public class GameMenu extends Menu {
                     Game.randomTeleport(player, false);
                     freeRandomTPList.remove(player.getName());
                 } else {
-                    if (redTeamScore < 2) {
-                        player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString());
-                        return;
+                    if (redTeamPlayers.contains(player.getName())) {
+                        if (redTeamScore < 2) {
+                            player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString());
+                            return;
+                        }
+                    } else if (blueTeamPlayers.contains(player.getName())) {
+                        if (blueTeamScore < 2) {
+                            player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString());
+                            return;
+                        }
                     }
                     player.closeInventory();
                     randomTeleport(player, false);
-                    sendAll(Message.NOTICE_RANDOM_TP.getString().replace("%player%", Message.TEAM_RED_COLOR.getString() + player.getName()));
-                    redTeamScore -= 2;
+                    if (redTeamPlayers.contains(player.getName())) {
+                        redTeamScore -= 2;
+                        sendAll(Message.NOTICE_RANDOM_TP.getString().replace("%player%", Message.TEAM_RED_COLOR.getString() + player.getName()));
+                    } else if (blueTeamPlayers.contains(player.getName())) {
+                        blueTeamScore -= 2;
+                        sendAll(Message.NOTICE_RANDOM_TP.getString().replace("%player%", Message.TEAM_BLUE_COLOR.getString() + player.getName()));
+                    }
                     Scoreboard.updateScoreboard();
                 }
             }
