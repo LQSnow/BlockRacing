@@ -89,9 +89,9 @@ public class Game {
     }
 
     private static void checkUpdate(Player player) {
+        player.resetTitle();
         if (!Config.CONFIG_VERSION.getString().equals(Main.getVersion()) || !Message.MESSAGE_VERSION.getString().equals(Main.getVersion())) {
             if (Message.NOTICE_VERSION_MISMATCH.getString() != null) {
-                player.resetTitle();
                 player.sendMessage(Message.NOTICE_VERSION_MISMATCH.getString());
                 player.sendTitle(Message.NOTICE_VERSION_MISMATCH_TITLE.getString(), Message.NOTICE_VERSION_MISMATCH_SUBTITLE.getString(), 0, 2000, 0);
             } else {
