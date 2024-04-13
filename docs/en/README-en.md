@@ -1,4 +1,4 @@
-[English](../en/README-en.md) | [简体中文](../zh/README-en.md)
+[English](../en/README-en.md) | [简体中文](../zh/README-zh.md)
 
 [Translation Tutorial](../en/TranslationTutorial-en.md) | [翻译教程](../zh/TranslationTutorial-zh.md)
 
