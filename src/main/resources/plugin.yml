@@ -1,5 +1,5 @@
 name: BlockRacing
-version: 3.0
+version: 3.1
 main: top.lqsnow.blockracing.Main
 api-version: 1.20
 authors: [ LQ_Snow ]
@@ -27,3 +27,6 @@ commands:
   waypoint:
     usage: "/waypoint"
     description: "Run waypoint commands."
+  block:
+    usage: "/block <team> <number>"
+    description: "Query block."

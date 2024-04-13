@@ -32,7 +32,7 @@ public class Debug implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 0) {
-            player.sendMessage("&cMissing parameters");
+            player.sendMessage(t("&cMissing parameters"));
             return true;
         }
 

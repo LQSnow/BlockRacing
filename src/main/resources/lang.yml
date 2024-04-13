@@ -158,7 +158,7 @@ menu:
 
 # 提示
 notice:
-  welcome: "&b&l欢迎来到方块竞速！按Shift+F打开菜单进行选队和准备！如果没反应，请检查潜行和切换副手的快捷键！"
+  welcome: "&b&l欢迎来到方块竞速！按Shift+F打开菜单进行选队和准备！如果没反应，请检查潜行和切换副手的快捷键！如果记分板显示的方块名称不完整，可以使用/block <队伍> <编号> 命令来查询！"
   join-red: "&c%player% 加入了红队！"
   join-blue: "&9%player% 加入了蓝队！"
   already-in-red: "&c您已经加入红队了！"
@@ -210,6 +210,13 @@ notice:
   spectator-tp-player-success: "&e[旁观者传送] &f已成功传送至 %player%"
   player-not-exist: "&c玩家不存在！"
   player-not-in-same-team: "&c玩家不在同一队伍！"
+  ranking: "&b---方块收集排行榜---"
+  ranking-red: "&c%player%: &b%amount%"
+  ranking-blue: "&9%player%: &b%amount%"
+  ranking-offline: "&7%player%: &b%amount%"
+  version-mismatch: "&c警告！当前您的config.yml和lang.yml的文件版本，与插件的版本不对应！您可能更新了插件，但没有更新配置文件！这可能会导致一些意料之外的错误！您可以将\\plugins\\BlockRacing文件夹中的两个配置文件删除，然后重启服务器，亦或是到github上下载最新版本的配置文件替换！"
+  version-mismatch-title: "&c警告！版本不对应！"
+  version-mismatch-subtitle: "&c请查看聊天框的具体信息！"
 
 # 如果你不知道这是什么，不要动它
-lang-version: 3.0
+lang-version: 3.1

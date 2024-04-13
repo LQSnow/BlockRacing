@@ -1,7 +1,5 @@
 package top.lqsnow.blockracing.managers;
 
-import lombok.Getter;
-import lombok.Setter;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -19,6 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.mineacademy.fo.menu.model.ItemCreator;
 import org.mineacademy.fo.remain.CompMaterial;
 import top.lqsnow.blockracing.Main;
+import top.lqsnow.blockracing.utils.ColorUtil;
 import top.lqsnow.blockracing.utils.TranslationUtil;
 
 import java.util.*;
@@ -34,8 +33,6 @@ import static top.lqsnow.blockracing.utils.CommandUtil.*;
 public class Game {
     public enum GameState {PREGAME, INGAME, END}
 
-    @Getter
-    @Setter
     public static GameState currentGameState = GameState.PREGAME;
     public static List<String> readyPlayers = new ArrayList<>();
     public static int redTeamScore = 0;
@@ -58,6 +55,7 @@ public class Game {
     public static List<String> inGamePlayers = new ArrayList<>();
     public static ArrayList<String> locateCommandPermission = new ArrayList<>();
     public static int locateCost;
+    public static Map<String, Integer> collectAmount = new HashMap<>();
 
     public static void playerLogin(Player player) {
         Scoreboard.showScoreboard(player);
@@ -85,6 +83,22 @@ public class Game {
         // The permissions will disappear when the player exits and re-enters, permissions need to be given again.
         if (locateCommandPermission.contains(player.getName())) {
             player.addAttachment(Main.getInstance(), "minecraft.command.locate", true);
+        }
+
+        checkUpdate(player);
+    }
+
+    private static void checkUpdate(Player player) {
+        if (!Config.CONFIG_VERSION.getString().equals(Main.getVersion()) || !Message.MESSAGE_VERSION.getString().equals(Main.getVersion())) {
+            if (Message.NOTICE_VERSION_MISMATCH.getString() != null) {
+                player.resetTitle();
+                player.sendMessage(Message.NOTICE_VERSION_MISMATCH.getString());
+                player.sendTitle(Message.NOTICE_VERSION_MISMATCH_TITLE.getString(), Message.NOTICE_VERSION_MISMATCH_SUBTITLE.getString(), 0, 2000, 0);
+            } else {
+                player.sendMessage(ColorUtil.t("&cWarning! The current file versions of your config.yml and lang.yml do not correspond to the plugin version! You may have updated the plugin, but did not update the configuration file! This may lead to some unexpected errors! You can delete the two configuration files in the \\plugins\\BlockRacing folder, and then restart the server, or download the latest version of the configuration file on GitHub to replace it!"));
+                player.sendTitle(ColorUtil.t("&cWarning! Version Mismatch!"), ColorUtil.t("&cPlease check the specific information in the chat!"), 20, 0, 0);
+            }
+            Bukkit.getLogger().severe(Message.NOTICE_VERSION_MISMATCH.getString());
         }
     }
 
@@ -411,10 +425,12 @@ public class Game {
             // Win check
             if (redTeamRemainingBlocks.isEmpty()) {
                 redWin();
+                showRanking();
                 this.cancel();
             }
             if (blueTeamRemainingBlocks.isEmpty()) {
                 blueWin();
+                showRanking();
                 this.cancel();
             }
 
@@ -422,6 +438,21 @@ public class Game {
             if (!redRollPlayers.isEmpty()) checkRedRoll();
             if (!blueRollPlayers.isEmpty()) checkBlueRoll();
 
+        }
+    }
+
+    private static void showRanking() {
+        List<Map.Entry<String, Integer>> entries = new ArrayList<>(collectAmount.entrySet());
+        entries.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+        sendAll(Message.NOTICE_RANKING.getString());
+        for (Map.Entry<String, Integer> entry : entries) {
+            if (redTeamPlayers.contains(entry.getKey())) {
+                sendAll(Message.NOTICE_RANKING_RED.getString().replace("%player%", entry.getKey()).replace("%amount%", entry.getValue().toString()));
+            } else if (blueTeamPlayers.contains(entry.getKey())) {
+                sendAll(Message.NOTICE_RANKING_BLUE.getString().replace("%player%", entry.getKey()).replace("%amount%", entry.getValue().toString()));
+            } else {
+                sendAll(Message.NOTICE_RANKING_OFFLINE.getString().replace("%player%", entry.getKey()).replace("%amount%", entry.getValue().toString()));
+            }
         }
     }
 
@@ -519,6 +550,7 @@ public class Game {
         if (Setting.isSpeedMode()) redTeamScore += 3;
         else redTeamScore += 1;
         redTeamCurrentBlockAmount += 1;
+        collect(player);
         updateScoreboard();
         // Put items into the opponent's team chest
         if (Setting.getCurrentGameMode().equals(Setting.GameMode.NORMAL)) {
@@ -541,6 +573,7 @@ public class Game {
         if (Setting.isSpeedMode()) blueTeamScore += 3;
         else blueTeamScore += 1;
         blueTeamCurrentBlockAmount += 1;
+        collect(player);
         updateScoreboard();
         // Put items into the opponent's team chest
         if (Setting.getCurrentGameMode().equals(Setting.GameMode.NORMAL)) {
@@ -618,5 +651,22 @@ public class Game {
 
     public static String getCoords(Location location) {
         return String.format("%.1f, %.1f, %.1f", location.getX(), location.getY(), location.getZ());
+    }
+
+    public static void collect(String p) {
+        if (collectAmount.containsKey(p)) {
+            int currentAmount = collectAmount.get(p);
+            collectAmount.put(p, currentAmount + 1);
+        } else {
+            collectAmount.put(p, 1);
+        }
+    }
+
+    public static GameState getCurrentGameState() {
+        return currentGameState;
+    }
+
+    public static void setCurrentGameState(GameState currentGameState) {
+        Game.currentGameState = currentGameState;
     }
 }

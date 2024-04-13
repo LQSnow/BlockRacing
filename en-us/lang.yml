@@ -58,7 +58,7 @@ team:
     color: "&c"
   blue:
     name: "&BlueTeam"
-    prefix: "&9[BlueTeamv]"
+    prefix: "&9[BlueTeam]"
     chat: "&9[BlueTeam] %s: &f%s"
     color: "&9"
 
@@ -165,7 +165,7 @@ menu:
 
 # Notices
 notice:
-  welcome: "&b&lWelcome to Block Racing! Press Shift+F to open the menu for team selection and preparation! If there's no response, check the sneak and offhand switch shortcuts!"
+  welcome: "&b&lWelcome to Block Racing! Press Shift+F to open the menu for team selection and preparation! If there's no response, check the sneak and offhand switch shortcuts! If the block names displayed on the scoreboard are incomplete, you can use the /block <team> <number> command to query!"
   join-red: "&c%player% joined the Red Team!"
   join-blue: "&9%player% joined the Blue Team!"
   already-in-red: "&cYou are already on the Red Team!"
@@ -173,7 +173,7 @@ notice:
   ready: "&a%player% is ready!"
   cancel-ready: "&c%player% canceled their ready status!"
   all-ready: "&bEveryone is ready. The game can now begin!"
-  start: "&bThe game has started!"
+  start: "&bGame Start!"
   exist-unready: "&cThe game cannot start! Some players are not ready!"
   unready-players: "&cUnready players: "
   not-enough-players: "&cThe game cannot start! At least two players are needed!"
@@ -217,6 +217,13 @@ notice:
   spectator-tp-player-success: "&e[Spectator Teleport] &fSuccessfully teleported to %player%"
   player-not-exist: "&cPlayer does not exist!"
   player-not-in-same-team: "&cPlayer is not on the same team!"
+  ranking: "&b---Block Collection Ranking---"
+  ranking-red: "&c%player%: &b%amount%"
+  ranking-blue: "&9%player%: &b%amount%"
+  ranking-offline: "&7%player%: &b%amount%"
+  version-mismatch: "&cWarning! The current file versions of your config.yml and lang.yml do not correspond to the plugin version! You may have updated the plugin, but did not update the configuration file! This may lead to some unexpected errors! You can delete the two configuration files in the \\plugins\\BlockRacing folder, and then restart the server, or download the latest version of the configuration file on GitHub to replace it!"
+  version-mismatch-title: "&cWarning! Version Mismatch!"
+  version-mismatch-subtitle: "&cPlease check the specific information in the chat!"
 
 # If you don't know what this is, don't touch it
-lang-version: 3.0
+lang-version: 3.1

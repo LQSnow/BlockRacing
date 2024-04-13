@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import top.lqsnow.blockracing.managers.Game;
 import top.lqsnow.blockracing.managers.Gui;
 import top.lqsnow.blockracing.managers.Message;
+import top.lqsnow.blockracing.managers.Scoreboard;
 import top.lqsnow.blockracing.menus.GameMenu;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.List;
 import static top.lqsnow.blockracing.managers.Game.*;
 import static top.lqsnow.blockracing.managers.Gui.*;
 import static top.lqsnow.blockracing.managers.Team.*;
+import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
 
 public class Menu implements CommandExecutor, TabCompleter {
     @Override
@@ -103,7 +105,32 @@ public class Menu implements CommandExecutor, TabCompleter {
                 sender.sendMessage(Message.NOTICE_GAME_NOT_START.getString());
                 return true;
             }
-            randomTeleport(player, false);
+            if (freeRandomTPList.contains(player.getName())) {
+                Game.randomTeleport(player, false);
+                freeRandomTPList.remove(player.getName());
+            } else {
+                if (redTeamPlayers.contains(player.getName())) {
+                    if (redTeamScore < 2) {
+                        player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString());
+                        return true;
+                    }
+                } else if (blueTeamPlayers.contains(player.getName())) {
+                    if (blueTeamScore < 2) {
+                        player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString());
+                        return true;
+                    }
+                }
+                player.closeInventory();
+                randomTeleport(player, false);
+                if (redTeamPlayers.contains(player.getName())) {
+                    redTeamScore -= 2;
+                    sendAll(Message.NOTICE_RANDOM_TP.getString().replace("%player%", Message.TEAM_RED_COLOR.getString() + player.getName()));
+                } else if (blueTeamPlayers.contains(player.getName())) {
+                    blueTeamScore -= 2;
+                    sendAll(Message.NOTICE_RANDOM_TP.getString().replace("%player%", Message.TEAM_BLUE_COLOR.getString() + player.getName()));
+                }
+                Scoreboard.updateScoreboard();
+            }
         }
 
         return true;

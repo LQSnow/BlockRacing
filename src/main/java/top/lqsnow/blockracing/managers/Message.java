@@ -175,6 +175,13 @@ public enum Message {
     NOTICE_SPECTATOR_TP_PLAYER_SUCCESS("notice.spectator-tp-player-success"),
     NOTICE_PLAYER_NOT_EXIST("notice.player-not-exist"),
     NOTICE_PLAYER_NOT_IN_SAME_TEAM("notice.player-not-in-same-team"),
+    NOTICE_RANKING("notice.ranking"),
+    NOTICE_RANKING_RED("notice.ranking-red"),
+    NOTICE_RANKING_BLUE("notice.ranking-blue"),
+    NOTICE_RANKING_OFFLINE("notice.ranking-offline"),
+    NOTICE_VERSION_MISMATCH("notice.version-mismatch"),
+    NOTICE_VERSION_MISMATCH_TITLE("notice.version-mismatch-title"),
+    NOTICE_VERSION_MISMATCH_SUBTITLE("notice.version-mismatch-subtitle"),
 
     // other
     MESSAGE_LANG("lang"),

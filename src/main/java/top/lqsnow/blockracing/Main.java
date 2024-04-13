@@ -37,6 +37,8 @@ public class Main extends SimplePlugin {
         getPluginCommand("locatebiome").setTabCompleter(new LocateBiome());
         getPluginCommand("restartgame").setExecutor(new Restart());
         getPluginCommand("tp").setExecutor(new Teleport());
+        getPluginCommand("block").setExecutor(new GetBlock());
+        getPluginCommand("block").setTabCompleter(new GetBlock());
 
         // Save resources
         this.saveResource("EasyBlocks.txt", false);
