@@ -121,6 +121,15 @@ End: When game progress exceeds the percentage of non-End dimension blocks in to
 
 # Changelog
 
+### 2024.4.13 - BlockRacing 3.1
+
+- Fixed the bug that scores would not be deducted when using commands for random teleportation
+- The block collection ranking will be displayed at the end of the game
+- Added version checking of language files and configuration files
+- Added the block command. If the block name on the scoreboard is not fully displayed, you can use this command to query the complete block name.
+- Removed GRASS in EasyBlocks
+- Updated game version to 1.20.4
+
 ### 2024.1.30 - BlockRacing 3.0
 
 - Refactored all code and execution logic.
