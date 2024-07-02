@@ -184,9 +184,7 @@ Contact:
 
 > Email: lq_snow@outlook.com
 >
-> QQ: 2784628010
->
-> Blog: lqsnow.top
+> QQ: 3765134939
 
 # License
 
