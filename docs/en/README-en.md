@@ -121,9 +121,9 @@ End: When game progress exceeds the percentage of non-End dimension blocks in to
 
 # Command Reference
 
-### /teleport - Teleport
+### /tp - Teleport
 
-`/teleport <player>`
+`/tp <player>`
 - `<player>`: The name of the player to teleport to. Can only teleport to players on the same team.
 
 ### /menu - Open Menu
@@ -133,7 +133,7 @@ End: When game progress exceeds the percentage of non-End dimension blocks in to
 - `chest [1|2|3]`: Open the team chest menu or a specific team's chest.
 - `waypoints [use <index>]`: Open the waypoints menu or use a specific waypoint.
 - `roll`: Execute a roll operation.
-- `locate`: Locate a player.
+- `locate`: Buy locate command permission.
 - `randomTP`: Perform a random teleportation.
 
 ### /locatebiome - Locate Biome

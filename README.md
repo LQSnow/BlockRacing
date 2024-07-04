@@ -122,9 +122,9 @@ en_us.json 翻译文件
 
 # 指令对照表
 
-### /teleport - 传送
+### /tp - 传送
 
-`/teleport <player>`
+`/tp <player>`
 - `<player>`: 要传送到的玩家名称。只能传送到同队玩家。
 
 ### /menu - 打开菜单
@@ -133,8 +133,8 @@ en_us.json 翻译文件
 - `main`: 打开主菜单。
 - `chest [1|2|3]`: 打开队伍箱子菜单或指定队伍箱子。
 - `waypoints [use <index>]`: 打开路径点菜单或使用指定路径点。
-- `roll`: 执行滚动操作。
-- `locate`: 定位玩家。
+- `roll`: 执行轮换操作。
+- `locate`: 购买定位指令使用权限。
 - `randomTP`: 随机传送。
 
 ### /locatebiome - 定位生物群系
