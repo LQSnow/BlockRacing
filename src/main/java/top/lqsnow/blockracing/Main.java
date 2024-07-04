@@ -65,7 +65,12 @@ public class Main extends SimplePlugin {
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             World world = Bukkit.getWorlds().get(0);
             world.setDifficulty(Difficulty.PEACEFUL);
+            // overworld
             world.setGameRule(GameRule.KEEP_INVENTORY, true);
+            // nether
+            Bukkit.getWorlds().get(1).setGameRule(GameRule.KEEP_INVENTORY, true);
+            // end
+            Bukkit.getWorlds().get(2).setGameRule(GameRule.KEEP_INVENTORY, true);
             world.setTime(1000);
         }, 5);
 

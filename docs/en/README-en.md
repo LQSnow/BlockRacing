@@ -119,6 +119,72 @@ Dyed: Game progress from 0% to 100%, weight stays at 10.
 
 End: When game progress exceeds the percentage of non-End dimension blocks in total blocks, weight is fixed at 60. If game progress is below the percentage of non-End dimension blocks in total blocks: game progress from 0% to 80%, weight is 0; game progress from 80% to 100%, weight increases from 0 to 60. (Reference data: Default block library, if all block difficulties are enabled, End dimension block percentage is about 2%, non-End dimension block percentage is about 98%).
 
+# Command Reference
+
+### /teleport - Teleport
+
+`/teleport <player>`
+- `<player>`: The name of the player to teleport to. Can only teleport to players on the same team.
+
+### /menu - Open Menu
+
+`/menu [main|chest|waypoints|roll|locate|randomTP]`
+- `main`: Open the main menu.
+- `chest [1|2|3]`: Open the team chest menu or a specific team's chest.
+- `waypoints [use <index>]`: Open the waypoints menu or use a specific waypoint.
+- `roll`: Execute a roll operation.
+- `locate`: Locate a player.
+- `randomTP`: Perform a random teleportation.
+
+### /locatebiome - Locate Biome
+
+`/locatebiome <biome>`
+- `<biome>`: The name of the biome to locate.
+
+### /locatestructure - Locate Structure
+
+`/locatestructure <structure>`
+- `<structure>`: The name of the structure to locate.
+
+### /restart - Restart Server
+
+`/restart`
+- Shutdown the server and restart it after all players confirm the restart.
+
+### /getblock - Get Block Information
+
+`/getblock <red|blue> <index>`
+- `<red|blue>`: The team color.
+- `<index>`: The block index (1, 2, 3, or 4).
+
+### /waypoint - Manage Waypoints
+
+`/waypoint remove <index>`
+- `<index>`: The index of the waypoint to remove (1, 2, or 3).
+
+### /debug - Debug Commands (Admin Only)
+
+`/debug reload`
+- Reload game messages and block information, and reload blocks during gameplay.
+
+`/debug skip <team> [block number|all]`
+- Skip specific block tasks for the specified team, or skip all block tasks.
+
+`/debug setscore <team> <score>`
+- Set the score for a specified team.
+
+`/debug getblock <team> <type>`
+- Retrieve block information for a specified team, including remaining and all blocks.
+
+`/debug gettranslation <team> <block number>`
+- Get translation information and Minecraft key for a specified block in the specified team.
+
+`/debug getteam`
+- Get the list of players in the current red and blue teams.
+
+`/debug setteam <team> <add|remove> <player>`
+- Add or remove a specified player from the specified team.
+
 # Changelog
 
 ### 2024.4.13 - BlockRacing 3.1

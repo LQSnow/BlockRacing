@@ -1,6 +1,6 @@
 [English](./docs/en/README-en.md) | [简体中文](./docs/zh/README-zh.md)
 
-[Translation Tutorial](./docs/en/TranslationTutorial-en.md) | [翻译教程](./docs/en/TranslationTutorial-zh.md)
+[Translation Tutorial](./docs/en/TranslationTutorial-en.md) | [翻译教程](./docs/zh/TranslationTutorial-zh.md)
 
 # 方块竞速BlockRacing
 
@@ -119,6 +119,72 @@ en_us.json 翻译文件
 染色：游戏进程从0%到100%，权重保持10不变。
 
 末地：当游戏进程超过非末地方块在总方块的占比时，权重固定为60。当游戏进程未达到非末地方块在总方块的占比时：游戏进程从0%到80%，权重为0；游戏进程从80%到100%，权重从0增加到60。（参考数据：默认方块库，如果所有方块难度全部启用，末地方块占比约为2%，非末地方块占比约为98%）
+
+# 指令对照表
+
+### /teleport - 传送
+
+`/teleport <player>`
+- `<player>`: 要传送到的玩家名称。只能传送到同队玩家。
+
+### /menu - 打开菜单
+
+`/menu [main|chest|waypoints|roll|locate|randomTP]`
+- `main`: 打开主菜单。
+- `chest [1|2|3]`: 打开队伍箱子菜单或指定队伍箱子。
+- `waypoints [use <index>]`: 打开路径点菜单或使用指定路径点。
+- `roll`: 执行滚动操作。
+- `locate`: 定位玩家。
+- `randomTP`: 随机传送。
+
+### /locatebiome - 定位生物群系
+
+`/locatebiome <biome>`
+- `<biome>`: 要定位的生物群系名称。
+
+### /locatestructure - 定位结构
+
+`/locatestructure <structure>`
+- `<structure>`: 要定位的结构名称。
+
+### /restart - 重启服务器
+
+`/restart`
+- 在所有玩家确认重启之后，关闭服务器并重新启动。
+
+### /getblock - 获取方块信息
+
+`/getblock <red|blue> <index>`
+- `<red|blue>`: 队伍颜色。
+- `<index>`: 方块索引（1, 2, 3 或 4）。
+
+### /waypoint - 管理路径点
+
+`/waypoint remove <index>`
+- `<index>`: 要删除的路径点索引（1, 2 或 3）。
+
+### /debug - 调试命令（需要管理员权限）
+
+`/debug reload`
+- 重新加载游戏消息和方块信息，并在游戏进行中重载方块。
+
+`/debug skip <team> [block number|all]`
+- 跳过指定队伍的指定方块任务，或跳过全部方块任务。
+
+`/debug setscore <team> <score>`
+- 设置指定队伍的分数。
+
+`/debug getblock <team> <type>`
+- 查询指定队伍的方块信息，包括剩余方块和所有方块。
+
+`/debug gettranslation <team> <block number>`
+- 获取指定队伍的指定方块的翻译信息和 Minecraft 中的键。
+
+`/debug getteam`
+- 获取当前红蓝队伍的玩家列表。
+
+`/debug setteam <team> <add|remove> <player>`
+- 将指定玩家添加到或从指定队伍移除。
 
 # 更新日志
 
