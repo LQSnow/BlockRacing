@@ -250,7 +250,7 @@ Contact:
 
 > Email: lq_snow@outlook.com
 >
-> QQ: 3765134939
+> QQ: 2784628010
 
 # License
 

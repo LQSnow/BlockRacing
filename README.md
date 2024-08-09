@@ -251,7 +251,7 @@ en_us.json 翻译文件
 
 >  邮箱：lq_snow@outlook.com
 > 
->  QQ：3765134939
+>  QQ：2784628010
 
 # 版权说明
 
