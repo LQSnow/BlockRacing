@@ -218,14 +218,14 @@ public class Game {
         for (PotionEffect effect : player.getActivePotionEffects()) {
             player.removePotionEffect(effect.getType());
         }
-        player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1200, 4, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 1200, 4, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 1200, 4, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 1200, 4, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0, false, false));
 
         // Speed mode
         if (Setting.isSpeedMode()) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 4, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, -1, 4, false, false));
             player.getInventory().addItem(ItemCreator.of(CompMaterial.IRON_PICKAXE).enchant(Enchantment.SILK_TOUCH, 1).make());
             player.getInventory().addItem(ItemCreator.of(CompMaterial.COOKED_BEEF).amount(64).make());
 

@@ -87,7 +87,7 @@ public class BasicListener implements Listener {
         event.getPlayer().sendMessage(Message.NOTICE_SPAWN_PROTECT.getString());
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0, false, false));
-            if (Game.getCurrentGameState().equals(Game.GameState.INGAME) && Setting.isSpeedMode()) event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, -1, 4, false, false));
+            if (Game.getCurrentGameState().equals(Game.GameState.INGAME) && Setting.isSpeedMode()) event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.HASTE, -1, 4, false, false));
         }, 10L);
     }
 
