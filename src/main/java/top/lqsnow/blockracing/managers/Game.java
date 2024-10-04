@@ -226,8 +226,12 @@ public class Game {
         // Speed mode
         if (Setting.isSpeedMode()) {
             player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, -1, 4, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, -1, 1, false, false));
+            Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+                player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, -1, 1, false, false));
+            }, 1300L);   // 延迟发放 避免冲突
             player.getInventory().addItem(ItemCreator.of(CompMaterial.IRON_PICKAXE).enchant(Enchantment.SILK_TOUCH, 1).make());
-            player.getInventory().addItem(ItemCreator.of(CompMaterial.COOKED_BEEF).amount(64).make());
+            player.getInventory().addItem(ItemCreator.of(CompMaterial.GOLDEN_CARROT).amount(64).make());
 
             ItemStack damagedElytra = new ItemStack(Material.ELYTRA);
             damagedElytra.setDurability((short) (damagedElytra.getType().getMaxDurability() - 1));
