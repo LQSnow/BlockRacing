@@ -187,6 +187,16 @@ End: When game progress exceeds the percentage of non-End dimension blocks in to
 
 # Changelog
 
+### 2024.10.4 - BlockRacing 3.2
+**Thanks to @xiaojiuwo233: https://github.com/LQSnow/BlockRacing/pull/6**
+- Updated game version to 1.21.1
+- Added new 1.21 blocks (for balance considerations, copper types only added to slightly weathered to avoid the need to find ruins and to ensure enough time to complete during the race)
+- Added 1.21 locate and language files (fully extracted and usable)
+- Moved pitcher plant and torchflower to difficult blocks
+- Changed food in speed mode to golden carrots and added Speed 2 and Resistance 2 effects
+- Added initial tools: stone pickaxe, stone axe, stone shovel
+- New game start initialization: removed drops and reset world weather
+
 ### 2024.4.13 - BlockRacing 3.1
 
 - Fixed the bug that scores would not be deducted when using commands for random teleportation

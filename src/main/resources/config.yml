@@ -27,4 +27,4 @@ game-mode: normal
 speed-mode: false
 
 # 如果你不知道这是什么，不要动它
-config-version: 3.1
+config-version: 3.2
