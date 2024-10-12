@@ -190,7 +190,7 @@ en_us.json 翻译文件
 # 更新日志
 
 ### 2024.10.4 - BlockRacing 3.2
-**感谢@xiaojiuwo233: https://github.com/LQSnow/BlockRacing/pull/6**
+**感谢[@xiaojiuwo233](https://github.com/xiaojiuwo233): https://github.com/LQSnow/BlockRacing/pull/6**
 - 更新游戏版本至1.21.1
 - 新增1.21新方块（为考虑平衡性，铜类只添加到轻微锈蚀，使玩家不必须寻找遗迹，在比赛时间中足够完成）
 - 新增1.21 locate和语言文件（完整提取 可用）

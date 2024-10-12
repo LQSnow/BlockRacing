@@ -188,7 +188,7 @@ End: When game progress exceeds the percentage of non-End dimension blocks in to
 # Changelog
 
 ### 2024.10.4 - BlockRacing 3.2
-**Thanks to @xiaojiuwo233: https://github.com/LQSnow/BlockRacing/pull/6**
+**Thanks to [@xiaojiuwo233](https://github.com/xiaojiuwo233): https://github.com/LQSnow/BlockRacing/pull/6**
 - Updated game version to 1.21.1
 - Added new 1.21 blocks (for balance considerations, copper types only added to slightly weathered to avoid the need to find ruins and to ensure enough time to complete during the race)
 - Added 1.21 locate and language files (fully extracted and usable)
