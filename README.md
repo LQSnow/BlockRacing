@@ -188,6 +188,13 @@ en_us.json 翻译文件
 
 # 更新日志
 
+### 2025.1.23 - BlockRacing 3.3
+- 更新游戏版本至1.21.4
+- 添加了团队箱子个数设置
+- 添加了团队路径点个数设置
+- 添加了路径点群系描述
+- 修改了路径点图标为脚下方块
+
 ### 2024.10.4 - BlockRacing 3.2
 **感谢[@xiaojiuwo233](https://github.com/xiaojiuwo233): https://github.com/LQSnow/BlockRacing/pull/6**
 - 更新游戏版本至1.21.1
