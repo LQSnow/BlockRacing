@@ -37,41 +37,9 @@ public class WayPoint implements CommandExecutor {
 
     private boolean removeWaypoint(String team, int index) {
         if (team.equals("red")) {
-            switch (index) {
-                case 1 -> {
-                    if (redWaypoint1 == null) return false;
-                    redWaypoint1 = null;
-                    return true;
-                }
-                case 2 -> {
-                    if (redWaypoint2 == null) return false;
-                    redWaypoint2 = null;
-                    return true;
-                }
-                case 3 -> {
-                    if (redWaypoint3 == null) return false;
-                    redWaypoint3 = null;
-                    return true;
-                }
-            }
+            redWaypoint.remove(index);
         } else {
-            switch (index) {
-                case 1 -> {
-                    if (blueWaypoint1 == null) return false;
-                    blueWaypoint1 = null;
-                    return true;
-                }
-                case 2 -> {
-                    if (blueWaypoint2 == null) return false;
-                    blueWaypoint2 = null;
-                    return true;
-                }
-                case 3 -> {
-                    if (blueWaypoint3 == null) return false;
-                    blueWaypoint3 = null;
-                    return true;
-                }
-            }
+            blueWaypoint.remove(index);
         }
 
         return true;

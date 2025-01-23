@@ -15,6 +15,10 @@ public class Setting {
     @Getter
     private static int blockAmount;
     @Getter
+    private static int maxTeamChestNum;
+    @Getter
+    private static  int maxTeamWaypointNum;
+    @Getter
     private static boolean speedMode;
     public enum GameMode {NORMAL, RACING}
     @Getter
@@ -28,6 +32,8 @@ public class Setting {
         enableEndBlock = Config.END_BLOCK.getBoolean();
         blockAmount = Config.BLOCK_AMOUNT.getInt();
         speedMode = Config.SPEED_MODE.getBoolean();
+        maxTeamChestNum = Config.MAX_TEAM_CHEST_NUM.getInt();
+        maxTeamWaypointNum = Config.MAX_TEAM_WAYPOINT_NUM.getInt();
         setCurrentGameMode(GameMode.valueOf(Config.GAME_MODE.getString().toUpperCase()));
     }
 
@@ -54,6 +60,11 @@ public class Setting {
     public static void setBlockAmount(int blockAmount) {
         Setting.blockAmount = blockAmount;
         Config.BLOCK_AMOUNT.setInt(blockAmount);
+    }
+
+    public static void setMaxTeamChestNum(int chestNum) {
+        Setting.maxTeamChestNum = chestNum;
+        Config.MAX_TEAM_CHEST_NUM.setInt(chestNum);
     }
 
     public static void setSpeedMode(boolean speedMode) {
