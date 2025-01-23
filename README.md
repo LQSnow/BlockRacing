@@ -127,6 +127,8 @@ en_us.json 翻译文件
 `/tp <player>`
 - `<player>`: 要传送到的玩家名称。只能传送到同队玩家。
 
+**注意，/tp命令已被插件修改，如果想使用原版tp的指令，请输入/teleport或/minecraft:tp**
+
 ### /menu - 打开菜单
 
 `/menu [main|chest|waypoints|roll|locate|randomTP]`
@@ -189,6 +191,7 @@ en_us.json 翻译文件
 # 更新日志
 
 ### 2025.1.23 - BlockRacing 3.3
+**感谢[@FHSHKL](https://github.com/FHSHKL): https://github.com/LQSnow/BlockRacing/pull/8**
 - 更新游戏版本至1.21.4
 - 添加团队箱子个数设置
 - 添加团队路径点个数设置

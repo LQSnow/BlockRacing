@@ -135,17 +135,17 @@ public class GameMenu extends Menu {
 
     // Team chest select menu
     public class TeamChestSelectMenu extends Menu {
-        
+
         public TeamChestSelectMenu() {
             super(GameMenu.this);
 
             setTitle(Message.MENU_TEAM_CHEST_SELECT_TITLE.getString());
 
-            int teamChestNum=Setting.getMaxTeamChestNum();
-            int teamChestMenuSize=((teamChestNum)/9+1)*9;
+            int teamChestNum = Setting.getMaxTeamChestNum();
+            int teamChestMenuSize = ((teamChestNum) / 9 + 1) * 9;
             setSize(teamChestMenuSize);
 
-            for(int i=0;i<teamChestNum;i++){
+            for (int i = 0; i < teamChestNum; i++) {
                 Button button = new Button(i) {
                     @Override
                     public void onClickedInMenu(Player player, Menu menu, ClickType click) {
@@ -154,14 +154,14 @@ public class GameMenu extends Menu {
 
                     @Override
                     public ItemStack getItem() {
-                        return ItemCreator.of(CompMaterial.CHEST, Message.MENU_TEAM_CHEST_SELECT_CHEST.getString()+this.getSlot()).make();
+                        return ItemCreator.of(CompMaterial.CHEST, Message.MENU_TEAM_CHEST_SELECT_CHEST.getString() + this.getSlot()).make();
                     }
                 };
 
                 this.registerButton(button);
             }
 
-            Button back = new Button(teamChestMenuSize-1) {
+            Button back = new Button(teamChestMenuSize - 1) {
                 @Override
                 public void onClickedInMenu(Player player, Menu menu, ClickType click) {
                     new GameMenu().displayTo(player);
@@ -183,17 +183,17 @@ public class GameMenu extends Menu {
         }
     }
 
-    public class WayPointMenu extends Menu{
+    public class WayPointMenu extends Menu {
         public WayPointMenu(HashMap<Integer, Location> wayPointMap) {
             super(GameMenu.this);
 
             setTitle(Message.MENU_WAYPOINT_TITLE.getString());
 
-            int teamWaypointNum=Setting.getMaxTeamWaypointNum();
-            int teamWappointMenuNum=((teamWaypointNum)/9+1)*9;
-            setSize(teamWappointMenuNum);
+            int teamWaypointNum = Setting.getMaxTeamWaypointNum();
+            int teamWaypointMenuNum = ((teamWaypointNum) / 9 + 1) * 9;
+            setSize(teamWaypointMenuNum);
 
-            for(int i=0;i<teamWaypointNum;i++){
+            for (int i = 0; i < teamWaypointNum; i++) {
                 Button button = new Button(i) {
                     @Override
                     public void onClickedInMenu(Player player, Menu menu, ClickType click) {
@@ -207,25 +207,30 @@ public class GameMenu extends Menu {
                     public ItemStack getItem() {
                         int ith = this.getSlot();
                         Location wayPoint = wayPointMap.get(ith);
-                        
-                        if (wayPoint != null){
+
+                        if (wayPoint != null) {
                             Block block = wayPoint.getBlock();
-                            while(block.isEmpty()){
+                            while (block.isEmpty()) {
                                 block = block.getRelative(0, -1, 0);
                             }
-                            return ItemCreator.of(CompMaterial.fromBlock(block), Message.MENU_WAYPOINT_FILLED.getString()+ith, replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), wayPoint.getWorld().getName(), getCoords(wayPoint), block.getBiome().toString())).make();
-                        }
-                        else{
-                            return ItemCreator.of(CompMaterial.MAP, Message.MENU_WAYPOINT_EMPTY.getString()+ith, Message.MENU_WAYPOINT_EMPTY_LORE.getStringList()).make();
+                            ItemStack itemStack;
+                            try {
+                                itemStack = ItemCreator.of(CompMaterial.fromBlock(block), Message.MENU_WAYPOINT_FILLED.getString() + ith, replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), wayPoint.getWorld().getName(), getCoords(wayPoint), block.getBiome().toString())).make();
+                            } catch (Exception e) {
+                                itemStack = ItemCreator.of(CompMaterial.FILLED_MAP, Message.MENU_WAYPOINT_FILLED.getString() + ith, replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), wayPoint.getWorld().getName(), getCoords(wayPoint), block.getBiome().toString())).make();
+                            }
+                            return itemStack;
+                        } else {
+                            return ItemCreator.of(CompMaterial.MAP, Message.MENU_WAYPOINT_EMPTY.getString() + ith, Message.MENU_WAYPOINT_EMPTY_LORE.getStringList()).make();
                         }
                     }
-                    
+
                 };
 
                 this.registerButton(button);
             }
 
-            Button back = new Button(teamWappointMenuNum-1) {
+            Button back = new Button(teamWaypointMenuNum - 1) {
                 @Override
                 public void onClickedInMenu(Player player, Menu menu, ClickType click) {
                     new GameMenu().displayTo(player);
@@ -261,16 +266,14 @@ public class GameMenu extends Menu {
 
         for (String line : lore) {
             line = line
-            .replace("%dimension%", dimension)
-            .replace("%coords%", coords)
-            .replace("%biome%", biome);
+                    .replace("%dimension%", dimension)
+                    .replace("%coords%", coords)
+                    .replace("%biome%", biome);
 
             modifiedLore.add(line);
         }
         return modifiedLore;
     }
-
-
 
 
 }

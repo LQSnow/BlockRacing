@@ -6,7 +6,7 @@
 
 This is a multiplayer racing mini-game in Minecraft, divided into two teams, where the team that collects the specified blocks first wins.
 
-Version: Java 1.21.1
+Version: Java 1.21.4
 
 # Features
 
@@ -126,6 +126,8 @@ End: When game progress exceeds the percentage of non-End dimension blocks in to
 `/tp <player>`
 - `<player>`: The name of the player to teleport to. Can only teleport to players on the same team.
 
+**Note: The /tp command has been modified by the plugin. To use the original tp command, please enter /teleport or /minecraft:tp**
+
 ### /menu - Open Menu
 
 `/menu [main|chest|waypoints|roll|locate|randomTP]`
@@ -187,7 +189,18 @@ End: When game progress exceeds the percentage of non-End dimension blocks in to
 
 # Changelog
 
+### 2025.1.23 - BlockRacing 3.3
+
+**Thanks to [@FHSHKL](https://github.com/FHSHKL): https://github.com/LQSnow/BlockRacing/pull/8**
+- Updated game version to 1.21.4
+- Added team chest count settings
+- Added team waypoint count settings
+- Added biome descriptions for waypoints
+- Changed waypoint icons to the block beneath the player
+- When the opposing team obtains blocks, they are prioritized into the chest with the highest index
+
 ### 2024.10.4 - BlockRacing 3.2
+
 **Thanks to [@xiaojiuwo233](https://github.com/xiaojiuwo233): https://github.com/LQSnow/BlockRacing/pull/6**
 - Updated game version to 1.21.1
 - Added new 1.21 blocks (for balance considerations, copper types only added to slightly weathered to avoid the need to find ruins and to ensure enough time to complete during the race)
