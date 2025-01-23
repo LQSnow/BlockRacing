@@ -18,7 +18,9 @@ public enum Config {
     BLOCK_AMOUNT("block-amount"),
     GAME_MODE("game-mode"),
     SPEED_MODE("speed-mode"),
-    CONFIG_VERSION("config-version");
+    CONFIG_VERSION("config-version"),
+    MAX_TEAM_CHEST_NUM("max-team-chest-num"),
+    MAX_TEAM_WAYPOINT_NUM("max-team-waypoint-num");
 
     private static File file;
     private static FileConfiguration config;

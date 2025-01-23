@@ -129,30 +129,22 @@ menu:
       - "&b花费2积分在&l主世界&r&b随机传送，首次免费"
   team-chest-select-menu:
     title: "&0队伍箱子选择"
-    chest1: "&b队伍箱子1"
-    chest2: "&b队伍箱子2"
-    chest3: "&b队伍箱子3"
+    chest: "&g队伍箱子"
+    chest: "&b队伍箱子"
   team-chest:
-    red-chest1: "&c红队队伍箱子1"
-    red-chest2: "&c红队队伍箱子2"
-    red-chest3: "&c红队队伍箱子3"
-    blue-chest1: "&9蓝队队伍箱子1"
-    blue-chest2: "&9蓝队队伍箱子2"
-    blue-chest3: "&9蓝队队伍箱子3"
+    red-chest: "&c红队队伍箱子"
+    blue-chest: "&9蓝队队伍箱子"
   way-point:
     title: "&0记录点"
     empty:
-      waypoint1: "&d记录点1"
-      waypoint2: "&d记录点2"
-      waypoint3: "&d记录点3"
+      waypoint: "&d记录点"
       lore: "&b左键点击创建记录点"
     filled:
-      waypoint1: "&6记录点1"
-      waypoint2: "&6记录点2"
-      waypoint3: "&6记录点3"
+      waypoint: "&6记录点"
       lore:
         - "&a维度：%dimension%"
         - "&a坐标：%coords%"
+        - "&a群系：%biome%"
         - "&b左键点击传送，右键点击删除"
         - "&b删除记录点需要在聊天框确认"
   all:
@@ -221,4 +213,4 @@ notice:
   version-mismatch-subtitle: "&c请查看聊天框的具体信息！"
 
 # 如果你不知道这是什么，不要动它
-lang-version: 3.2
+lang-version: 3.3

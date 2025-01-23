@@ -26,5 +26,15 @@ game-mode: normal
 # Effects: Haste V
 speed-mode: false
 
+# max team chest number
+# default：8
+# max：53
+max-team-chest-num: 8
+
+# max team waypoint number
+# default: 8
+# max: 53
+max-team-waypoint-num: 8
+
 # If you don't know what this is, don't touch it
-config-version: 3.2
+config-version: 3.3

@@ -134,30 +134,21 @@ menu:
       - "&bin the &lOverworld&r&b, first time is free"
   team-chest-select-menu:
     title: "&0Team Chest Selection"
-    chest1: "&bTeam Chest 1"
-    chest2: "&bTeam Chest 2"
-    chest3: "&bTeam Chest 3"
+    chest: "&gTeam Chest "
   team-chest:
-    red-chest1: "&cRed Team Chest 1"
-    red-chest2: "&cRed Team Chest 2"
-    red-chest3: "&cRed Team Chest 3"
-    blue-chest1: "&9Blue Team Chest 1"
-    blue-chest2: "&9Blue Team Chest 2"
-    blue-chest3: "&9Blue Team Chest 3"
+    red-chest: "&cRed Team Chest "
+    blue-chest: "&9Blue Team Chest "
   way-point:
     title: "&0Waypoints"
     empty:
-      waypoint1: "&dWaypoint 1"
-      waypoint2: "&dWaypoint 2"
-      waypoint3: "&dWaypoint 3"
+      waypoint: "&dWaypoint "
       lore: "&bLeft-click to create a waypoint"
     filled:
-      waypoint1: "&6Waypoint 1"
-      waypoint2: "&6Waypoint 2"
-      waypoint3: "&6Waypoint 3"
+      waypoint: "&6Waypoint "
       lore:
         - "&aDimension: %dimension%"
         - "&aCoordinates: %coords%"
+        - "&aBiom: %biome%"
         - "&bLeft-click to teleport, right-click to delete"
         - "&bDeleting waypoints requires confirmation in the chat"
   all:
@@ -226,4 +217,4 @@ notice:
   version-mismatch-subtitle: "&cPlease check the specific information in the chat!"
 
 # If you don't know what this is, don't touch it
-lang-version: 3.2
+lang-version: 3.3

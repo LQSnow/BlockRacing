@@ -9,6 +9,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -44,12 +45,13 @@ public class Game {
     public static int redTeamTotalBlockAmount = 0;
     public static int blueTeamTotalBlockAmount = 0;
     public static List<String> freeRandomTPList = new ArrayList<>();
-    public static Location redWaypoint1;
-    public static Location redWaypoint2;
-    public static Location redWaypoint3;
-    public static Location blueWaypoint1;
-    public static Location blueWaypoint2;
-    public static Location blueWaypoint3;
+
+    public static ArrayList<Inventory> redTeamChest = new ArrayList<>();
+    public static ArrayList<Inventory> blueTeamChest = new ArrayList<>();
+
+    public static HashMap<Integer,Location> redWaypoint = new HashMap<>();
+    public static HashMap<Integer,Location> blueWaypoint = new HashMap<>();
+
     public static int redTeamRollCount;
     public static int blueTeamRollCount;
     public static List<String> redRollPlayers = new ArrayList<>();
@@ -58,6 +60,14 @@ public class Game {
     public static ArrayList<String> locateCommandPermission = new ArrayList<>();
     public static int locateCost;
     public static Map<String, Integer> collectAmount = new HashMap<>();
+
+    public static void initChest(){
+        int teamChestNum=Setting.getMaxTeamChestNum();
+        for(int i=0;i<teamChestNum;i++){
+            redTeamChest.add(Bukkit.createInventory(null, 6 * 9, Message.MENU_RED_CHEST.getString()+i));
+            blueTeamChest.add(Bukkit.createInventory(null, 6 * 9, Message.MENU_BLUE_CHEST.getString()+i));
+        }
+    }
 
     public static void playerLogin(Player player) {
         Scoreboard.showScoreboard(player);
@@ -367,18 +377,8 @@ public class Game {
 
     public static Location getWaypoint(String team, int index) {
         return switch (team) {
-            case "red" -> switch (index) {
-                case 1 -> redWaypoint1;
-                case 2 -> redWaypoint2;
-                case 3 -> redWaypoint3;
-                default -> null;
-            };
-            case "blue" -> switch (index) {
-                case 1 -> blueWaypoint1;
-                case 2 -> blueWaypoint2;
-                case 3 -> blueWaypoint3;
-                default -> null;
-            };
+            case "red" -> redWaypoint.get(index);
+            case "blue" -> blueWaypoint.get(index);
             default -> null;
         };
     }
@@ -387,18 +387,10 @@ public class Game {
         Location waypoint = player.getLocation();
         switch (team) {
             case "red" -> {
-                switch (index) {
-                    case 1 -> redWaypoint1 = waypoint;
-                    case 2 -> redWaypoint2 = waypoint;
-                    case 3 -> redWaypoint3 = waypoint;
-                }
+                redWaypoint.put(index, waypoint);
             }
             case "blue" -> {
-                switch (index) {
-                    case 1 -> blueWaypoint1 = waypoint;
-                    case 2 -> blueWaypoint2 = waypoint;
-                    case 3 -> blueWaypoint3 = waypoint;
-                }
+                blueWaypoint.put(index, waypoint);
             }
         }
     }
@@ -526,9 +518,11 @@ public class Game {
         }
         // Complete from team chest
         for (String block : getCurrentBlocks("red")) {
-            if (redTeamChest1.contains(Material.valueOf(block)) || redTeamChest2.contains(Material.valueOf(block)) || redTeamChest3.contains(Material.valueOf(block))) {
-                redTaskComplete(block, Message.NOTICE_RED_TEAM_CHEST.getString());
-                return;
+            for(Inventory chest : redTeamChest){
+                if(chest.contains(Material.valueOf(block))){
+                    redTaskComplete(block, Message.NOTICE_RED_TEAM_CHEST.getString());
+                    return;
+                }
             }
         }
     }
@@ -547,9 +541,11 @@ public class Game {
         }
         // Complete from team chest
         for (String block : getCurrentBlocks("blue")) {
-            if (blueTeamChest1.contains(Material.valueOf(block)) || blueTeamChest2.contains(Material.valueOf(block)) || blueTeamChest3.contains(Material.valueOf(block))) {
-                blueTaskComplete(block, Message.NOTICE_BLUE_TEAM_CHEST.getString());
-                return;
+            for(Inventory chest : blueTeamChest){
+                if(chest.contains(Material.valueOf(block))){
+                    blueTaskComplete(block, Message.NOTICE_BLUE_TEAM_CHEST.getString());
+                    return;
+                }
             }
         }
     }
@@ -566,14 +562,16 @@ public class Game {
         updateScoreboard();
         // Put items into the opponent's team chest
         if (Setting.getCurrentGameMode().equals(Setting.GameMode.NORMAL)) {
-            if (blueTeamChest1.firstEmpty() != -1)
-                blueTeamChest1.setItem(blueTeamChest1.firstEmpty(), ItemCreator.of(CompMaterial.valueOf(block)).amount(64).make());
-            else if (blueTeamChest2.firstEmpty() != -1)
-                blueTeamChest2.setItem(blueTeamChest2.firstEmpty(), ItemCreator.of(CompMaterial.valueOf(block)).amount(64).make());
-            else if (blueTeamChest3.firstEmpty() != -1)
-                blueTeamChest3.setItem(blueTeamChest3.firstEmpty(), ItemCreator.of(CompMaterial.valueOf(block)).amount(64).make());
-            else
-                sendAll(Message.NOTICE_TEAM_CHEST_FULL.getString().replace("%team%", Message.TEAM_BLUE_NAME.getString()).replace("%block%", TranslationUtil.getValue(block)));
+            for(int i=blueTeamChest.size()-1;i>=0;i--){
+                Inventory chest = blueTeamChest.get(i);
+                int emptyPos = chest.firstEmpty();
+                if(emptyPos==-1){
+                    continue;
+                }
+                chest.setItem(emptyPos, ItemCreator.of(CompMaterial.valueOf(block)).amount(64).make());
+                return;
+            }
+            sendAll(Message.NOTICE_TEAM_CHEST_FULL.getString().replace("%team%", Message.TEAM_BLUE_NAME.getString()).replace("%block%", TranslationUtil.getValue(block)));
         }
     }
 
@@ -589,14 +587,16 @@ public class Game {
         updateScoreboard();
         // Put items into the opponent's team chest
         if (Setting.getCurrentGameMode().equals(Setting.GameMode.NORMAL)) {
-            if (redTeamChest1.firstEmpty() != -1)
-                redTeamChest1.setItem(redTeamChest1.firstEmpty(), ItemCreator.of(CompMaterial.valueOf(block)).amount(64).make());
-            else if (redTeamChest2.firstEmpty() != -1)
-                redTeamChest2.setItem(redTeamChest2.firstEmpty(), ItemCreator.of(CompMaterial.valueOf(block)).amount(64).make());
-            else if (redTeamChest3.firstEmpty() != -1)
-                redTeamChest3.setItem(redTeamChest3.firstEmpty(), ItemCreator.of(CompMaterial.valueOf(block)).amount(64).make());
-            else
-                sendAll(Message.NOTICE_TEAM_CHEST_FULL.getString().replace("%team%", Message.TEAM_RED_NAME.getString()).replace("%block%", TranslationUtil.getValue(block)));
+            for(int i=redTeamChest.size()-1;i>=0;i--){
+                Inventory chest = redTeamChest.get(i);
+                int emptyPos = chest.firstEmpty();
+                if(emptyPos==-1){
+                    continue;
+                }
+                chest.setItem(emptyPos, ItemCreator.of(CompMaterial.valueOf(block)).amount(64).make());
+                return;
+            }
+            sendAll(Message.NOTICE_TEAM_CHEST_FULL.getString().replace("%team%", Message.TEAM_RED_NAME.getString()).replace("%block%", TranslationUtil.getValue(block)));
         }
     }
 

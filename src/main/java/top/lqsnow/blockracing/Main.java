@@ -55,6 +55,7 @@ public class Main extends SimplePlugin {
         Message.saveDefaultConfig();
         Message.load();
         Setting.getSettings();
+        Game.initChest();
         Team.createTeam();
         Scoreboard.createScoreboard();
         Scoreboard.setPreGameScoreboard();

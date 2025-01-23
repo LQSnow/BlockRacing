@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static top.lqsnow.blockracing.managers.Game.*;
-import static top.lqsnow.blockracing.managers.Gui.*;
 import static top.lqsnow.blockracing.managers.Team.*;
 import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
 
@@ -48,17 +47,15 @@ public class Menu implements CommandExecutor, TabCompleter {
                     new GameMenu().new TeamChestSelectMenu().displayTo(player);
                     return true;
                 }
-                if (args[1].equalsIgnoreCase("1")) player.openInventory(redTeamChest1);
-                else if (args[1].equalsIgnoreCase("2")) player.openInventory(redTeamChest2);
-                else if (args[1].equalsIgnoreCase("3")) player.openInventory(redTeamChest3);
+                int ith = Integer.parseInt(args[1]);
+                player.openInventory(redTeamChest.get(ith));
             } else if (blueTeamPlayers.contains(player.getName())) {
                 if (args.length == 1) {
                     new GameMenu().new TeamChestSelectMenu().displayTo(player);
                     return true;
                 }
-                if (args[1].equalsIgnoreCase("1")) player.openInventory(blueTeamChest1);
-                else if (args[1].equalsIgnoreCase("2")) player.openInventory(blueTeamChest2);
-                else if (args[1].equalsIgnoreCase("3")) player.openInventory(blueTeamChest3);
+                int ith = Integer.parseInt(args[1]);
+                player.openInventory(blueTeamChest.get(ith));
             }
 
         }
@@ -71,9 +68,9 @@ public class Menu implements CommandExecutor, TabCompleter {
 
             if (args.length == 1) {
                 if (redTeamPlayers.contains(player.getName())) {
-                    new GameMenu().new RedWaypointMenu().displayTo(player);
+                    new GameMenu().new WayPointMenu(redWaypoint).displayTo(player);
                 } else if (blueTeamPlayers.contains(player.getName())) {
-                    new GameMenu().new BlueWaypointMenu().displayTo(player);
+                    new GameMenu().new WayPointMenu(blueWaypoint).displayTo(player);
                 }
                 return true;
             }
