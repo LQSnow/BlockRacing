@@ -13,6 +13,7 @@ import top.lqsnow.blockracing.managers.Game;
 import top.lqsnow.blockracing.managers.Gui;
 import top.lqsnow.blockracing.managers.Message;
 import top.lqsnow.blockracing.managers.Scoreboard;
+import top.lqsnow.blockracing.managers.Setting;
 import top.lqsnow.blockracing.menus.GameMenu;
 
 import java.util.ArrayList;
@@ -48,14 +49,14 @@ public class Menu implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 int ith = Integer.parseInt(args[1]);
-                player.openInventory(redTeamChest.get(ith));
+                player.openInventory(redTeamChest.get(ith-1));
             } else if (blueTeamPlayers.contains(player.getName())) {
                 if (args.length == 1) {
                     new GameMenu().new TeamChestSelectMenu().displayTo(player);
                     return true;
                 }
                 int ith = Integer.parseInt(args[1]);
-                player.openInventory(blueTeamChest.get(ith));
+                player.openInventory(blueTeamChest.get(ith-1));
             }
 
         }
@@ -68,9 +69,9 @@ public class Menu implements CommandExecutor, TabCompleter {
 
             if (args.length == 1) {
                 if (redTeamPlayers.contains(player.getName())) {
-                    new GameMenu().new WayPointMenu(redWaypoint).displayTo(player);
+                    new GameMenu().new WayPointMenu(redWaypoint,redWaypointIconCache).displayTo(player);
                 } else if (blueTeamPlayers.contains(player.getName())) {
-                    new GameMenu().new WayPointMenu(blueWaypoint).displayTo(player);
+                    new GameMenu().new WayPointMenu(blueWaypoint,blueWaypointIconCache).displayTo(player);
                 }
                 return true;
             }
@@ -145,15 +146,15 @@ public class Menu implements CommandExecutor, TabCompleter {
             completions.add("locate");
             completions.add("randomTP");
         } else if (args.length == 2 && args[0].equalsIgnoreCase("chest")) {
-            completions.add("1");
-            completions.add("2");
-            completions.add("3");
+            for(int i = 1; i <= Setting.getMaxTeamChestNum(); i++){
+                completions.add(Integer.toString(i));
+            }
         } else if (args.length == 2 && args[0].equalsIgnoreCase("waypoints")) {
             completions.add("use");
         } else if (args.length == 3 && args[0].equalsIgnoreCase("waypoints")) {
-            completions.add("1");
-            completions.add("2");
-            completions.add("3");
+            for(int i = 1; i <= Setting.getMaxTeamWaypointNum(); i++){
+                completions.add(Integer.toString(i));
+            }
         }
 
         String prefix = args[args.length - 1].toLowerCase();

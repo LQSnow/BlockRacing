@@ -34,7 +34,9 @@ import static top.lqsnow.blockracing.utils.ColorUtil.t;
 import static top.lqsnow.blockracing.utils.CommandUtil.*;
 
 public class Game {
-    public enum GameState {PREGAME, INGAME, END}
+    public enum GameState {
+        PREGAME, INGAME, END
+    }
 
     public static GameState currentGameState = GameState.PREGAME;
     public static List<String> readyPlayers = new ArrayList<>();
@@ -49,8 +51,11 @@ public class Game {
     public static ArrayList<Inventory> redTeamChest = new ArrayList<>();
     public static ArrayList<Inventory> blueTeamChest = new ArrayList<>();
 
-    public static HashMap<Integer,Location> redWaypoint = new HashMap<>();
-    public static HashMap<Integer,Location> blueWaypoint = new HashMap<>();
+    public static HashMap<Integer, Location> redWaypoint = new HashMap<>();
+    public static HashMap<Integer, Location> blueWaypoint = new HashMap<>();
+
+    public static HashMap<Integer, CompMaterial> redWaypointIconCache = new HashMap<>();
+    public static HashMap<Integer, CompMaterial> blueWaypointIconCache = new HashMap<>();
 
     public static int redTeamRollCount;
     public static int blueTeamRollCount;
@@ -61,11 +66,11 @@ public class Game {
     public static int locateCost;
     public static Map<String, Integer> collectAmount = new HashMap<>();
 
-    public static void initChest(){
-        int teamChestNum=Setting.getMaxTeamChestNum();
-        for(int i=0;i<teamChestNum;i++){
-            redTeamChest.add(Bukkit.createInventory(null, 6 * 9, Message.MENU_RED_CHEST.getString()+i));
-            blueTeamChest.add(Bukkit.createInventory(null, 6 * 9, Message.MENU_BLUE_CHEST.getString()+i));
+    public static void initChest() {
+        int teamChestNum = Setting.getMaxTeamChestNum();
+        for (int i = 0; i < teamChestNum; i++) {
+            redTeamChest.add(Bukkit.createInventory(null, 6 * 9, Message.MENU_RED_CHEST.getString() + (i + 1)));
+            blueTeamChest.add(Bukkit.createInventory(null, 6 * 9, Message.MENU_BLUE_CHEST.getString() + (i + 1)));
         }
     }
 
@@ -75,7 +80,8 @@ public class Game {
         if (getCurrentGameState().equals(GameState.PREGAME)) {
             player.setGameMode(GameMode.ADVENTURE);
             player.sendMessage(Message.NOTICE_WELCOME.getString());
-            player.sendMessage(t("&eNot your language? Please follow the tutorial to change the language: https://github.com/LQSnow/BlockRacing/blob/3.0/docs/en/TranslationTutorial-en.md"));
+            player.sendMessage(t(
+                    "&eNot your language? Please follow the tutorial to change the language: https://github.com/LQSnow/BlockRacing/blob/3.0/docs/en/TranslationTutorial-en.md"));
             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
         } else if (getCurrentGameState().equals(GameState.INGAME)) {
             // Spectator
@@ -85,14 +91,16 @@ public class Game {
                 return;
             }
 
-            // Players who choose a team before the start of the game and exit, but enter after the start of the game
+            // Players who choose a team before the start of the game and exit, but enter
+            // after the start of the game
             if (!inGamePlayers.contains(player.getName())) {
                 initPlayer(player);
                 freeRandomTPList.add(player.getName());
             }
         }
 
-        // The permissions will disappear when the player exits and re-enters, permissions need to be given again.
+        // The permissions will disappear when the player exits and re-enters,
+        // permissions need to be given again.
         if (locateCommandPermission.contains(player.getName())) {
             player.addAttachment(Main.getInstance(), "minecraft.command.locate", true);
         }
@@ -102,13 +110,17 @@ public class Game {
 
     private static void checkUpdate(Player player) {
         player.resetTitle();
-        if (!Config.CONFIG_VERSION.getString().equals(Main.getVersion()) || !Message.MESSAGE_VERSION.getString().equals(Main.getVersion())) {
+        if (!Config.CONFIG_VERSION.getString().equals(Main.getVersion())
+                || !Message.MESSAGE_VERSION.getString().equals(Main.getVersion())) {
             if (Message.NOTICE_VERSION_MISMATCH.getString() != null) {
                 player.sendMessage(Message.NOTICE_VERSION_MISMATCH.getString());
-                player.sendTitle(Message.NOTICE_VERSION_MISMATCH_TITLE.getString(), Message.NOTICE_VERSION_MISMATCH_SUBTITLE.getString(), 0, 2000, 0);
+                player.sendTitle(Message.NOTICE_VERSION_MISMATCH_TITLE.getString(),
+                        Message.NOTICE_VERSION_MISMATCH_SUBTITLE.getString(), 0, 2000, 0);
             } else {
-                player.sendMessage(ColorUtil.t("&cWarning! The current file versions of your config.yml and lang.yml do not correspond to the plugin version! You may have updated the plugin, but did not update the configuration file! This may lead to some unexpected errors! You can delete the two configuration files in the \\plugins\\BlockRacing folder, and then restart the server, or download the latest version of the configuration file on GitHub to replace it!"));
-                player.sendTitle(ColorUtil.t("&cWarning! Version Mismatch!"), ColorUtil.t("&cPlease check the specific information in the chat!"), 20, 0, 0);
+                player.sendMessage(ColorUtil.t(
+                        "&cWarning! The current file versions of your config.yml and lang.yml do not correspond to the plugin version! You may have updated the plugin, but did not update the configuration file! This may lead to some unexpected errors! You can delete the two configuration files in the \\plugins\\BlockRacing folder, and then restart the server, or download the latest version of the configuration file on GitHub to replace it!"));
+                player.sendTitle(ColorUtil.t("&cWarning! Version Mismatch!"),
+                        ColorUtil.t("&cPlease check the specific information in the chat!"), 20, 0, 0);
             }
             Bukkit.getLogger().severe(Message.NOTICE_VERSION_MISMATCH.getString());
         }
@@ -135,11 +147,13 @@ public class Game {
         }
     }
 
-    // Check if the game can start. If not, send the reason to the player; if possible, start the game directly
+    // Check if the game can start. If not, send the reason to the player; if
+    // possible, start the game directly
     public static void checkStartDemands(Player player) {
 
         // Game already start
-        if (getCurrentGameState().equals(GameState.INGAME)) return;
+        if (getCurrentGameState().equals(GameState.INGAME))
+            return;
 
         // Not enough players
         if (!(Bukkit.getOnlinePlayers().size() > 1)) {
@@ -214,8 +228,10 @@ public class Game {
 
         Bukkit.getLogger().info("Red team players: " + redTeamPlayers.toString());
         Bukkit.getLogger().info("Blue team players: " + blueTeamPlayers.toString());
-        if (Setting.getCurrentGameMode().equals(Setting.GameMode.NORMAL)) Bukkit.getLogger().info("Game mode: Normal");
-        else if (Setting.getCurrentGameMode().equals(Setting.GameMode.RACING)) Bukkit.getLogger().info("Game mode: Racing");
+        if (Setting.getCurrentGameMode().equals(Setting.GameMode.NORMAL))
+            Bukkit.getLogger().info("Game mode: Normal");
+        else if (Setting.getCurrentGameMode().equals(Setting.GameMode.RACING))
+            Bukkit.getLogger().info("Game mode: Racing");
         Bukkit.getLogger().info(Setting.isSpeedMode() ? "Speed mode: On" : "Speed mode: Off");
     }
 
@@ -247,8 +263,9 @@ public class Game {
             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, -1, 1, false, false));
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, -1, 1, false, false));
-            }, 1300L);   // 延迟发放 避免冲突
-            player.getInventory().addItem(ItemCreator.of(CompMaterial.IRON_PICKAXE).enchant(Enchantment.SILK_TOUCH, 1).make());
+            }, 1300L); // 延迟发放 避免冲突
+            player.getInventory()
+                    .addItem(ItemCreator.of(CompMaterial.IRON_PICKAXE).enchant(Enchantment.SILK_TOUCH, 1).make());
             player.getInventory().addItem(ItemCreator.of(CompMaterial.GOLDEN_CARROT).amount(64).make());
 
             ItemStack damagedElytra = new ItemStack(Material.ELYTRA);
@@ -334,10 +351,17 @@ public class Game {
         double Y = offset.getY() + 1;
         offset.setY(Y);
         player.teleport(offset);
-        player.sendMessage(Message.NOTICE_TP_SUCCESS.getString().replace("%x%", String.valueOf(offset.getX())).replace("%y%", String.valueOf(offset.getY())).replace("%z%", String.valueOf(offset.getZ())));
+
+        String x = String.format("%.1f", offset.getX());
+        String y = String.format("%.1f", offset.getY());
+        String z = String.format("%.1f", offset.getZ());
+
+        player.sendMessage(Message.NOTICE_TP_SUCCESS.getString().replace("%x%", x).replace("%y%", y).replace("%z%", z));
         if (avoidOcean) {
             Biome biome = player.getLocation().getBlock().getBiome();
-            if (biome == Biome.OCEAN || biome == Biome.DEEP_OCEAN || biome == Biome.DEEP_COLD_OCEAN || biome == Biome.LUKEWARM_OCEAN || biome == Biome.DEEP_FROZEN_OCEAN || biome == Biome.COLD_OCEAN || biome == Biome.WARM_OCEAN || biome == Biome.DEEP_LUKEWARM_OCEAN || biome == Biome.FROZEN_OCEAN) {
+            if (biome == Biome.OCEAN || biome == Biome.DEEP_OCEAN || biome == Biome.DEEP_COLD_OCEAN
+                    || biome == Biome.LUKEWARM_OCEAN || biome == Biome.DEEP_FROZEN_OCEAN || biome == Biome.COLD_OCEAN
+                    || biome == Biome.WARM_OCEAN || biome == Biome.DEEP_LUKEWARM_OCEAN || biome == Biome.FROZEN_OCEAN) {
                 player.sendMessage(Message.NOTICE_TP_OCEAN.getString());
                 randomTeleport(player, true);
             }
@@ -347,7 +371,8 @@ public class Game {
     // Waypoints
     // Return value: true -> waypoint changed, false -> waypoint doesn't change
     public static boolean waypoint(Player player, int index, ClickType clickType) {
-        String team = redTeamPlayers.contains(player.getName()) ? "red" : (blueTeamPlayers.contains(player.getName()) ? "blue" : "");
+        String team = redTeamPlayers.contains(player.getName()) ? "red"
+                : (blueTeamPlayers.contains(player.getName()) ? "blue" : "");
 
         if (!team.isEmpty()) {
             Location waypoint = getWaypoint(team, index);
@@ -365,7 +390,12 @@ public class Game {
                         return true;
                     } else {
                         player.teleport(waypoint);
-                        player.sendMessage(Message.NOTICE_TP_SUCCESS.getString().replace("%x%", String.valueOf(waypoint.getX())).replace("%y%", String.valueOf(waypoint.getY())).replace("%z%", String.valueOf(waypoint.getZ())));
+                        String x = String.format("%.1f", waypoint.getX());
+                        String y = String.format("%.1f", waypoint.getY());
+                        String z = String.format("%.1f", waypoint.getZ());
+
+                        player.sendMessage(Message.NOTICE_TP_SUCCESS.getString().replace("%x%", x).replace("%y%", y)
+                                .replace("%z%", z));
                         return false;
                     }
                 }
@@ -396,7 +426,8 @@ public class Game {
     }
 
     private static void removeWaypoint(Player player, int index) {
-        TextComponent message = new TextComponent(Message.NOTICE_REMOVE_WAYPOINT.getString().replace("%index%", String.valueOf(index)));
+        TextComponent message = new TextComponent(
+                Message.NOTICE_REMOVE_WAYPOINT.getString().replace("%index%", String.valueOf(index)));
         message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/waypoint remove " + index));
         player.spigot().sendMessage(message);
         player.closeInventory();
@@ -411,7 +442,8 @@ public class Game {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 10, 255));
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 10, 255));
             }
-            if (getCurrentGameState().equals(GameState.INGAME)) this.cancel();
+            if (getCurrentGameState().equals(GameState.INGAME))
+                this.cancel();
         }
     }
 
@@ -439,8 +471,10 @@ public class Game {
             }
 
             // Roll check
-            if (!redRollPlayers.isEmpty()) checkRedRoll();
-            if (!blueRollPlayers.isEmpty()) checkBlueRoll();
+            if (!redRollPlayers.isEmpty())
+                checkRedRoll();
+            if (!blueRollPlayers.isEmpty())
+                checkBlueRoll();
 
         }
     }
@@ -451,11 +485,14 @@ public class Game {
         sendAll(Message.NOTICE_RANKING.getString());
         for (Map.Entry<String, Integer> entry : entries) {
             if (redTeamPlayers.contains(entry.getKey())) {
-                sendAll(Message.NOTICE_RANKING_RED.getString().replace("%player%", entry.getKey()).replace("%amount%", entry.getValue().toString()));
+                sendAll(Message.NOTICE_RANKING_RED.getString().replace("%player%", entry.getKey()).replace("%amount%",
+                        entry.getValue().toString()));
             } else if (blueTeamPlayers.contains(entry.getKey())) {
-                sendAll(Message.NOTICE_RANKING_BLUE.getString().replace("%player%", entry.getKey()).replace("%amount%", entry.getValue().toString()));
+                sendAll(Message.NOTICE_RANKING_BLUE.getString().replace("%player%", entry.getKey()).replace("%amount%",
+                        entry.getValue().toString()));
             } else {
-                sendAll(Message.NOTICE_RANKING_OFFLINE.getString().replace("%player%", entry.getKey()).replace("%amount%", entry.getValue().toString()));
+                sendAll(Message.NOTICE_RANKING_OFFLINE.getString().replace("%player%", entry.getKey())
+                        .replace("%amount%", entry.getValue().toString()));
             }
         }
     }
@@ -497,11 +534,16 @@ public class Game {
     }
 
     private static void setLocateScore() {
-        if (Setting.getBlockAmount() <= 20) locateCost = 2;
-        else if (Setting.getBlockAmount() <= 50) locateCost = 3;
-        else if (Setting.getBlockAmount() <= 100) locateCost = 5;
-        else if (Setting.getBlockAmount() <= 200) locateCost = 8;
-        else locateCost = 10;
+        if (Setting.getBlockAmount() <= 20)
+            locateCost = 2;
+        else if (Setting.getBlockAmount() <= 50)
+            locateCost = 3;
+        else if (Setting.getBlockAmount() <= 100)
+            locateCost = 5;
+        else if (Setting.getBlockAmount() <= 200)
+            locateCost = 8;
+        else
+            locateCost = 10;
     }
 
     private static void checkRedInventory() {
@@ -509,7 +551,8 @@ public class Game {
         for (String player : redTeamPlayers) {
             for (String block : getCurrentBlocks("red")) {
                 Player p = Bukkit.getPlayer(player);
-                if (p == null) continue;
+                if (p == null)
+                    continue;
                 if (p.getInventory().contains(Material.valueOf(block))) {
                     redTaskComplete(block, player);
                     return;
@@ -518,8 +561,8 @@ public class Game {
         }
         // Complete from team chest
         for (String block : getCurrentBlocks("red")) {
-            for(Inventory chest : redTeamChest){
-                if(chest.contains(Material.valueOf(block))){
+            for (Inventory chest : redTeamChest) {
+                if (chest.contains(Material.valueOf(block))) {
                     redTaskComplete(block, Message.NOTICE_RED_TEAM_CHEST.getString());
                     return;
                 }
@@ -532,7 +575,8 @@ public class Game {
         for (String player : blueTeamPlayers) {
             for (String block : getCurrentBlocks("blue")) {
                 Player p = Bukkit.getPlayer(player);
-                if (p == null) continue;
+                if (p == null)
+                    continue;
                 if (p.getInventory().contains(Material.valueOf(block))) {
                     blueTaskComplete(block, player);
                     return;
@@ -541,8 +585,8 @@ public class Game {
         }
         // Complete from team chest
         for (String block : getCurrentBlocks("blue")) {
-            for(Inventory chest : blueTeamChest){
-                if(chest.contains(Material.valueOf(block))){
+            for (Inventory chest : blueTeamChest) {
+                if (chest.contains(Material.valueOf(block))) {
                     blueTaskComplete(block, Message.NOTICE_BLUE_TEAM_CHEST.getString());
                     return;
                 }
@@ -551,52 +595,62 @@ public class Game {
     }
 
     public static void redTaskComplete(String block, String player) {
-        sendAll(Message.NOTICE_RED_COLLECT.getString().replace("%block%", TranslationUtil.getValue(block)).replace("%player%", player));
-        Bukkit.getLogger().info(Message.NOTICE_RED_COLLECT.getString().replace("%block%", TranslationUtil.getValue(block)).replace("%player%", player).replaceAll("§.", ""));
+        sendAll(Message.NOTICE_RED_COLLECT.getString().replace("%block%", TranslationUtil.getValue(block))
+                .replace("%player%", player));
+        Bukkit.getLogger().info(Message.NOTICE_RED_COLLECT.getString()
+                .replace("%block%", TranslationUtil.getValue(block)).replace("%player%", player).replaceAll("§.", ""));
         playSound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
         redTeamRemainingBlocks.remove(block);
-        if (Setting.isSpeedMode()) redTeamScore += 3;
-        else redTeamScore += 1;
+        if (Setting.isSpeedMode())
+            redTeamScore += 3;
+        else
+            redTeamScore += 1;
         redTeamCurrentBlockAmount += 1;
         collect(player);
         updateScoreboard();
         // Put items into the opponent's team chest
         if (Setting.getCurrentGameMode().equals(Setting.GameMode.NORMAL)) {
-            for(int i=blueTeamChest.size()-1;i>=0;i--){
+            for (int i = blueTeamChest.size() - 1; i >= 0; i--) {
                 Inventory chest = blueTeamChest.get(i);
                 int emptyPos = chest.firstEmpty();
-                if(emptyPos==-1){
+                if (emptyPos == -1) {
                     continue;
                 }
                 chest.setItem(emptyPos, ItemCreator.of(CompMaterial.valueOf(block)).amount(64).make());
                 return;
             }
-            sendAll(Message.NOTICE_TEAM_CHEST_FULL.getString().replace("%team%", Message.TEAM_BLUE_NAME.getString()).replace("%block%", TranslationUtil.getValue(block)));
+            sendAll(Message.NOTICE_TEAM_CHEST_FULL.getString().replace("%team%", Message.TEAM_BLUE_NAME.getString())
+                    .replace("%block%", TranslationUtil.getValue(block)));
         }
     }
 
     public static void blueTaskComplete(String block, String player) {
-        sendAll(Message.NOTICE_BLUE_COLLECT.getString().replace("%block%", TranslationUtil.getValue(block)).replace("%player%", player));
-        Bukkit.getLogger().info(Message.NOTICE_BLUE_COLLECT.getString().replace("%block%", TranslationUtil.getValue(block)).replace("%player%", player).replaceAll("§.", ""));
+        sendAll(Message.NOTICE_BLUE_COLLECT.getString().replace("%block%", TranslationUtil.getValue(block))
+                .replace("%player%", player));
+        Bukkit.getLogger().info(Message.NOTICE_BLUE_COLLECT.getString()
+                .replace("%block%", TranslationUtil.getValue(block)).replace("%player%", player).replaceAll("§.", ""));
         playSound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
         blueTeamRemainingBlocks.remove(block);
-        if (Setting.isSpeedMode()) blueTeamScore += 3;
-        else blueTeamScore += 1;
+        if (Setting.isSpeedMode())
+            blueTeamScore += 3;
+        else
+            blueTeamScore += 1;
         blueTeamCurrentBlockAmount += 1;
         collect(player);
         updateScoreboard();
         // Put items into the opponent's team chest
         if (Setting.getCurrentGameMode().equals(Setting.GameMode.NORMAL)) {
-            for(int i=redTeamChest.size()-1;i>=0;i--){
+            for (int i = redTeamChest.size() - 1; i >= 0; i--) {
                 Inventory chest = redTeamChest.get(i);
                 int emptyPos = chest.firstEmpty();
-                if(emptyPos==-1){
+                if (emptyPos == -1) {
                     continue;
                 }
                 chest.setItem(emptyPos, ItemCreator.of(CompMaterial.valueOf(block)).amount(64).make());
                 return;
             }
-            sendAll(Message.NOTICE_TEAM_CHEST_FULL.getString().replace("%team%", Message.TEAM_RED_NAME.getString()).replace("%block%", TranslationUtil.getValue(block)));
+            sendAll(Message.NOTICE_TEAM_CHEST_FULL.getString().replace("%team%", Message.TEAM_RED_NAME.getString())
+                    .replace("%block%", TranslationUtil.getValue(block)));
         }
     }
 
