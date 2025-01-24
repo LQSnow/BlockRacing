@@ -221,8 +221,8 @@ public class GameMenu extends Menu {
                                 if(block.isEmpty()){
                                     switch(block.getWorld().getEnvironment()){
                                         case NORMAL:icon = CompMaterial.GRASS_BLOCK;break;
-                                        case NETHER:icon = CompMaterial.GRASS_BLOCK;break;
-                                        case THE_END:icon = CompMaterial.GRASS_BLOCK;break;
+                                        case NETHER:icon = CompMaterial.NETHERRACK;break;
+                                        case THE_END:icon = CompMaterial.END_STONE;break;
                                         default:icon = CompMaterial.FILLED_MAP;break;
                                     }
                                 }
