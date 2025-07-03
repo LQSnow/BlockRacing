@@ -1,6 +1,6 @@
 [English](./docs/en/README-en.md) | [简体中文](./README.md)
 
-[Translation Tutorial](./docs/en/TranslationTutorial-en.md) | [翻译教程](./TranslationTutorial)
+[Translation Tutorial](./docs/en/TranslationTutorial-en.md) | [翻译教程](./TranslationTutorial.md)
 
 # 方块竞速BlockRacing
 
