@@ -1,6 +1,6 @@
-[English](../en/README-en.md) | [简体中文](../zh/README-zh.md)
+[English](../en/README-en.md) | [简体中文](../../README.md)
 
-[Translation Tutorial](../en/TranslationTutorial-en.md) | [翻译教程](../zh/TranslationTutorial-zh.md)
+[Translation Tutorial](../en/TranslationTutorial-en.md) | [翻译教程](../../TranslationTutorial)
 
 # BlockRacing
 
@@ -187,87 +187,9 @@ End: When game progress exceeds the percentage of non-End dimension blocks in to
 `/debug setteam <team> <add|remove> <player>`
 - Add or remove a specified player from the specified team.
 
-# Changelog
-
-### 2025.1.23 - BlockRacing 3.3
-
-**Thanks to [@FHSHKL](https://github.com/FHSHKL): https://github.com/LQSnow/BlockRacing/pull/8**
-- Updated game version to 1.21.4
-- Added team chest count settings
-- Added team waypoint count settings
-- Added biome descriptions for waypoints
-- Changed waypoint icons to the block beneath the player
-- When the opposing team obtains blocks, they are prioritized into the chest with the highest index
-
-### 2024.10.4 - BlockRacing 3.2
-
-**Thanks to [@xiaojiuwo233](https://github.com/xiaojiuwo233): https://github.com/LQSnow/BlockRacing/pull/6**
-- Updated game version to 1.21.1
-- Added new 1.21 blocks (for balance considerations, copper types only added to slightly weathered to avoid the need to find ruins and to ensure enough time to complete during the race)
-- Added 1.21 locate and language files (fully extracted and usable)
-- Moved pitcher plant and torchflower to difficult blocks
-- Changed food in speed mode to golden carrots and added Speed 2 and Resistance 2 effects
-- Added initial tools: stone pickaxe, stone axe, stone shovel
-- New game start initialization: removed drops and reset world weather
-
-### 2024.4.13 - BlockRacing 3.1
-
-- Fixed the bug that scores would not be deducted when using commands for random teleportation
-- The block collection ranking will be displayed at the end of the game
-- Added version checking of language files and configuration files
-- Added the block command. If the block name on the scoreboard is not fully displayed, you can use this command to query the complete block name.
-- Removed GRASS in EasyBlocks
-- Updated game version to 1.20.4
-
-### 2024.1.30 - BlockRacing 3.0
-
-- Refactored all code and execution logic.
-- Added language and configuration files.
-- Modified the execution method of the locate command, split into two commands.
-- The server will automatically read the configuration file and load the configuration from the previous game on startup.
-- Different difficulties of blocks will have different generation weights during different stages of the game, aiding game progression.
-- Rolling blocks now require approval from all **online** players in the team.
-- Preparation before the game can now be canceled.
-- Players' messages now have team prefixes.
-- Deleting waypoints now requires confirmation in the chat.
-
-### 2023.9.28 - BlockRacing 2.2.1
-
-- Fixed a bug where urgency effect level was incorrect in extreme speed mode.
-- Fixed a bug with incorrect world teleportation.
-- Added 1.20 biomes to the /locate command.
-- Initial RepairCost for Elytra in extreme speed mode set to 15.
-- Corrected some item descriptions.
-- Added more functionalities to the /menu command.
-- Optimized some code and execution logic.
-
-### 2023.9.25 - BlockRacing 2.2
-
-- Changed the number of block rotations to 3 times and no longer limited to easy blocks only ([@BlockyDeer](https://github.com/BlockyDeer)).
-- Added extreme speed mode with extra resources and effects at the start ([@xiaojiuwo233](https://github.com/xiaojiuwo233)).
-- Replaced the preparation menu GUI with a new one.
-- Restricted world borders before the game starts to prevent early exploration.
-- Added the /menu command to open various menus.
-- Fixed a bug where block quantity couldn't be modified properly.
-- Fixed a bug where exiting and re-entering the game after selecting a team would be considered as a spectator.
-- Fixed a bug where potion effects were lost after death and respawn.
-- Optimized some code and execution logic.
-- Updated game version to 1.20.2.
-
-### 2023.9.18 - BlockRacing 2.1
-
-- Players entering the game will receive infinite night vision effect.
-- All team players must apply for block rotation before the team's blocks are replaced.
-- Added Debug command (requires OP permission).
-- Fixed a bug where players could freely teleport randomly after rejoining the game.
-- Fixed a bug where End rods showed as Null.
-- Fixed some display errors.
-- Optimized some code and execution logic.
-- Updated game version to 1.19.4.
-
 # Feedback
 
-Game feedback: [https://docs.qq.com/form/page/DU0Fvc0xtUmZWRUJN](https://docs.qq.com/form/page/DU0Fvc0xtUmZWRUJN)
+Game feedback: lq_snow@outlook.com
 
 Contact:
 

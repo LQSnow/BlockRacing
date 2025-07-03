@@ -1,6 +1,6 @@
-[English](./docs/en/README-en.md) | [简体中文](./docs/zh/README-zh.md)
+[English](./docs/en/README-en.md) | [简体中文](./README.md)
 
-[Translation Tutorial](./docs/en/TranslationTutorial-en.md) | [翻译教程](./docs/zh/TranslationTutorial-zh.md)
+[Translation Tutorial](./docs/en/TranslationTutorial-en.md) | [翻译教程](./TranslationTutorial)
 
 # 方块竞速BlockRacing
 
@@ -190,6 +190,13 @@ en_us.json 翻译文件
 
 # 更新日志
 
+### 2025.5.8 - BlockRacing 3.4
+**感谢[@xiaojiuwo233](https://github.com/xiaojiuwo233): https://github.com/LQSnow/BlockRacing/pull/13**
+- 更新游戏版本至1.21.5
+- 添加 1.21.5 新方块
+- 移除 沉重核心，火把花，瓶子草
+- 移动 磁石 至 简单方块 （合成配方 下届合金 -> 铁锭）
+
 ### 2025.1.23 - BlockRacing 3.3
 **感谢[@FHSHKL](https://github.com/FHSHKL): https://github.com/LQSnow/BlockRacing/pull/8**
 - 更新游戏版本至1.21.4
@@ -266,7 +273,7 @@ en_us.json 翻译文件
 
 # 意见反馈
 
-游戏反馈：https://docs.qq.com/form/page/DU0Fvc0xtUmZWRUJN
+游戏反馈：lq_snow@outlook.com
 
 联系方式：
 
