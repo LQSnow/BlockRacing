@@ -39,15 +39,19 @@ public class Main extends SimplePlugin {
         getPluginCommand("tp").setExecutor(new Teleport());
         getPluginCommand("block").setExecutor(new GetBlock());
         getPluginCommand("block").setTabCompleter(new GetBlock());
+        getPluginCommand("randomteam").setExecutor(new RandomTeam());
 
         // Save resources
-        this.saveResource("EasyBlocks.txt", false);
-        this.saveResource("MediumBlocks.txt", false);
-        this.saveResource("HardBlocks.txt", false);
-        this.saveResource("DyedBlocks.txt", false);
-        this.saveResource("EndBlocks.txt", false);
-        this.saveResource("zh_cn.json", false);
-        this.saveResource("en_us.json", false);
+        saveIfAbsent(
+                "EasyBlocks.txt",
+                "MediumBlocks.txt",
+                "HardBlocks.txt",
+                "DyedBlocks.txt",
+                "EndBlocks.txt",
+                "zh_cn.json",
+                "en_us.json"
+        );
+
 
         // Load managers
         Config.saveDefaultConfig();
@@ -88,5 +92,17 @@ public class Main extends SimplePlugin {
     protected void onPluginStop() {
         super.onPluginStop();
         Config.saveConfig();
+    }
+
+    private void saveIfAbsent(String... paths) {
+        if (!getDataFolder().exists()) {
+            getDataFolder().mkdirs();
+        }
+        for (String path : paths) {
+            java.io.File out = new java.io.File(getDataFolder(), path);
+            if (!out.exists()) {
+                saveResource(path, false); // 只在缺失时复制，避免 WARNING
+            }
+        }
     }
 }

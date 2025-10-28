@@ -200,6 +200,7 @@ notice:
   restart: "&b%player%申请重启！服务器中所有玩家申请即可重启游戏！使用/restartgame命令即可申请！"
   restart-cancel: "&c%player%已取消重启申请！"
   game-not-start: "&c游戏未开始！"
+  game-has-start: "&c游戏已开始！"
   tp-player-success: "&a[队伍传送] &f已成功传送至 %player%"
   spectator-tp-player-success: "&e[旁观者传送] &f已成功传送至 %player%"
   player-not-exist: "&c玩家不存在！"
@@ -211,6 +212,7 @@ notice:
   version-mismatch: "&c警告！当前您的config.yml和lang.yml的文件版本，与插件的版本不对应！您可能更新了插件，但没有更新配置文件！这可能会导致一些意料之外的错误！您可以将\\plugins\\BlockRacing文件夹中的两个配置文件删除，然后重启服务器，亦或是到github上下载最新版本的配置文件替换！"
   version-mismatch-title: "&c警告！版本不对应！"
   version-mismatch-subtitle: "&c请查看聊天框的具体信息！"
+  team-shuffle: "&a随机组队已完成！"
 
 # 如果你不知道这是什么，不要动它
 lang-version: 3.4

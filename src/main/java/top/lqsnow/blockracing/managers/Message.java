@@ -161,6 +161,7 @@ public enum Message {
     NOTICE_RESTART("notice.restart"),
     NOTICE_RESTART_CANCEL("notice.restart-cancel"),
     NOTICE_GAME_NOT_START("notice.game-not-start"),
+    NOTICE_GAME_HAS_START("notice.game-has-start"),
     NOTICE_TP_PLAYER_SUCCESS("notice.tp-player-success"),
     NOTICE_SPECTATOR_TP_PLAYER_SUCCESS("notice.spectator-tp-player-success"),
     NOTICE_PLAYER_NOT_EXIST("notice.player-not-exist"),
@@ -172,6 +173,7 @@ public enum Message {
     NOTICE_VERSION_MISMATCH("notice.version-mismatch"),
     NOTICE_VERSION_MISMATCH_TITLE("notice.version-mismatch-title"),
     NOTICE_VERSION_MISMATCH_SUBTITLE("notice.version-mismatch-subtitle"),
+    NOTICE_TEAM_SHUFFLE("notice.team-shuffle"),
 
     // other
     MESSAGE_LANG("lang"),

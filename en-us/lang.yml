@@ -204,6 +204,7 @@ notice:
   restart: "&b%player% requested a restart! The game will restart if all players on the server agree! Use /restartgame to apply!"
   restart-cancel: "&c%player%'s restart request canceled!"
   game-not-start: "&cThe game has not started!"
+  game-has-start: "&cThe game has started!"
   tp-player-success: "&a[Team Teleport] &fSuccessfully teleported to %player%"
   spectator-tp-player-success: "&e[Spectator Teleport] &fSuccessfully teleported to %player%"
   player-not-exist: "&cPlayer does not exist!"
@@ -215,6 +216,7 @@ notice:
   version-mismatch: "&cWarning! The current file versions of your config.yml and lang.yml do not correspond to the plugin version! You may have updated the plugin, but did not update the configuration file! This may lead to some unexpected errors! You can delete the two configuration files in the \\plugins\\BlockRacing folder, and then restart the server, or download the latest version of the configuration file on GitHub to replace it!"
   version-mismatch-title: "&cWarning! Version Mismatch!"
   version-mismatch-subtitle: "&cPlease check the specific information in the chat!"
+  team-shuffle: "&aRandom team shuffle complete!"
 
 # If you don't know what this is, don't touch it
 lang-version: 3.4
