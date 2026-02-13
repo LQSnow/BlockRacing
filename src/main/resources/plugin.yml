@@ -1,7 +1,7 @@
 name: BlockRacing
-version: 3.4
+version: 3.5
 main: top.lqsnow.blockracing.Main
-api-version: 1.21
+api-version: 1.21.11
 authors: [ LQ_Snow, xiaojiuwo233, FHSHKL ]
 description: The first team to collect the required blocks wins
 commands:

@@ -1,8 +1,21 @@
 package top.lqsnow.blockracing.managers;
 
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Difficulty;
+import org.bukkit.GameMode;
+import org.bukkit.GameRules;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
@@ -19,19 +32,28 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.mineacademy.fo.menu.model.ItemCreator;
 import org.mineacademy.fo.remain.CompMaterial;
+
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import top.lqsnow.blockracing.Main;
-import top.lqsnow.blockracing.utils.ColorUtil;
-import top.lqsnow.blockracing.utils.TranslationUtil;
-
-import java.util.*;
-
 import static top.lqsnow.blockracing.listeners.BasicListener.editAmountPlayer;
-import static top.lqsnow.blockracing.managers.Block.*;
-import static top.lqsnow.blockracing.managers.Gui.*;
+import static top.lqsnow.blockracing.managers.Block.blocks;
+import static top.lqsnow.blockracing.managers.Block.blueTeamBlocks;
+import static top.lqsnow.blockracing.managers.Block.blueTeamRemainingBlocks;
+import static top.lqsnow.blockracing.managers.Block.checkBlock;
+import static top.lqsnow.blockracing.managers.Block.redTeamBlocks;
+import static top.lqsnow.blockracing.managers.Block.redTeamRemainingBlocks;
+import static top.lqsnow.blockracing.managers.Block.setupBlocks;
+import static top.lqsnow.blockracing.managers.Gui.closeAllPlayersMenu;
 import static top.lqsnow.blockracing.managers.Scoreboard.updateScoreboard;
-import static top.lqsnow.blockracing.managers.Team.*;
+import static top.lqsnow.blockracing.managers.Team.blueTeamPlayers;
+import static top.lqsnow.blockracing.managers.Team.redTeamPlayers;
+import top.lqsnow.blockracing.utils.ColorUtil;
 import static top.lqsnow.blockracing.utils.ColorUtil.t;
-import static top.lqsnow.blockracing.utils.CommandUtil.*;
+import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
+import static top.lqsnow.blockracing.utils.CommandUtil.sendBlue;
+import static top.lqsnow.blockracing.utils.CommandUtil.sendRed;
+import top.lqsnow.blockracing.utils.TranslationUtil;
 
 public class Game {
     public enum GameState {
@@ -204,6 +226,7 @@ public class Game {
         world.setStorm(false);
         world.setThundering(false);
         world.getEntities().stream().filter(e -> e instanceof Item).forEach(Entity::remove);
+        world.setGameRule(GameRules.LOCATOR_BAR, false);
 
         // World border
         world.getWorldBorder().setCenter(world.getSpawnLocation());

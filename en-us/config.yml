@@ -37,4 +37,4 @@ max-team-chest-num: 8
 max-team-waypoint-num: 8
 
 # If you don't know what this is, don't touch it
-config-version: 3.4
+config-version: 3.5

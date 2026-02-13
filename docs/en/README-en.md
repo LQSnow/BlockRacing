@@ -6,7 +6,7 @@
 
 This is a multiplayer racing mini-game in Minecraft, divided into two teams, where the team that collects the specified blocks first wins.
 
-Version: Java 1.21.5
+Version: Java 1.21.11
 
 # Features
 
