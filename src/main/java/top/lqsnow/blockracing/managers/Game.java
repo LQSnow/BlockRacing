@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
@@ -87,6 +89,7 @@ public class Game {
     public static ArrayList<String> locateCommandPermission = new ArrayList<>();
     public static int locateCost;
     public static Map<String, Integer> collectAmount = new HashMap<>();
+    private static final Deque<Location> randomTpPool = new ArrayDeque<>();
 
     public static void initChest() {
         int teamChestNum = Setting.getMaxTeamChestNum();
@@ -368,8 +371,9 @@ public class Game {
     public static void randomTeleport(Player player, boolean avoidOcean) {
         Random random = new Random();
         World playerWorld = Bukkit.getWorlds().get(0);
-        double randX = random.nextInt(20000) - 10000;
-        double randZ = random.nextInt(20000) - 10000;
+        Location candidate = pollRandomTeleportCandidate();
+        double randX = candidate != null ? candidate.getX() : (random.nextInt(20000) - 10000);
+        double randZ = candidate != null ? candidate.getZ() : (random.nextInt(20000) - 10000);
         Location offset = playerWorld.getHighestBlockAt(new Location(playerWorld, randX, 0, randZ)).getLocation();
         double Y = offset.getY() + 1;
         offset.setY(Y);
@@ -389,6 +393,24 @@ public class Game {
                 randomTeleport(player, true);
             }
         }
+    }
+
+    public static synchronized void addRandomTeleportCandidate(Location location) {
+        if (location != null) {
+            randomTpPool.addLast(location);
+        }
+    }
+
+    public static synchronized Location pollRandomTeleportCandidate() {
+        return randomTpPool.pollFirst();
+    }
+
+    public static synchronized int getRandomTeleportPoolSize() {
+        return randomTpPool.size();
+    }
+
+    public static synchronized List<Location> getRandomTeleportPoolSnapshot() {
+        return List.copyOf(randomTpPool);
     }
 
     // Waypoints
