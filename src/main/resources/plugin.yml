@@ -30,3 +30,6 @@ commands:
   block:
     usage: "/block <team> <number>"
     description: "Query block."
+  randomteam:
+    usage: "/randomteam"
+    description: "Random team."
