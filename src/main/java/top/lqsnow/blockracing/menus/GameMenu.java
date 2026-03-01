@@ -1,7 +1,11 @@
 package top.lqsnow.blockracing.menus;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -14,18 +18,24 @@ import org.mineacademy.fo.menu.model.ItemCreator;
 import org.mineacademy.fo.remain.CompMaterial;
 
 import top.lqsnow.blockracing.managers.Game;
+import static top.lqsnow.blockracing.managers.Game.blueTeamScore;
+import static top.lqsnow.blockracing.managers.Game.blueWaypoint;
+import static top.lqsnow.blockracing.managers.Game.blueWaypointIconCache;
+import static top.lqsnow.blockracing.managers.Game.freeRandomTPList;
+import static top.lqsnow.blockracing.managers.Game.getCoords;
+import static top.lqsnow.blockracing.managers.Game.locateCost;
+import static top.lqsnow.blockracing.managers.Game.randomTeleport;
+import static top.lqsnow.blockracing.managers.Game.redTeamScore;
+import static top.lqsnow.blockracing.managers.Game.redWaypoint;
+import static top.lqsnow.blockracing.managers.Game.redWaypointIconCache;
+import static top.lqsnow.blockracing.managers.Game.waypoint;
+import static top.lqsnow.blockracing.managers.Gui.openTeamChest;
+import static top.lqsnow.blockracing.managers.Gui.updateMenu;
 import top.lqsnow.blockracing.managers.Message;
 import top.lqsnow.blockracing.managers.Scoreboard;
 import top.lqsnow.blockracing.managers.Setting;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
-import static top.lqsnow.blockracing.managers.Game.*;
-import static top.lqsnow.blockracing.managers.Gui.*;
-import static top.lqsnow.blockracing.managers.Team.*;
+import static top.lqsnow.blockracing.managers.Team.blueTeamPlayers;
+import static top.lqsnow.blockracing.managers.Team.redTeamPlayers;
 import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
 
 public class GameMenu extends Menu {
@@ -231,9 +241,9 @@ public class GameMenu extends Menu {
                             
                             ItemStack itemStack;
                             try {
-                                itemStack = ItemCreator.of(icon, Message.MENU_WAYPOINT_FILLED.getString() + ith, replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), wayPoint.getWorld().getName(), getCoords(wayPoint), wayPoint.getBlock().getBiome().toString())).make();
+                                itemStack = ItemCreator.of(icon, Message.MENU_WAYPOINT_FILLED.getString() + ith, replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), wayPoint.getWorld().getName(), getCoords(wayPoint), wayPoint.getBlock().getBiome().getKey().getKey())).make();
                             } catch (Exception e) {
-                                itemStack = ItemCreator.of(CompMaterial.FILLED_MAP, Message.MENU_WAYPOINT_FILLED.getString() + ith, replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), wayPoint.getWorld().getName(), getCoords(wayPoint), wayPoint.getBlock().getBiome().toString())).make();
+                                itemStack = ItemCreator.of(CompMaterial.FILLED_MAP, Message.MENU_WAYPOINT_FILLED.getString() + ith, replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), wayPoint.getWorld().getName(), getCoords(wayPoint), wayPoint.getBlock().getBiome().getKey().getKey())).make();
                             }
                             return itemStack;
                         } else {
