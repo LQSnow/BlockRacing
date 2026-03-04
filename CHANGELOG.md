@@ -4,7 +4,7 @@
 - 增加随机队伍命令的注册
 - 游戏开始时禁用新版本的定位栏
 - 增加随机传送池机制
-- 添加第三方控制 API，详细请见可选附属插件（未使用插件时将使用默认传送机制）
+- 添加第三方控制 API，详细请见可选[附属插件](https://github.com/xiaojiuwo233/BlockRacingChunky)（未使用插件时将使用默认传送机制）
 
 ### 2025.5.8 - BlockRacing 3.4
 **感谢[@xiaojiuwo233](https://github.com/xiaojiuwo233): https://github.com/LQSnow/BlockRacing/pull/13**
