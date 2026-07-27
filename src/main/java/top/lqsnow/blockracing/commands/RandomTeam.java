@@ -90,7 +90,8 @@ public class RandomTeam implements CommandExecutor {
         teams.get(0).forEach(member -> Team.joinTeam(member, Team.redTeam, false));
         teams.get(1).forEach(member -> Team.joinTeam(member, Team.blueTeam, false));
 
-        CommandUtil.sendAll(Message.NOTICE_TEAM_SHUFFLE.getString());
+        CommandUtil.sendAll(Message.NOTICE_TEAM_SHUFFLE_TRIGGERED.getString()
+                .replace("%player%", player.getName()));
         Gui.updateMenu(new PreGameMenu());
         Scoreboard.updateScoreboard();
     }
