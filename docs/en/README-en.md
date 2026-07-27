@@ -19,6 +19,8 @@ Back up `plugins/BlockRacing` before upgrading, then choose one method:
 1. No customizations: delete the old `config.yml`, `lang.yml`, five block pools, and two translation JSON files, then restart the server to generate current files.
 2. Customized files: manually merge your changes into the current default files. Do not change only the version number at the end of a file.
 
+See the current default configuration and resource files in the [GitHub `src/main/resources` directory](https://github.com/LQSnow/BlockRacing/tree/26.2/src/main/resources).
+
 # Features
 
 1. Team Chests: Each team has 3 team chests, and the items inside are shared among team members.

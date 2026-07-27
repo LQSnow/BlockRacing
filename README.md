@@ -19,6 +19,8 @@
 1. 没有自定义配置：删除旧的 `config.yml`、`lang.yml`、五个方块库和两个翻译 JSON，重启服务器自动生成当前版本文件。
 2. 有自定义配置：将自定义内容手动合并到当前版本的默认文件中，不要只修改文件末尾的版本号。
 
+当前版本的默认配置和资源文件可在 [GitHub `src/main/resources` 目录](https://github.com/LQSnow/BlockRacing/tree/26.2/src/main/resources) 查看。
+
 # 特色功能
 
 1. 队伍箱子：每个队伍都有3个队伍箱子，箱子里的物品对同队伍成员共享。
