@@ -3,6 +3,7 @@ package top.lqsnow.blockracing.menus;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import top.lqsnow.blockracing.commands.RandomTeam;
 import top.lqsnow.blockracing.managers.Game;
 import top.lqsnow.blockracing.managers.Message;
 import top.lqsnow.blockracing.managers.Setting;
@@ -100,6 +101,13 @@ public final class PreGameMenu extends MenuView {
                         .lore(Message.MENU_START_LORE.getStringList())
                         .build(),
                 (player, click) -> Game.checkStartDemands(player)
+        ));
+        setButton(41, MenuButton.of(
+                () -> ItemBuilder.of(Material.PLAYER_HEAD)
+                        .name(Message.MENU_RANDOM_TEAM.getString())
+                        .lore(Message.MENU_RANDOM_TEAM_LORE.getStringList())
+                        .build(),
+                (player, click) -> RandomTeam.requestConfirmation(player)
         ));
     }
 

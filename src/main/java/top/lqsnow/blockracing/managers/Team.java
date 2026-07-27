@@ -4,7 +4,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -71,6 +71,13 @@ public class Team {
 
     public static boolean isPlayerInBlueTeam(Player player) {
         return blueTeamPlayers.contains(player.getName());
+    }
+
+    public static void clearTeams() {
+        new HashSet<>(redTeam.getEntries()).forEach(redTeam::removeEntry);
+        new HashSet<>(blueTeam.getEntries()).forEach(blueTeam::removeEntry);
+        redTeamPlayers.clear();
+        blueTeamPlayers.clear();
     }
 
 }

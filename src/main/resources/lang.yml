@@ -109,6 +109,10 @@ menu:
     block-setting: "&a方块设置"
     select-mode: "&a模式选择"
     ready-and-start: "&a准备和开始游戏"
+    random-team: "&d随机组队"
+    random-team-lore:
+      - "&b将当前所有在线玩家随机平均分配到红蓝两队"
+      - "&e点击后需要在聊天框中再次确认"
   game-menu:
     title: "&0主菜单"
     team-chest: "&a队伍箱子"
@@ -212,6 +216,10 @@ notice:
   version-mismatch-title: "&c警告！版本不对应！"
   version-mismatch-subtitle: "&c请查看聊天框的具体信息！"
   team-shuffle: "&a随机组队已完成！"
+  team-shuffle-confirm: "&e确定要将当前所有在线玩家重新随机分队吗？"
+  team-shuffle-confirm-button: "&a&l[点击确认随机组队]"
+  team-shuffle-confirm-hover: "&7确认后将清除当前队伍分配并重新平均分队"
+  team-shuffle-confirm-expired: "&c随机组队确认已失效，请重新发起！"
 
 # 如果你不知道这是什么，不要动它
 lang-version: 26.2.1
