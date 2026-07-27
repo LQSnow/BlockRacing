@@ -1,5 +1,7 @@
 package top.lqsnow.blockracing.commands;
 
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import top.lqsnow.blockracing.Main;
 import top.lqsnow.blockracing.managers.Message;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static top.lqsnow.blockracing.managers.Game.locateCommandPermission;
@@ -41,6 +42,15 @@ public class LocateBiome implements CommandExecutor, TabCompleter {
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        return Arrays.asList("plains", "sunflower_plains", "snowy_plains", "ice_spikes", "desert", "swamp", "mangrove_swamp", "forest", "flower_forest", "birch_forest", "dark_forest", "old_growth_birch_forest", "old_growth_pine_taiga", "old_growth_spruce_taiga", "taiga", "snowy_taiga", "savanna", "savanna_plateau", "windswept_hills", "windswept_gravelly_hills", "windswept_forest", "windswept_savanna", "jungle", "sparse_jungle", "bamboo_jungle", "badlands", "eroded_badlands", "wooded_badlands", "meadow", "grove", "snowy_slopes", "frozen_peaks", "jagged_peaks", "stony_peaks", "river", "frozen_river", "beach", "snowy_beach", "stony_shore", "warm_ocean", "lukewarm_ocean", "deep_lukewarm_ocean", "ocean", "deep_ocean", "cold_ocean", "deep_cold_ocean", "frozen_ocean", "deep_frozen_ocean", "mushroom_fields", "dripstone_caves", "lush_caves", "deep_dark", "nether_wastes", "warped_forest", "crimson_forest", "soul_sand_valley", "basalt_deltas", "the_end", "end_highlands", "end_midlands", "small_end_islands", "end_barrens", "cherry_grove", "pale_garden");
+        if (strings.length != 1) {
+            return List.of();
+        }
+        String prefix = strings[0].toLowerCase();
+        return RegistryAccess.registryAccess().getRegistry(RegistryKey.BIOME).keyStream()
+                .filter(key -> key.getNamespace().equals("minecraft"))
+                .map(key -> key.getKey())
+                .filter(key -> key.startsWith(prefix))
+                .sorted()
+                .toList();
     }
 }

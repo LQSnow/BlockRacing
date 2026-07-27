@@ -1,8 +1,10 @@
 package top.lqsnow.blockracing.managers;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Team;
@@ -13,11 +15,12 @@ import static top.lqsnow.blockracing.managers.Block.*;
 
 
 public class Scoreboard {
+    private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
     public static org.bukkit.scoreboard.Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
     public static Objective sidebar;
 
     public static void createScoreboard() {
-        sidebar = scoreboard.registerNewObjective("sidebar", "dummy");
+        sidebar = scoreboard.registerNewObjective("sidebar", Criteria.DUMMY, Component.empty());
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
         for (int i = 1; i <= 15; i++) {
             Team team = scoreboard.registerNewTeam("SLOT_" + i);
@@ -115,21 +118,14 @@ public class Scoreboard {
 
 
     /**
-     * https://github.com/Andy-K-Sparklight/PluginDiaryCode/blob/master/RarityCommons/src/main/java/rarityeg/commons/ScoreHelper.java
-     * Help build up a scoreboard.
-     * Considering RarityCommons isn't designed for Paper only,
-     * we won't make migrations before Bukkit and Spigot support Kyori Poweblue Adventure.
-     *
-     * @author crisdev333
-     * @author RarityEG
+     * Generates an invisible, unique legacy entry for each scoreboard line.
      */
     private static String genEntry(int slot) {
-        return ChatColor.values()[slot].toString();
+        return "\u00A7" + Integer.toHexString(slot);
     }
 
     private static void setTitle(String title) {
-        title = ChatColor.translateAlternateColorCodes('&', title);
-        sidebar.setDisplayName(title.length() > 32 ? title.substring(0, 32) : title);
+        sidebar.displayName(LEGACY_SERIALIZER.deserialize(title));
     }
 
     private static void setSlot(int slot, String text) {
@@ -139,36 +135,11 @@ public class Scoreboard {
             sidebar.getScore(entry).setScore(slot);
         }
 
-        text = ChatColor.translateAlternateColorCodes('&', text);
-        String pre = getFirstSplit(text);
-        String suf = getFirstSplit(ChatColor.getLastColors(pre) + getSecondSplit(text));
-
-        // Edited
-        if (pre.endsWith("§")) {
-            pre = pre.substring(0, pre.length() - 1);
-            if (suf.startsWith("§")) {
-                suf = suf.substring(0, 2) + "§" + suf.substring(2);
-            } else {
-                suf = "§" + suf;
-            }
-        }
-
         if (team == null) {
             return;
         }
-        team.setPrefix(pre);
-        team.setSuffix(suf);
-    }
-
-    private static String getFirstSplit(String s) {
-        return s.length() > 16 ? s.substring(0, 16) : s;
-    }
-
-    private static String getSecondSplit(String s) {
-        if (s.length() > 32) {
-            s = s.substring(0, 32);
-        }
-        return s.length() > 16 ? s.substring(16) : "";
+        team.prefix(LEGACY_SERIALIZER.deserialize(text));
+        team.suffix(Component.empty());
     }
 
 }

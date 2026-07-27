@@ -1,9 +1,8 @@
 package top.lqsnow.blockracing;
 
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
-import org.bukkit.GameRule;
+import org.bukkit.GameRules;
 import org.bukkit.World;
 import org.mineacademy.fo.plugin.SimplePlugin;
 import top.lqsnow.blockracing.commands.*;
@@ -15,8 +14,11 @@ import static org.bukkit.Bukkit.getPluginManager;
 
 
 public class Main extends SimplePlugin {
-    @Getter
     private static Main instance;
+
+    public static Main getInstance() {
+        return instance;
+    }
 
     @Override
     protected void onPluginStart() {
@@ -71,7 +73,7 @@ public class Main extends SimplePlugin {
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             World world = getPrimaryWorld();
             world.setDifficulty(Difficulty.PEACEFUL);
-            Bukkit.getWorlds().forEach(loadedWorld -> loadedWorld.setGameRule(GameRule.KEEP_INVENTORY, true));
+            Bukkit.getWorlds().forEach(loadedWorld -> loadedWorld.setGameRule(GameRules.KEEP_INVENTORY, true));
             world.setTime(1000);
         }, 5);
 

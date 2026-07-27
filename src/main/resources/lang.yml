@@ -129,7 +129,6 @@ menu:
       - "&b花费2积分在&l主世界&r&b随机传送，首次免费"
   team-chest-select-menu:
     title: "&0队伍箱子选择"
-    chest: "&g队伍箱子"
     chest: "&b队伍箱子"
   team-chest:
     red-chest: "&c红队队伍箱子"
@@ -215,4 +214,4 @@ notice:
   team-shuffle: "&a随机组队已完成！"
 
 # 如果你不知道这是什么，不要动它
-lang-version: 3.5
+lang-version: 3.6

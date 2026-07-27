@@ -1,28 +1,15 @@
 package top.lqsnow.blockracing.managers;
 
-import lombok.Getter;
-import lombok.Setter;
-
 public class Setting {
-    @Getter
     private static boolean enableMediumBlock;
-    @Getter
     private static boolean enableHardBlock;
-    @Getter
     private static boolean enableDyedBlock;
-    @Getter
     private static boolean enableEndBlock;
-    @Getter
     private static int blockAmount;
-    @Getter
     private static int maxTeamChestNum;
-    @Getter
     private static  int maxTeamWaypointNum;
-    @Getter
     private static boolean speedMode;
     public enum GameMode {NORMAL, RACING}
-    @Getter
-    @Setter
     private static GameMode currentGameMode = GameMode.NORMAL;
 
     public static void getSettings(){
@@ -94,5 +81,46 @@ public class Setting {
 
     public static void toggleSpeedMode() {
         setSpeedMode(!isSpeedMode());
+    }
+
+    public static boolean isEnableMediumBlock() {
+        return enableMediumBlock;
+    }
+
+    public static boolean isEnableHardBlock() {
+        return enableHardBlock;
+    }
+
+    public static boolean isEnableDyedBlock() {
+        return enableDyedBlock;
+    }
+
+    public static boolean isEnableEndBlock() {
+        return enableEndBlock;
+    }
+
+    public static int getBlockAmount() {
+        return blockAmount;
+    }
+
+    public static int getMaxTeamChestNum() {
+        return maxTeamChestNum;
+    }
+
+    public static int getMaxTeamWaypointNum() {
+        return maxTeamWaypointNum;
+    }
+
+    public static boolean isSpeedMode() {
+        return speedMode;
+    }
+
+    public static GameMode getCurrentGameMode() {
+        return currentGameMode;
+    }
+
+    public static void setCurrentGameMode(GameMode currentGameMode) {
+        Setting.currentGameMode = currentGameMode;
+        Config.GAME_MODE.setString(currentGameMode.name().toLowerCase());
     }
 }

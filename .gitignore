@@ -1,6 +1,8 @@
 .vscode/
 .idea/
 *.iml
+.toolchains/
+.runtime/
 target/
 dependency-reduced-pom.xml
 server/*

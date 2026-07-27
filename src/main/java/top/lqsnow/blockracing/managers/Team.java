@@ -1,6 +1,7 @@
 package top.lqsnow.blockracing.managers;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -11,18 +12,19 @@ import static top.lqsnow.blockracing.managers.Scoreboard.scoreboard;
 import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
 
 public class Team {
+    private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
     public static org.bukkit.scoreboard.Team redTeam = scoreboard.registerNewTeam("red");
     public static org.bukkit.scoreboard.Team blueTeam = scoreboard.registerNewTeam("blue");
     public static List<String> redTeamPlayers = new CopyOnWriteArrayList<>();
     public static List<String> blueTeamPlayers = new CopyOnWriteArrayList<>();
 
     public static void createTeam() {
-        redTeam.setDisplayName(Message.TEAM_RED_NAME.getString());
-        redTeam.setPrefix(Message.TEAM_RED_PREFIX.getString());
-        redTeam.setColor(ChatColor.RED);
-        blueTeam.setDisplayName(Message.TEAM_BLUE_NAME.getString());
-        blueTeam.setPrefix(Message.TEAM_BLUE_PREFIX.getString());
-        blueTeam.setColor(ChatColor.BLUE);
+        redTeam.displayName(LEGACY_SERIALIZER.deserialize(Message.TEAM_RED_NAME.getString()));
+        redTeam.prefix(LEGACY_SERIALIZER.deserialize(Message.TEAM_RED_PREFIX.getString()));
+        redTeam.color(NamedTextColor.RED);
+        blueTeam.displayName(LEGACY_SERIALIZER.deserialize(Message.TEAM_BLUE_NAME.getString()));
+        blueTeam.prefix(LEGACY_SERIALIZER.deserialize(Message.TEAM_BLUE_PREFIX.getString()));
+        blueTeam.color(NamedTextColor.BLUE);
     }
 
     public static boolean joinTeam(Player player, org.bukkit.scoreboard.Team team, boolean sendMessage) {

@@ -9,9 +9,12 @@ import java.util.Random;
 import java.util.Set;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.lang.reflect.Method;
-import java.util.concurrent.CompletableFuture;
+import java.time.Duration;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
@@ -29,6 +32,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Repairable;
 import org.bukkit.potion.PotionEffect;
@@ -37,8 +41,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.mineacademy.fo.menu.model.ItemCreator;
 import org.mineacademy.fo.remain.CompMaterial;
 
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import top.lqsnow.blockracing.Main;
 import top.lqsnow.blockracing.commands.Restart;
 import static top.lqsnow.blockracing.listeners.BasicListener.editAmountPlayer;
@@ -61,6 +63,7 @@ import static top.lqsnow.blockracing.utils.CommandUtil.sendRed;
 import top.lqsnow.blockracing.utils.TranslationUtil;
 
 public class Game {
+    private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
     public enum GameState {
         PREGAME, INGAME, END
     }
@@ -93,14 +96,14 @@ public class Game {
     public static int locateCost;
     public static Map<String, Integer> collectAmount = new HashMap<>();
     private static final Deque<Location> randomTpPool = new ArrayDeque<>();
-    private static Method asyncChunkMethod;
-    private static boolean asyncChunkMethodChecked;
 
     public static void initChest() {
         int teamChestNum = Setting.getMaxTeamChestNum();
         for (int i = 0; i < teamChestNum; i++) {
-            redTeamChest.add(Bukkit.createInventory(null, 6 * 9, Message.MENU_RED_CHEST.getString() + (i + 1)));
-            blueTeamChest.add(Bukkit.createInventory(null, 6 * 9, Message.MENU_BLUE_CHEST.getString() + (i + 1)));
+            redTeamChest.add(Bukkit.createInventory(null, 6 * 9,
+                    LEGACY_SERIALIZER.deserialize(Message.MENU_RED_CHEST.getString() + (i + 1))));
+            blueTeamChest.add(Bukkit.createInventory(null, 6 * 9,
+                    LEGACY_SERIALIZER.deserialize(Message.MENU_BLUE_CHEST.getString() + (i + 1))));
         }
     }
 
@@ -144,13 +147,19 @@ public class Game {
                 || !Message.MESSAGE_VERSION.getString().equals(Main.getVersion())) {
             if (Message.NOTICE_VERSION_MISMATCH.getString() != null) {
                 player.sendMessage(Message.NOTICE_VERSION_MISMATCH.getString());
-                player.sendTitle(Message.NOTICE_VERSION_MISMATCH_TITLE.getString(),
-                        Message.NOTICE_VERSION_MISMATCH_SUBTITLE.getString(), 0, 2000, 0);
+                player.showTitle(Title.title(
+                        LEGACY_SERIALIZER.deserialize(Message.NOTICE_VERSION_MISMATCH_TITLE.getString()),
+                        LEGACY_SERIALIZER.deserialize(Message.NOTICE_VERSION_MISMATCH_SUBTITLE.getString()),
+                        Title.Times.times(Duration.ZERO, Duration.ofSeconds(100), Duration.ZERO)
+                ));
             } else {
                 player.sendMessage(ColorUtil.t(
                         "&cWarning! The current file versions of your config.yml and lang.yml do not correspond to the plugin version! You may have updated the plugin, but did not update the configuration file! This may lead to some unexpected errors! You can delete the two configuration files in the \\plugins\\BlockRacing folder, and then restart the server, or download the latest version of the configuration file on GitHub to replace it!"));
-                player.sendTitle(ColorUtil.t("&cWarning! Version Mismatch!"),
-                        ColorUtil.t("&cPlease check the specific information in the chat!"), 20, 0, 0);
+                player.showTitle(Title.title(
+                        LEGACY_SERIALIZER.deserialize(ColorUtil.t("&cWarning! Version Mismatch!")),
+                        LEGACY_SERIALIZER.deserialize(ColorUtil.t("&cPlease check the specific information in the chat!")),
+                        Title.Times.times(Duration.ofSeconds(1), Duration.ZERO, Duration.ZERO)
+                ));
             }
             Bukkit.getLogger().severe(Message.NOTICE_VERSION_MISMATCH.getString());
         }
@@ -301,8 +310,9 @@ public class Game {
             player.getInventory().addItem(ItemCreator.of(CompMaterial.GOLDEN_CARROT).amount(64).make());
 
             ItemStack damagedElytra = new ItemStack(Material.ELYTRA);
-            damagedElytra.setDurability((short) (damagedElytra.getType().getMaxDurability() - 1));
             ItemMeta elytraMeta = damagedElytra.getItemMeta();
+            Damageable damageable = (Damageable) elytraMeta;
+            damageable.setDamage(damagedElytra.getType().getMaxDurability() - 1);
             Repairable repairable = (Repairable) elytraMeta;
             repairable.setRepairCost(15);
             damagedElytra.setItemMeta(elytraMeta);
@@ -377,10 +387,7 @@ public class Game {
     public static void randomTeleport(Player player, boolean avoidOcean) {
         World playerWorld = getPrimaryWorld();
         int maxAttempts = avoidOcean ? 12 : 1;
-        if (startAsyncRandomTeleport(player, playerWorld, avoidOcean, 1, maxAttempts)) {
-            return;
-        }
-        randomTeleportSynchronously(player, playerWorld, avoidOcean, Math.min(maxAttempts, 3));
+        startAsyncRandomTeleport(player, playerWorld, avoidOcean, 1, maxAttempts);
     }
 
     private static void randomTeleportSynchronously(Player player, World playerWorld, boolean avoidOcean,
@@ -401,49 +408,30 @@ public class Game {
         completeRandomTeleport(player, offset, avoidOcean);
     }
 
-    private static boolean startAsyncRandomTeleport(Player player, World world, boolean avoidOcean,
-                                                    int attempt, int maxAttempts) {
-        Method method = getAsyncChunkMethod(world);
-        if (method == null) return false;
-
+    private static void startAsyncRandomTeleport(Player player, World world, boolean avoidOcean,
+                                                 int attempt, int maxAttempts) {
         Random random = new Random();
         Location candidate = pollRandomTeleportCandidate();
         int blockX = candidate != null ? candidate.getBlockX() : random.nextInt(20000) - 10000;
         int blockZ = candidate != null ? candidate.getBlockZ() : random.nextInt(20000) - 10000;
-        try {
-            Object result = method.invoke(world, blockX >> 4, blockZ >> 4, true);
-            if (!(result instanceof CompletableFuture<?> future)) return false;
-            future.whenComplete((chunk, error) -> Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
+        world.getChunkAtAsync(blockX >> 4, blockZ >> 4, true)
+                .whenComplete((chunk, error) -> Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
                 if (!player.isOnline()) return;
                 if (error != null) {
-                    randomTeleportSynchronously(player, world, avoidOcean, Math.max(1, maxAttempts - attempt + 1));
+                    if (attempt < maxAttempts) {
+                        startAsyncRandomTeleport(player, world, avoidOcean, attempt + 1, maxAttempts);
+                    } else {
+                        randomTeleportSynchronously(player, world, avoidOcean, 1);
+                    }
                     return;
                 }
                 Location offset = world.getHighestBlockAt(blockX, blockZ).getLocation().add(0, 1, 0);
                 if (avoidOcean && isOcean(offset.getBlock().getBiome()) && attempt < maxAttempts) {
-                    if (!startAsyncRandomTeleport(player, world, true, attempt + 1, maxAttempts)) {
-                        randomTeleportSynchronously(player, world, true, 1);
-                    }
+                    startAsyncRandomTeleport(player, world, true, attempt + 1, maxAttempts);
                     return;
                 }
                 completeRandomTeleport(player, offset, avoidOcean);
-            }));
-            return true;
-        } catch (ReflectiveOperationException ex) {
-            return false;
-        }
-    }
-
-    private static Method getAsyncChunkMethod(World world) {
-        if (!asyncChunkMethodChecked) {
-            asyncChunkMethodChecked = true;
-            try {
-                asyncChunkMethod = world.getClass().getMethod("getChunkAtAsync", int.class, int.class, boolean.class);
-            } catch (NoSuchMethodException ignored) {
-                asyncChunkMethod = null;
-            }
-        }
-        return asyncChunkMethod;
+                }));
     }
 
     private static void completeRandomTeleport(Player player, Location offset, boolean avoidOcean) {
@@ -541,10 +529,10 @@ public class Game {
     }
 
     private static void removeWaypoint(Player player, int index) {
-        TextComponent message = new TextComponent(
-                Message.NOTICE_REMOVE_WAYPOINT.getString().replace("%index%", String.valueOf(index)));
-        message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/waypoint remove " + index));
-        player.spigot().sendMessage(message);
+        Component message = LEGACY_SERIALIZER.deserialize(
+                        Message.NOTICE_REMOVE_WAYPOINT.getString().replace("%index%", String.valueOf(index)))
+                .clickEvent(ClickEvent.runCommand("/waypoint remove " + index));
+        player.sendMessage(message);
         player.closeInventory();
     }
 
@@ -774,7 +762,10 @@ public class Game {
     public static void redWin() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.closeInventory();
-            player.sendTitle(Message.NOTICE_RED_WIN.getString(), null);
+            player.showTitle(Title.title(
+                    LEGACY_SERIALIZER.deserialize(Message.NOTICE_RED_WIN.getString()),
+                    Component.empty()
+            ));
             player.setGameMode(GameMode.SPECTATOR);
         }
         sendAll(Message.NOTICE_RED_WIN.getString());
@@ -785,7 +776,10 @@ public class Game {
     public static void blueWin() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.closeInventory();
-            player.sendTitle(Message.NOTICE_BLUE_WIN.getString(), null);
+            player.showTitle(Title.title(
+                    LEGACY_SERIALIZER.deserialize(Message.NOTICE_BLUE_WIN.getString()),
+                    Component.empty()
+            ));
             player.setGameMode(GameMode.SPECTATOR);
         }
         sendAll(Message.NOTICE_BLUE_WIN.getString());

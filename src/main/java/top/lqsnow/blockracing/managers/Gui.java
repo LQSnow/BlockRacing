@@ -1,5 +1,6 @@
 package top.lqsnow.blockracing.managers;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -14,7 +15,7 @@ import static top.lqsnow.blockracing.managers.Team.blueTeamPlayers;
 import static top.lqsnow.blockracing.managers.Team.redTeamPlayers;
 
 public class Gui {
-    public static Inventory checkBlockInventory = Bukkit.createInventory(null, 9, "Check Block Inventory");
+    public static Inventory checkBlockInventory = Bukkit.createInventory(null, 9, Component.text("Check Block Inventory"));
 
     public static void openMenu(Player player) {
         if (currentGameState.equals(Game.GameState.PREGAME)) new PreGameMenu().displayTo(player);

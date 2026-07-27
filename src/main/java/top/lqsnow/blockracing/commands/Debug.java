@@ -100,11 +100,11 @@ public class Debug implements CommandExecutor, TabCompleter {
             if (args[1].equalsIgnoreCase("red")) {
                 String block = getCurrentBlocks("red").get(Integer.parseInt(args[2]) - 1);
                 Material material = Material.getMaterial(block);
-                sender.sendMessage(String.format("The translation of %s is: %s, key: %s", block, TranslationUtil.getValue(block), material.getTranslationKey()));
+                sender.sendMessage(String.format("The translation of %s is: %s, key: %s", block, TranslationUtil.getValue(block), material.translationKey()));
             } else if (args[1].equalsIgnoreCase("blue")) {
                 String block = getCurrentBlocks("blue").get(Integer.parseInt(args[2]) - 1);
                 Material material = Material.getMaterial(block);
-                sender.sendMessage(String.format("The translation of %s is: %s, key: %s", block, TranslationUtil.getValue(block), material.getTranslationKey()));
+                sender.sendMessage(String.format("The translation of %s is: %s, key: %s", block, TranslationUtil.getValue(block), material.translationKey()));
             }
         }
 

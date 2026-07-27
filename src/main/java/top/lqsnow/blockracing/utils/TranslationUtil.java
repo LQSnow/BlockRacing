@@ -20,7 +20,7 @@ public class TranslationUtil {
 
     public static String getValue(String block) {
         try {
-            String key = Objects.requireNonNull(Material.getMaterial(block)).getTranslationKey();
+            String key = Objects.requireNonNull(Material.getMaterial(block)).translationKey();
             if (block.equalsIgnoreCase("NETHER_WART")) {
                 key = "block.minecraft.nether_wart";
             }

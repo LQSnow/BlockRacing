@@ -1,6 +1,5 @@
 package top.lqsnow.blockracing.managers;
 
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import top.lqsnow.blockracing.Main;
@@ -15,6 +14,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+
+import static top.lqsnow.blockracing.utils.ColorUtil.t;
 
 public enum Message {
     // scoreboard
@@ -222,13 +223,13 @@ public enum Message {
     }
 
     public String getString() {
-        return cacheString != null ? cacheString : (cacheString = ChatColor.translateAlternateColorCodes('&', getMessageConfig().getString(path)));
+        return cacheString != null ? cacheString : (cacheString = t(getMessageConfig().getString(path)));
     }
 
     public List<String> getStringList() {
         return cacheStringList != null ? cacheStringList : (cacheStringList = Collections.unmodifiableList(
                 getMessageConfig().getStringList(path).stream()
-                        .map(msg -> ChatColor.translateAlternateColorCodes('&', msg))
+                        .map(msg -> t(msg))
                         .collect(Collectors.toList())
         ));
     }

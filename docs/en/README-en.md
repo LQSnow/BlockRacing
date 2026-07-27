@@ -6,7 +6,11 @@
 
 This is a multiplayer racing mini-game in Minecraft, divided into two teams, where the team that collects the specified blocks first wins.
 
-Version: Java 1.21.11
+Version: Java 26.2 (requires Java 25)
+
+Requirements: Paper 26.2 and Java 25. Starting with 3.6, BlockRacing uses Paper APIs directly and no longer supports Spigot.
+
+Before upgrading, back up `plugins/BlockRacing`. After replacing the plugin, merge your old `config.yml`, `lang.yml`, five block pools, and two translation JSON files with the 3.6 defaults. If you have no customizations, delete those files and restart the server to regenerate the 26.2 versions.
 
 # Features
 
@@ -46,7 +50,7 @@ Version: Java 1.21.11
 
 # Installation Guide
 
-1. Set up a Paper server (can also be Spigot or Purpur).
+1. Set up a Paper 26.2 server running Java 25.
 
 2. Download the plugin and place it in the `plugins` folder in the server directory.
 

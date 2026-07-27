@@ -1,3 +1,16 @@
+### 2026.7.27 - BlockRacing 3.6
+
+- 更新游戏版本至 Minecraft Java 26.2，并要求 Java 25 与 Paper 26.2
+- 更新 Paper API 至 `26.2.build.84-stable`、Foundation 至 6.10.0、Maven Shade Plugin 至 3.6.2
+- 添加硫磺、朱砂、强效硫磺、硫磺锥及两套完整建筑方块
+- 从 Mojang 26.2 官方资源更新简体中文和英文方块翻译
+- 生物群系和结构补全改为读取 Paper 实时注册表，自动包含硫磺洞穴
+- 聊天、标题、计分板、队伍和容器标题迁移至 Adventure / Paper API
+- 随机传送直接使用 Paper 异步区块 API
+- 移除对 Lombok 隐式传递依赖，并修复游戏模式配置持久化
+- 修复默认语言文件的重复 YAML 键
+- 新增 26.2 方块、翻译、重复方块池和 YAML 资源测试
+
 ### 2026.3.2 - BlockRacing 3.5
 **感谢[@xiaojiuwo233](https://github.com/xiaojiuwo233): https://github.com/LQSnow/BlockRacing/pull/14**
 - 更新游戏版本至1.21.11

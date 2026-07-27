@@ -1,5 +1,7 @@
 package top.lqsnow.blockracing.listeners;
 
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,11 +21,11 @@ import static top.lqsnow.blockracing.managers.Gui.updateMenu;
 import static top.lqsnow.blockracing.managers.Scoreboard.updateScoreboard;
 import static top.lqsnow.blockracing.managers.Team.isPlayerInBlueTeam;
 import static top.lqsnow.blockracing.managers.Team.isPlayerInRedTeam;
-import static top.lqsnow.blockracing.utils.ColorUtil.t;
 import static top.lqsnow.blockracing.managers.Block.*;
 import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
 
 public class BasicListener implements Listener {
+    private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
     public static List<String> editAmountPlayer = new CopyOnWriteArrayList<>();
 
     @EventHandler
@@ -46,23 +48,32 @@ public class BasicListener implements Listener {
     }
 
     @EventHandler
-    private void onPlayerChat(AsyncPlayerChatEvent event) {
+    private void onPlayerChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
 
         // Change block amount
         if (editAmountPlayer.contains(player.getName())) {
             event.setCancelled(true);
-            String message = event.getMessage();
+            String message = LEGACY_SERIALIZER.serialize(event.message());
             Bukkit.getScheduler().runTask(Main.getInstance(), () -> handleBlockAmountInput(player, message));
             return;
         }
 
         // Change chat format
         if (isPlayerInRedTeam(player)) {
-            event.setFormat(t(Message.TEAM_RED_CHAT.getString()));
+            applyTeamChatFormat(event, Message.TEAM_RED_CHAT.getString());
         } else if (isPlayerInBlueTeam(player)) {
-            event.setFormat(t(Message.TEAM_BLUE_CHAT.getString()));
+            applyTeamChatFormat(event, Message.TEAM_BLUE_CHAT.getString());
         }
+    }
+
+    private void applyTeamChatFormat(AsyncChatEvent event, String format) {
+        event.renderer((source, sourceDisplayName, message, viewer) ->
+                LEGACY_SERIALIZER.deserialize(String.format(
+                        format,
+                        source.getName(),
+                        LEGACY_SERIALIZER.serialize(message)
+                )));
     }
 
     private void handleBlockAmountInput(Player player, String message) {
