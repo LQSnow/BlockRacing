@@ -40,10 +40,10 @@ scoreboard:
     bottom-slot: "&e&lEnjoy the game!"
     block-difficulty:
       easy: "&aEASY"
-      medium: "&eMID  "
+      medium: "&eMID"
       hard: "&cHARD"
       dyed: "&dDYED"
-      end: "&eEND  "
+      end: "&eEND"
 
 # Team
 team:
@@ -221,6 +221,7 @@ notice:
   team-shuffle-confirm-button: "&a&l[Click to confirm random teams]"
   team-shuffle-confirm-hover: "&7This clears current teams and creates new balanced teams"
   team-shuffle-confirm-expired: "&cThe random-team confirmation expired. Please try again!"
+  new-target-block: "&aNew target block: &b%block%"
 
 # Internal compatibility value. Do not edit this manually.
 lang-version: 26.2.1

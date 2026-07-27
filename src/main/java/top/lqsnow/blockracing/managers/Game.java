@@ -707,7 +707,7 @@ public class Game {
         Bukkit.getLogger().info(Message.NOTICE_RED_COLLECT.getString()
                 .replace("%block%", TranslationUtil.getValue(block)).replace("%player%", player).replaceAll("§.", ""));
         playSound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
-        redTeamRemainingBlocks.remove(block);
+        String newTarget = removeAndGetNewVisibleTarget(redTeamRemainingBlocks, block);
         if (Setting.isSpeedMode())
             redTeamScore += 3;
         else
@@ -715,6 +715,10 @@ public class Game {
         redTeamCurrentBlockAmount += 1;
         collect(player);
         updateScoreboard();
+        if (newTarget != null) {
+            sendRed(Message.NOTICE_NEW_TARGET_BLOCK, (viewer, text) -> text
+                    .replace("%block%", TranslationUtil.getValue(newTarget, viewer)));
+        }
         // Put items into the opponent's team chest
         if (Setting.getCurrentGameMode().equals(Setting.GameMode.NORMAL)) {
             for (int i = blueTeamChest.size() - 1; i >= 0; i--) {
@@ -742,7 +746,7 @@ public class Game {
         Bukkit.getLogger().info(Message.NOTICE_BLUE_COLLECT.getString()
                 .replace("%block%", TranslationUtil.getValue(block)).replace("%player%", player).replaceAll("§.", ""));
         playSound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
-        blueTeamRemainingBlocks.remove(block);
+        String newTarget = removeAndGetNewVisibleTarget(blueTeamRemainingBlocks, block);
         if (Setting.isSpeedMode())
             blueTeamScore += 3;
         else
@@ -750,6 +754,10 @@ public class Game {
         blueTeamCurrentBlockAmount += 1;
         collect(player);
         updateScoreboard();
+        if (newTarget != null) {
+            sendBlue(Message.NOTICE_NEW_TARGET_BLOCK, (viewer, text) -> text
+                    .replace("%block%", TranslationUtil.getValue(newTarget, viewer)));
+        }
         // Put items into the opponent's team chest
         if (Setting.getCurrentGameMode().equals(Setting.GameMode.NORMAL)) {
             for (int i = redTeamChest.size() - 1; i >= 0; i--) {
@@ -853,6 +861,14 @@ public class Game {
 
     public static void setCurrentGameState(GameState currentGameState) {
         Game.currentGameState = currentGameState;
+    }
+
+    static String removeAndGetNewVisibleTarget(List<String> remainingBlocks, String completedBlock) {
+        boolean hadHiddenTarget = remainingBlocks.size() > 4;
+        if (!remainingBlocks.remove(completedBlock) || !hadHiddenTarget) {
+            return null;
+        }
+        return remainingBlocks.get(3);
     }
 
     private static World getPrimaryWorld() {

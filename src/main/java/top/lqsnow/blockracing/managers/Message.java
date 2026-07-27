@@ -182,6 +182,7 @@ public enum Message {
     NOTICE_VERSION_MISMATCH_TITLE("notice.version-mismatch-title"),
     NOTICE_VERSION_MISMATCH_SUBTITLE("notice.version-mismatch-subtitle"),
     NOTICE_TEAM_SHUFFLE_TRIGGERED("notice.team-shuffle-triggered"),
+    NOTICE_NEW_TARGET_BLOCK("notice.new-target-block"),
 
     // other
     MESSAGE_LANG("lang"),

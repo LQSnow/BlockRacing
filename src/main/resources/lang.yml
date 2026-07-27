@@ -213,6 +213,7 @@ notice:
   team-shuffle-confirm-button: "&a&l[点击确认随机组队]"
   team-shuffle-confirm-hover: "&7确认后将清除当前队伍分配并重新平均分队"
   team-shuffle-confirm-expired: "&c随机组队确认已失效，请重新发起！"
+  new-target-block: "&a新的目标方块：&b%block%"
 
 # Internal compatibility value. Do not edit this manually.
 lang-version: 26.2.1
