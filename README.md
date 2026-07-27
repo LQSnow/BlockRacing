@@ -35,7 +35,7 @@ See the current default configuration and resource files in the [`src/main/resou
 
 6. Waypoints: Each team has 3 waypoints for free saving, teleporting, and deleting.
 
-7. Per-player languages: Player messages, titles, and menus can follow the Minecraft client language or be switched manually between English and Simplified Chinese.
+7. Per-player languages: Messages, titles, menus, team prefixes, block names, and scoreboards can follow the Minecraft client language or be switched manually between English and Simplified Chinese.
 
 # Gameplay Instructions
 
@@ -104,9 +104,15 @@ DyedBlocks.txt - Dyed block library
 EndBlocks.txt - End dimension block library
 config.yml - Configuration file
 lang.yml - Language file
+languages/en_us/lang.yml - English language file
+language-preferences.yml - Saved player language preferences
 zh_cn.json - Translation file (Simplified Chinese)
 en_us.json - Translation file (English)
 ```
+
+The default `config.yml` comments are written in English. Player language is not
+controlled by `config.yml`; use `/language` in game. Custom language text can be
+edited in `lang.yml` and `languages/en_us/lang.yml`.
 
 You can freely modify the 5 block library files, but please note:
 

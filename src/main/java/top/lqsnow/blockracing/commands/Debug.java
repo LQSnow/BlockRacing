@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.lqsnow.blockracing.managers.LanguageManager;
 import top.lqsnow.blockracing.managers.Message;
+import top.lqsnow.blockracing.managers.Scoreboard;
 import top.lqsnow.blockracing.utils.TranslationUtil;
 
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class Debug implements CommandExecutor, TabCompleter {
         if (args[0].equalsIgnoreCase("reload")) {
             Message.load();
             LanguageManager.load();
+            Scoreboard.syncPlayerTeams();
             if (getCurrentGameState().equals(GameState.PREGAME)) {
                 reloadBlock();
             }
@@ -149,6 +151,7 @@ public class Debug implements CommandExecutor, TabCompleter {
                         result = blueTeam.removeEntry(targetName);
                         blueTeamPlayers.remove(targetName);
                     }
+                    Scoreboard.syncPlayerTeams();
                     if (result) {
                         player.sendMessage(t("&aSuccessfully removed player from team"));
                     } else {

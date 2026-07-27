@@ -57,7 +57,7 @@ public class Menu implements CommandExecutor, TabCompleter {
                     player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString(player));
                     return true;
                 }
-                player.openInventory(redTeamChest.get(ith-1));
+                Gui.openTeamChest(player, ith - 1);
             } else if (blueTeamPlayers.contains(player.getName())) {
                 if (args.length == 1) {
                     new GameMenu.TeamChestSelectMenu().open(player);
@@ -68,7 +68,7 @@ public class Menu implements CommandExecutor, TabCompleter {
                     player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString(player));
                     return true;
                 }
-                player.openInventory(blueTeamChest.get(ith-1));
+                Gui.openTeamChest(player, ith - 1);
             }
             return true;
         }

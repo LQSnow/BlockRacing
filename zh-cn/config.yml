@@ -2,9 +2,7 @@
 # 该配置文件仅用于服务器重启后保留设置数据
 # 服务器关闭时将自动保存本局游戏的设置到该文件
 # 如果服务器已启动，请前往游戏中的设置界面进行设置，不要在这里调整
-
-# 语言
-lang: zh_cn
+# 每位玩家可使用 /language 独立选择语言，此文件不控制玩家语言
 
 # 除去easy-block以外的四种额外方块库设置
 medium-block: false
@@ -36,5 +34,5 @@ max-team-chest-num: 8
 # 最大：53
 max-team-waypoint-num: 8
 
-# 如果你不知道这是什么，不要动它
-config-version: 3.6
+# 内部兼容版本，请勿手动修改
+config-version: 26.2.1

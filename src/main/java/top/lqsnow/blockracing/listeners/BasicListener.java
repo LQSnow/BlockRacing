@@ -40,6 +40,13 @@ public class BasicListener implements Listener {
     @EventHandler
     private void onPlayerQuit(PlayerQuitEvent event) {
         Game.playerQuit(event.getPlayer());
+        Scoreboard.removePlayer(event.getPlayer());
+    }
+
+    @EventHandler
+    private void onPlayerLocaleChange(PlayerLocaleChangeEvent event) {
+        Bukkit.getScheduler().runTask(Main.getInstance(),
+                () -> Scoreboard.refreshPlayer(event.getPlayer()));
     }
 
     @EventHandler

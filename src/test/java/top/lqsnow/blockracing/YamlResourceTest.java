@@ -1,6 +1,8 @@
 package top.lqsnow.blockracing;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
@@ -15,8 +17,12 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class YamlResourceTest {
+    @TempDir
+    Path temporaryDirectory;
+
     @Test
     void yamlResourcesDoNotContainDuplicateKeys() throws Exception {
         LoaderOptions options = new LoaderOptions();
@@ -45,6 +51,31 @@ class YamlResourceTest {
         Set<String> english = loadLeafKeys(yaml, Path.of("en-us/lang.yml"));
 
         assertEquals(chinese, english);
+        assertEquals(chinese, loadLeafKeys(yaml, Path.of("zh-cn/lang.yml")));
+    }
+
+    @Test
+    void publishedConfigurationsContainTheSameKeys() throws Exception {
+        LoaderOptions options = new LoaderOptions();
+        Yaml yaml = new Yaml(new SafeConstructor(options));
+        Set<String> defaults = loadLeafKeys(yaml, Path.of("src/main/resources/config.yml"));
+
+        assertEquals(defaults, loadLeafKeys(yaml, Path.of("en-us/config.yml")));
+        assertEquals(defaults, loadLeafKeys(yaml, Path.of("zh-cn/config.yml")));
+    }
+
+    @Test
+    void configurationCommentsSurviveASettingsSave() throws Exception {
+        YamlConfiguration configuration = new YamlConfiguration();
+        configuration.options().parseComments(true);
+        configuration.load(Path.of("src/main/resources/config.yml").toFile());
+        configuration.set("block-amount", 75);
+
+        Path saved = temporaryDirectory.resolve("config.yml");
+        configuration.save(saved.toFile());
+        String text = Files.readString(saved, StandardCharsets.UTF_8);
+        assertTrue(text.contains("# BlockRacing game settings"));
+        assertTrue(text.contains("# Total number of target blocks in one game"));
     }
 
     private static Set<String> loadLeafKeys(Yaml yaml, Path path) throws Exception {

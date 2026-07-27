@@ -1,40 +1,37 @@
-# BlockRacing 游戏设置
-# 该配置文件仅用于服务器重启后保留设置数据
-# 服务器关闭时将自动保存本局游戏的设置到该文件
-# 如果服务器已启动，请前往游戏中的设置界面进行设置，不要在这里调整
+# BlockRacing game settings
+# This file preserves the current game settings across server restarts.
+# Settings are saved automatically when the server stops.
+# While the server is running, change these options through the in-game menu.
+# Player languages are selected independently with /language and are not configured here.
 
-# 语言
-lang: zh_cn
-
-# 除去easy-block以外的四种额外方块库设置
+# Optional block pools in addition to the required easy pool
 medium-block: false
 hard-block: false
 dyed-block: false
 end-block: false
 
-# 一局游戏需要收集的方块总数
+# Total number of target blocks in one game
 block-amount: 50
 
-# 游戏模式：
-# normal - 普通模式：两个队伍需要收集的方块及顺序完全随机，收集方块会将一组该方块给到对方的队伍箱子里
-# racing - 竞速模式：两个队伍需要收集的方块及顺序将完全相同，且收集方块将不会给予一组方块到对方队伍箱子里
+# Game mode:
+# normal - Teams receive different random target lists. Collecting a block gives
+#          a stack of that block to the opposing team's chests.
+# racing - Teams receive the same targets in the same order. No blocks are
+#          awarded to the opposing team.
 game-mode: normal
 
-# 极速模式：
-# 开启极速模式后，开局时将会给予玩家部分道具和效果，且获得方块时加3分，以加快游戏进度
-# 物品：精准采集铁镐、熟牛排、损坏的鞘翅、经验修补附魔书
-# 效果：急迫V
+# Speed mode:
+# Gives players additional starting items and effects. Each collected block is
+# worth 3 points instead of 1.
+# Items: Silk Touch iron pickaxe, cooked beef, damaged elytra and Mending book
+# Effect: Haste V
 speed-mode: false
 
-# 团队箱子个数
-# 默认：8
-# 最大：53
+# Number of shared chests per team (default: 8, maximum: 53)
 max-team-chest-num: 8
 
-# 路径点个数
-# 默认：8
-# 最大：53
+# Number of waypoints per team (default: 8, maximum: 53)
 max-team-waypoint-num: 8
 
-# 如果你不知道这是什么，不要动它
+# Internal compatibility value. Do not edit this manually.
 config-version: 26.2.1

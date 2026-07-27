@@ -1,40 +1,37 @@
-# BlockRacing Game Settings
-# This configuration file is only used to retain settings data after server restarts.
-# Settings for the current game will be automatically saved to this file when the server shuts down.
-# If the server is already running, please go to the in-game settings interface for adjustments, do not modify here.
+# BlockRacing game settings
+# This file preserves the current game settings across server restarts.
+# Settings are saved automatically when the server stops.
+# While the server is running, change these options through the in-game menu.
+# Player languages are selected independently with /language and are not configured here.
 
-# Language
-lang: en_us
-
-# Settings for four additional block libraries, excluding the easy block
+# Optional block pools in addition to the required easy pool
 medium-block: false
 hard-block: false
 dyed-block: false
 end-block: false
 
-# Total number of blocks to be collected in one game
+# Total number of target blocks in one game
 block-amount: 50
 
 # Game mode:
-# normal - Normal Mode: Both teams need to collect random blocks in random order, and collecting blocks will give a set of those blocks to the opposing team's chest
-# racing - Racing Mode: Both teams need to collect the same blocks in the same order, and collecting blocks will not give a set of blocks to the opposing team
+# normal - Teams receive different random target lists. Collecting a block gives
+#          a stack of that block to the opposing team's chests.
+# racing - Teams receive the same targets in the same order. No blocks are
+#          awarded to the opposing team.
 game-mode: normal
 
 # Speed mode:
-# When speed mode is enabled, players will be given certain items and effects at the start, and gaining blocks will earn 3 points to accelerate game progress
-# Items: Silk Touch Iron Pickaxe, Cooked Beef, Damaged Elytra, Experience Repair Enchantment Book
-# Effects: Haste V
+# Gives players additional starting items and effects. Each collected block is
+# worth 3 points instead of 1.
+# Items: Silk Touch iron pickaxe, cooked beef, damaged elytra and Mending book
+# Effect: Haste V
 speed-mode: false
 
-# max team chest number
-# default：8
-# max：53
+# Number of shared chests per team (default: 8, maximum: 53)
 max-team-chest-num: 8
 
-# max team waypoint number
-# default: 8
-# max: 53
+# Number of waypoints per team (default: 8, maximum: 53)
 max-team-waypoint-num: 8
 
-# If you don't know what this is, don't touch it
-config-version: 3.6
+# Internal compatibility value. Do not edit this manually.
+config-version: 26.2.1

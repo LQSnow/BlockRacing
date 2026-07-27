@@ -25,6 +25,7 @@ public class Team {
         blueTeam.displayName(LEGACY_SERIALIZER.deserialize(Message.TEAM_BLUE_NAME.getString()));
         blueTeam.prefix(LEGACY_SERIALIZER.deserialize(Message.TEAM_BLUE_PREFIX.getString()));
         blueTeam.color(NamedTextColor.BLUE);
+        Scoreboard.syncPlayerTeams();
     }
 
     public static boolean joinTeam(Player player, org.bukkit.scoreboard.Team team, boolean sendMessage) {
@@ -41,6 +42,7 @@ public class Team {
             }
             redTeam.addEntry(player.getName());
             redTeamPlayers.add(player.getName());
+            Scoreboard.syncPlayerTeams();
             if (sendMessage) {
                 sendAll(Message.NOTICE_JOIN_RED,
                         (viewer, text) -> text.replace("%player%", player.getName()));
@@ -59,6 +61,7 @@ public class Team {
             }
             blueTeam.addEntry(player.getName());
             blueTeamPlayers.add(player.getName());
+            Scoreboard.syncPlayerTeams();
             if (sendMessage) {
                 sendAll(Message.NOTICE_JOIN_BLUE,
                         (viewer, text) -> text.replace("%player%", player.getName()));
@@ -80,6 +83,7 @@ public class Team {
         new HashSet<>(blueTeam.getEntries()).forEach(blueTeam::removeEntry);
         redTeamPlayers.clear();
         blueTeamPlayers.clear();
+        Scoreboard.syncPlayerTeams();
     }
 
 }

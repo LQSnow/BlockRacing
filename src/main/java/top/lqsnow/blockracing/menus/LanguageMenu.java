@@ -7,6 +7,7 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import top.lqsnow.blockracing.managers.Gui;
 import top.lqsnow.blockracing.managers.LanguageManager;
+import top.lqsnow.blockracing.managers.Scoreboard;
 import top.lqsnow.blockracing.toolkit.item.ItemBuilder;
 import top.lqsnow.blockracing.toolkit.menu.MenuButton;
 import top.lqsnow.blockracing.toolkit.menu.MenuView;
@@ -33,6 +34,7 @@ public final class LanguageMenu extends MenuView {
 
     public static void apply(Player player, LanguageManager.Preference preference) {
         LanguageManager.setPreference(player, preference);
+        Scoreboard.refreshPlayer(player);
         player.sendMessage(preference == LanguageManager.Preference.ZH_CN
                 ? "§a语言已切换为简体中文。"
                 : preference == LanguageManager.Preference.EN_US

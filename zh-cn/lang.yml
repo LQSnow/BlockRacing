@@ -1,20 +1,13 @@
-# BlockRacing 语言文件
-# 该文件存储了游戏中除了方块名的所有语言文字
-# 如果需要翻译方块名，请查看 https://github.com/LQSnow/BlockRacing/blob/3.0/docs/zh/TranslationTutorial-zh.md 的教程
-# 如需这个文件的翻译，可直接复制文件内容给ChatGPT，让他帮忙翻译
-# BlockRacing language files
-# This file stores all language characters in the game except block names.
-# If you need to translate the block name, please check the tutorial at https://github.com/LQSnow/BlockRacing/blob/3.0/docs/en/TranslationTutorial-en.md
-# If you need to translate this file, you can directly copy the file content to ChatGPT and let him help translate it.
-
-# 当前语言: 简体中文
+# BlockRacing Simplified Chinese language file
+# This file contains player-facing text except Minecraft block names.
+# Translation guide in this repository: TranslationTutorial.md
+# English guide: docs/en/TranslationTutorial-en.md
+# Player preferences are changed with /language; this value identifies this file.
 lang: zh_cn
 
-# 记分板
-# slot项中，如果引号里没有任何字符表示这一行不显示，如果引号里加空格表示这一行为空行
-# 注意！最终显示在记分板上的每一行，总字符数不能超过30，这是一行的最大显示范围！
-# 这个显示范围包含颜色代码和空格，占位符替换的文字也包含在内！
-# 超出范围的文字将无法显示！
+# Scoreboard
+# An empty quoted value hides the line; a single space creates a blank line.
+# Keep lines concise because Minecraft clients have limited sidebar width.
 scoreboard:
   game-mode:
     normal: "&a普通模式"
@@ -53,7 +46,7 @@ scoreboard:
       dyed: "&d染色"
       end: "&e末地"
 
-# 队伍
+# Teams
 team:
   red:
     name: "&c红队"
@@ -66,7 +59,7 @@ team:
     chat: "&9[蓝队] %s: &f%s"
     color: "&9"
 
-# 菜单
+# Menus
 menu:
   pregame-menu:
     title: "&0准备菜单"
@@ -95,18 +88,24 @@ menu:
     normal-mode-lore:
       - "&e两个队伍需要收集的方块及顺序完全&l随机&r&e，"
       - "&e收集方块会将一组该方块给到对方的队伍箱子里！"
+      - "&b物品：石镐、石斧、石铲"
     racing-mode-lore:
       - "&e两个队伍需要收集的方块及顺序将完全&l相同&r&e，"
       - "&e且收集方块将&l不会&r&e给予一组方块到对方队伍！"
+      - "&b物品：石镐、石斧、石铲"
     speed-mode-lore:
       - "&a开启极速模式后，开局时将会&l给予玩家部分物品和效果&e，"
       - "&e且获得方块时加3分，以加快游戏进度。"
-      - "&b物品：精准采集铁镐、熟牛排、损坏的鞘翅、经验修补附魔书"
-      - "&b效果：急迫V"
+      - "&b物品：精准采集铁镐、金胡萝卜、损坏的鞘翅、经验修补附魔书"
+      - "&b效果：急迫5、速度2、抗性2"
     select-team: "&a选队"
     block-setting: "&a方块设置"
     select-mode: "&a模式选择"
     ready-and-start: "&a准备和开始游戏"
+    random-team: "&d随机组队"
+    random-team-lore:
+      - "&b将当前所有在线玩家随机平均分配到红蓝两队"
+      - "&e点击后需要在聊天框中再次确认"
   game-menu:
     title: "&0主菜单"
     team-chest: "&a队伍箱子"
@@ -147,7 +146,7 @@ menu:
   all:
     return-back: "&c返回"
 
-# 提示
+# Notices
 notice:
   welcome: "&b&l欢迎来到方块竞速！按Shift+F打开菜单进行选队和准备！如果没反应，请检查潜行和切换副手的快捷键！如果记分板显示的方块名称不完整，可以使用/block <队伍> <编号> 命令来查询！"
   join-red: "&c%player% 加入了红队！"
@@ -209,7 +208,11 @@ notice:
   version-mismatch: "&c警告！当前您的config.yml和lang.yml的文件版本，与插件的版本不对应！您可能更新了插件，但没有更新配置文件！这可能会导致一些意料之外的错误！您可以将\\plugins\\BlockRacing文件夹中的两个配置文件删除，然后重启服务器，亦或是到github上下载最新版本的配置文件替换！"
   version-mismatch-title: "&c警告！版本不对应！"
   version-mismatch-subtitle: "&c请查看聊天框的具体信息！"
-  team-shuffle: "&a随机组队已完成！"
+  team-shuffle-triggered: "&d%player% &a触发了随机组队，当前在线玩家已完成平均分队！"
+  team-shuffle-confirm: "&e确定要将当前所有在线玩家重新随机分队吗？"
+  team-shuffle-confirm-button: "&a&l[点击确认随机组队]"
+  team-shuffle-confirm-hover: "&7确认后将清除当前队伍分配并重新平均分队"
+  team-shuffle-confirm-expired: "&c随机组队确认已失效，请重新发起！"
 
-# 如果你不知道这是什么，不要动它
-lang-version: 3.6
+# Internal compatibility value. Do not edit this manually.
+lang-version: 26.2.1

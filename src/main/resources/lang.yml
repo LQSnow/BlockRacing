@@ -1,20 +1,13 @@
-# BlockRacing 语言文件
-# 该文件存储了游戏中除了方块名的所有语言文字
-# 如果需要翻译方块名，请查看 https://github.com/LQSnow/BlockRacing/blob/3.0/docs/zh/TranslationTutorial-zh.md 的教程
-# 如需这个文件的翻译，可直接复制文件内容给ChatGPT，让他帮忙翻译
-# BlockRacing language files
-# This file stores all language characters in the game except block names.
-# If you need to translate the block name, please check the tutorial at https://github.com/LQSnow/BlockRacing/blob/3.0/docs/en/TranslationTutorial-en.md
-# If you need to translate this file, you can directly copy the file content to ChatGPT and let him help translate it.
-
-# 当前语言: 简体中文
+# BlockRacing Simplified Chinese language file
+# This file contains player-facing text except Minecraft block names.
+# Translation guide in this repository: TranslationTutorial.md
+# English guide: docs/en/TranslationTutorial-en.md
+# Player preferences are changed with /language; this value identifies this file.
 lang: zh_cn
 
-# 记分板
-# slot项中，如果引号里没有任何字符表示这一行不显示，如果引号里加空格表示这一行为空行
-# 注意！最终显示在记分板上的每一行，总字符数不能超过30，这是一行的最大显示范围！
-# 这个显示范围包含颜色代码和空格，占位符替换的文字也包含在内！
-# 超出范围的文字将无法显示！
+# Scoreboard
+# An empty quoted value hides the line; a single space creates a blank line.
+# Keep lines concise because Minecraft clients have limited sidebar width.
 scoreboard:
   game-mode:
     normal: "&a普通模式"
@@ -53,7 +46,7 @@ scoreboard:
       dyed: "&d染色"
       end: "&e末地"
 
-# 队伍
+# Teams
 team:
   red:
     name: "&c红队"
@@ -66,7 +59,7 @@ team:
     chat: "&9[蓝队] %s: &f%s"
     color: "&9"
 
-# 菜单
+# Menus
 menu:
   pregame-menu:
     title: "&0准备菜单"
@@ -153,7 +146,7 @@ menu:
   all:
     return-back: "&c返回"
 
-# 提示
+# Notices
 notice:
   welcome: "&b&l欢迎来到方块竞速！按Shift+F打开菜单进行选队和准备！如果没反应，请检查潜行和切换副手的快捷键！如果记分板显示的方块名称不完整，可以使用/block <队伍> <编号> 命令来查询！"
   join-red: "&c%player% 加入了红队！"
@@ -221,5 +214,5 @@ notice:
   team-shuffle-confirm-hover: "&7确认后将清除当前队伍分配并重新平均分队"
   team-shuffle-confirm-expired: "&c随机组队确认已失效，请重新发起！"
 
-# 如果你不知道这是什么，不要动它
+# Internal compatibility value. Do not edit this manually.
 lang-version: 26.2.1

@@ -35,7 +35,7 @@
 
 6. 记录点：每个队伍有3个记录点，可以自由保存、传送、删除。
 
-7. 玩家独立语言：聊天提示、标题和菜单可以跟随 Minecraft 客户端语言，也可以手动切换英文或简体中文。
+7. 玩家独立语言：聊天提示、标题、菜单、队伍前缀、方块名称和计分板均可跟随 Minecraft 客户端语言，也可以手动切换英文或简体中文。
 
 # 玩法说明
 
@@ -105,9 +105,14 @@ DyedBlocks.txt 染色方块库
 EndBlocks.txt 末地方块库
 config.yml 配置文件
 lang.yml 语言文件
+languages/en_us/lang.yml 英文语言文件
+language-preferences.yml 玩家语言偏好
 zh_cn.json 翻译文件
 en_us.json 翻译文件
 ```
+
+默认 `config.yml` 使用英文注释，且不再控制玩家语言。玩家请在游戏中使用
+`/language`；自定义语言文字可编辑 `lang.yml` 和 `languages/en_us/lang.yml`。
 
 5个方块库文件你可以自由修改，但请注意：
 

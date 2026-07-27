@@ -7,6 +7,7 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import top.lqsnow.blockracing.Main;
 
@@ -41,7 +42,14 @@ public enum Config {
         if (file == null) {
             file = new File(Main.getInstance().getDataFolder(), "config.yml");
         }
-        config = YamlConfiguration.loadConfiguration(file);
+        YamlConfiguration loaded = new YamlConfiguration();
+        loaded.options().parseComments(true);
+        try {
+            loaded.load(file);
+        } catch (IOException | InvalidConfigurationException ex) {
+            Main.getInstance().getLogger().log(Level.SEVERE, "[BlockRacing] Error reading config.yml!", ex);
+        }
+        config = loaded;
         try (Reader reader = new InputStreamReader(Main.getInstance().getResource("config.yml"), StandardCharsets.UTF_8)) {
             YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(reader);
             config.setDefaults(defConfig);

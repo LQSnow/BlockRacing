@@ -1,56 +1,42 @@
-# Translation Tutorial
+# Translation and Language Guide
 
-All language texts presented to players in the game are divided into two parts:
+[English](./TranslationTutorial-en.md) | [简体中文](../../TranslationTutorial.md)
 
-The first part, the block names displayed on the scoreboard;
+BlockRacing 26.2.1 includes English and Simplified Chinese, with an independent
+language preference for every player.
 
-The second part, other prompt texts excluding block names (excluding the /debug command).
+## Changing a Player's Language
 
-The game currently comes with Simplified Chinese and English versions.
+- Run `/language` to open the language menu.
+- `/language auto`: Follow the Minecraft client language. Chinese clients use
+  Simplified Chinese; all other clients use English.
+- `/language zh_cn`: Always use Simplified Chinese.
+- `/language en_us`: Always use English.
 
-If you need to switch to another language, follow this tutorial:
+Preferences are stored in `plugins/BlockRacing/language-preferences.yml`.
+`config.yml` does not control player language. First-time players also receive a
+clickable language-menu prompt in chat.
 
-## 1. Language File Translation
+## Editing the Built-in Translations
 
-First, place `BlockRacing.jar` into the plugins folder, start the server once, and a `BlockRacing` folder will be created in the plugins folder, storing all the game configurations for BlockRacing. Among them, lang.yml is the language file, which corresponds to the second part mentioned above.
+The first server start creates:
 
-If the language is not what you need:
+- `lang.yml`: Simplified Chinese interface text.
+- `languages/en_us/lang.yml`: English interface text.
+- `zh_cn.json`: Simplified Chinese block names.
+- `en_us.json`: English block names.
 
-1. The game comes with language files for Simplified Chinese and English, which can be downloaded from Github:
+Edit these files directly, then run `/debug reload` or restart the server. Keep
+the YAML structure, color codes such as `&a`, and placeholders such as
+`%player%`.
 
-   [English version](../../en-us)
+Plugin upgrades do not overwrite existing translation files. Compare and merge
+new entries from [`src/main/resources`](../../src/main/resources) and
+[`en-us`](../../en-us).
 
-   [Simplified Chinese version](../../zh-cn)
+## Adding Another Language
 
-   Replace the two files directly in the `BlockRacing` folder and remember to restart the server.
-
-2. If you need another language, you can download the English version first, then copy its content to ChatGPT for translation. It will automatically recognize color codes and placeholders.
-
-Note! Be sure to change the following lines in `config.yml` and `lang.yml` to your language code:
-
-```
-lang: en_us
-```
-
-
-The game will read the block translation file based on this content!
-
-## 2. Block Translation
-
-The block translation file is files like `zh_cn.json` and `en_us.json` in the `BlockRacing` folder. This file is actually the game's built-in translation file, and you can obtain it directly from the game.
-
-1. First, in the client game directory, find `.minecraft\assets\indexes` and open `12.json`. This file is the index file for version 1.20.x. Search for your language code, such as `zh_cn`, and you will find a key-value pair like this:
-
-    ```
-    "minecraft/lang/zh_cn.json": {"hash": "773e22552e5569ff4512a881c5afb7d5f6d7a091", "size": 421000}
-    ```
-
-    The value of `"hash"`, here is `773e22552e5569ff4512a881c5afb7d5f6d7a091`, is the filename of the language translation file in the game. Copy it.
-
-2. In the `.minecraft\assets\objects` folder, search for this hash value, and you will get the translation file for your language. Copy it to the `BlockRacing` folder, change the suffix to `.json`, and name it with your language code.
-
-**Notice! The file name must be consistent with the value of `lang` in the above language file and configuration file! Otherwise the game will not read properly!**
-
-## 3. Restart the Server
-
-When all the configurations in the `BlockRacing` folder are ready, restart the server, and the game will automatically load the corresponding language.
+The in-game selector currently supports English and Simplified Chinese. Adding a
+third language requires extending `LanguageManager`, the language menu, the
+interface YAML, and the block-name JSON. Adding only a JSON file does not create
+a new language option.
