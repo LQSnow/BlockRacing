@@ -1,4 +1,4 @@
-### 2026.7.27 - BlockRacing 3.6
+### 2026.7.27 - BlockRacing 26.2.1
 
 - 更新游戏版本至 Minecraft Java 26.2，并要求 Java 25 与 Paper 26.2
 - 更新 Paper API 至 `26.2.build.84-stable`、Maven Shade Plugin 至 3.6.2

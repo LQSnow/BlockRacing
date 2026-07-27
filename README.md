@@ -8,9 +8,9 @@
 
 版本：Java 26.2（需要 Java 25）
 
-运行要求：Paper 26.2、Java 25。3.6 起直接使用 Paper API，不再支持 Spigot。
+运行要求：Paper 26.2、Java 25。26.2.1 起直接使用 Paper API，不再支持 Spigot。
 
-从旧版本升级前请备份 `plugins/BlockRacing`。替换插件后，将旧的 `config.yml`、`lang.yml`、五个方块库和两个翻译 JSON 与 3.6 默认文件合并；若没有自定义内容，可以删除这些文件并重启服务器，让插件重新生成 26.2 版本。
+从旧版本升级前请备份 `plugins/BlockRacing`。替换插件后，将旧的 `config.yml`、`lang.yml`、五个方块库和两个翻译 JSON 与 26.2.1 默认文件合并；若没有自定义内容，可以删除这些文件并重启服务器，让插件重新生成 26.2 版本。
 
 # 特色功能
 
