@@ -1,11 +1,9 @@
 package top.lqsnow.blockracing.managers;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.mineacademy.fo.menu.model.ItemCreator;
-import org.mineacademy.fo.remain.CompMaterial;
 import top.lqsnow.blockracing.Main;
+import top.lqsnow.blockracing.toolkit.material.Materials;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -217,7 +215,7 @@ public class Block {
         boolean flag = true;
         for (String str : blocks) {
             try {
-                ItemStack item = ItemCreator.of(CompMaterial.fromMaterial(Material.valueOf(str))).amount(64).make();
+                ItemStack item = Materials.stack(str, 64);
                 checkBlockInventory.setItem(0, item);
             } catch (Exception e) {
                 Bukkit.getLogger().severe(String.format("[BlockRacing] " + Message.NOTICE_ERROR_BLOCK.getString(), str));

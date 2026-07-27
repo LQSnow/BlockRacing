@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -195,7 +196,7 @@ public class GameMenu extends Menu {
     }
 
     public class WayPointMenu extends Menu {
-        public WayPointMenu(HashMap<Integer, Location> wayPointMap,HashMap<Integer,CompMaterial> wayPointIconCache) {
+        public WayPointMenu(HashMap<Integer, Location> wayPointMap, HashMap<Integer, Material> wayPointIconCache) {
             super(GameMenu.this);
 
             setTitle(Message.MENU_WAYPOINT_TITLE.getString());
@@ -220,20 +221,20 @@ public class GameMenu extends Menu {
                         Location wayPoint = wayPointMap.get(ith);
 
                         if (wayPoint != null) {
-                            CompMaterial icon = wayPointIconCache.get(ith);
+                            Material icon = wayPointIconCache.get(ith);
                             
                             if(icon == null){
                                 Block block = wayPoint.getBlock();
                                 while (block.isEmpty()&&block.getY()>-64) {
                                     block = block.getRelative(0, -1, 0);
                                 }
-                                icon = CompMaterial.fromBlock(block);
+                                icon = block.getType();
                                 if(block.isEmpty()){
                                     switch(block.getWorld().getEnvironment()){
-                                        case NORMAL:icon = CompMaterial.GRASS_BLOCK;break;
-                                        case NETHER:icon = CompMaterial.NETHERRACK;break;
-                                        case THE_END:icon = CompMaterial.END_STONE;break;
-                                        default:icon = CompMaterial.FILLED_MAP;break;
+                                        case NORMAL:icon = Material.GRASS_BLOCK;break;
+                                        case NETHER:icon = Material.NETHERRACK;break;
+                                        case THE_END:icon = Material.END_STONE;break;
+                                        default:icon = Material.FILLED_MAP;break;
                                     }
                                 }
                                 wayPointIconCache.put(ith,icon);
@@ -241,7 +242,10 @@ public class GameMenu extends Menu {
                             
                             ItemStack itemStack;
                             try {
-                                itemStack = ItemCreator.of(icon, Message.MENU_WAYPOINT_FILLED.getString() + ith, replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), wayPoint.getWorld().getName(), getCoords(wayPoint), wayPoint.getBlock().getBiome().getKey().getKey())).make();
+                                itemStack = ItemCreator.of(new ItemStack(icon))
+                                        .name(Message.MENU_WAYPOINT_FILLED.getString() + ith)
+                                        .lore(new ArrayList<>(replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), wayPoint.getWorld().getName(), getCoords(wayPoint), wayPoint.getBlock().getBiome().getKey().getKey())))
+                                        .make();
                             } catch (Exception e) {
                                 itemStack = ItemCreator.of(CompMaterial.FILLED_MAP, Message.MENU_WAYPOINT_FILLED.getString() + ith, replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), wayPoint.getWorld().getName(), getCoords(wayPoint), wayPoint.getBlock().getBiome().getKey().getKey())).make();
                             }

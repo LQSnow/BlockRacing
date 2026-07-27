@@ -43,6 +43,7 @@ import org.mineacademy.fo.remain.CompMaterial;
 
 import top.lqsnow.blockracing.Main;
 import top.lqsnow.blockracing.commands.Restart;
+import top.lqsnow.blockracing.toolkit.material.Materials;
 import static top.lqsnow.blockracing.listeners.BasicListener.editAmountPlayer;
 import static top.lqsnow.blockracing.managers.Block.blocks;
 import static top.lqsnow.blockracing.managers.Block.blueTeamBlocks;
@@ -84,8 +85,8 @@ public class Game {
     public static HashMap<Integer, Location> redWaypoint = new HashMap<>();
     public static HashMap<Integer, Location> blueWaypoint = new HashMap<>();
 
-    public static HashMap<Integer, CompMaterial> redWaypointIconCache = new HashMap<>();
-    public static HashMap<Integer, CompMaterial> blueWaypointIconCache = new HashMap<>();
+    public static HashMap<Integer, Material> redWaypointIconCache = new HashMap<>();
+    public static HashMap<Integer, Material> blueWaypointIconCache = new HashMap<>();
 
     public static int redTeamRollCount;
     public static int blueTeamRollCount;
@@ -721,7 +722,7 @@ public class Game {
                 if (emptyPos == -1) {
                     continue;
                 }
-                chest.setItem(emptyPos, ItemCreator.of(CompMaterial.valueOf(block)).amount(64).make());
+                chest.setItem(emptyPos, Materials.stack(block, 64));
                 return;
             }
             sendAll(Message.NOTICE_TEAM_CHEST_FULL.getString().replace("%team%", Message.TEAM_BLUE_NAME.getString())
@@ -751,7 +752,7 @@ public class Game {
                 if (emptyPos == -1) {
                     continue;
                 }
-                chest.setItem(emptyPos, ItemCreator.of(CompMaterial.valueOf(block)).amount(64).make());
+                chest.setItem(emptyPos, Materials.stack(block, 64));
                 return;
             }
             sendAll(Message.NOTICE_TEAM_CHEST_FULL.getString().replace("%team%", Message.TEAM_RED_NAME.getString())
