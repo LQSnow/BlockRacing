@@ -6,7 +6,7 @@
 
     <groupId>lq.snow</groupId>
     <artifactId>BlockRacing</artifactId>
-    <version>26.2.2</version>
+    <version>26.2.1</version>
 
     <properties>
         <maven.compiler.release>25</maven.compiler.release>

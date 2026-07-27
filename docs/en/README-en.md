@@ -8,9 +8,16 @@ This is a multiplayer racing mini-game in Minecraft, divided into two teams, whe
 
 Version: Java 26.2 (requires Java 25)
 
-Requirements: Paper 26.2 and Java 25. Starting with 3.6, BlockRacing uses Paper APIs directly and no longer supports Spigot.
+Requirements: Paper 26.2 and Java 25. Starting with 26.2.1, BlockRacing uses Paper APIs directly and no longer supports Spigot.
 
-Before upgrading, back up `plugins/BlockRacing`. After replacing the plugin, merge your old `config.yml`, `lang.yml`, five block pools, and two translation JSON files with the 3.6 defaults. If you have no customizations, delete those files and restart the server to regenerate the 26.2 versions.
+## Upgrade Notice
+
+Replacing only the plugin JAR does not update existing configuration files. If the versions in an old `config.yml` or `lang.yml` do not match the plugin, an in-game warning is displayed and new settings or messages may not work correctly.
+
+Back up `plugins/BlockRacing` before upgrading, then choose one method:
+
+1. No customizations: delete the old `config.yml`, `lang.yml`, five block pools, and two translation JSON files, then restart the server to generate current files.
+2. Customized files: manually merge your changes into the current default files. Do not change only the version number at the end of a file.
 
 # Features
 
