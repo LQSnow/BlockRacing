@@ -234,8 +234,13 @@ public final class Scoreboard {
 
     private static String padEnglishDifficulty(String value) {
         String trimmed = value.stripTrailing();
-        int visibleLength = trimmed.replaceAll("§.", "").length();
-        return trimmed + " ".repeat(Math.max(0, 4 - visibleLength));
+        String visibleText = trimmed.replaceAll("§.", "");
+        int spaces = switch (visibleText) {
+            case "MID" -> 3;
+            case "END" -> 2;
+            default -> 0;
+        };
+        return trimmed + " ".repeat(spaces);
     }
 
     private static void clearLines(org.bukkit.scoreboard.Scoreboard board) {
