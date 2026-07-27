@@ -18,14 +18,6 @@
             <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -34,37 +26,6 @@
             <artifactId>paper-api</artifactId>
             <version>26.2.build.84-stable</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.kangarko</groupId>
-            <artifactId>Foundation</artifactId>
-            <version>6.10.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.mineacademy.plugin</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.projectlombok</groupId>
-                    <artifactId>lombok</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.logging.log4j</groupId>
-                    <artifactId>log4j-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.yaml</groupId>
-                    <artifactId>snakeyaml</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.mojang</groupId>
-                    <artifactId>datafixerupper</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.papermc.paper</groupId>
-                    <artifactId>paper-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
@@ -105,23 +66,10 @@
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <artifactSet>
                         <includes>
-                            <!-- Important: This will ensure only Foundation is shaded to your jar.
-                            If you have
-                     other dependencies that should be compiled, duplicate this line for each. 
-                     
-                     ONLY ADD THE LIBRARIES HERE YOU WANT TO BE INCLUDED IN YOUR PLUGIN.JAR
-                     -->
-                            <include>com.github.kangarko:Foundation*</include>
                             <include>com.googlecode.json-simple:json-simple</include>
                         </includes>
                     </artifactSet>
                     <relocations>
-                        <!-- This moves Foundation into your own package in "lib" subpackage to
-                        prevent interference. -->
-                        <relocation>
-                            <pattern>org.mineacademy.fo</pattern>
-                            <!--shadedPattern>your.plugin.main.package.lib</shadedPattern-->
-                        </relocation>
                         <relocation>
                             <pattern>org.json.simple</pattern>
                             <shadedPattern>top.lqsnow.blockracing.lib.jsonsimple</shadedPattern>

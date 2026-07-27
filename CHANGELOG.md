@@ -1,7 +1,8 @@
 ### 2026.7.27 - BlockRacing 3.6
 
 - 更新游戏版本至 Minecraft Java 26.2，并要求 Java 25 与 Paper 26.2
-- 更新 Paper API 至 `26.2.build.84-stable`、Foundation 至 6.10.0、Maven Shade Plugin 至 3.6.2
+- 更新 Paper API 至 `26.2.build.84-stable`、Maven Shade Plugin 至 3.6.2
+- 移除 Foundation，改用项目内的物品、文本、菜单和原生材料工具模块
 - 添加硫磺、朱砂、强效硫磺、硫磺锥及两套完整建筑方块
 - 从 Mojang 26.2 官方资源更新简体中文和英文方块翻译
 - 生物群系和结构补全改为读取 Paper 实时注册表，自动包含硫磺洞穴

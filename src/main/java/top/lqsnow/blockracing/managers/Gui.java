@@ -1,12 +1,11 @@
 package top.lqsnow.blockracing.managers;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.mineacademy.fo.menu.Menu;
 import top.lqsnow.blockracing.menus.GameMenu;
 import top.lqsnow.blockracing.menus.PreGameMenu;
+import top.lqsnow.blockracing.toolkit.menu.MenuManager;
+import top.lqsnow.blockracing.toolkit.menu.MenuView;
 
 import static top.lqsnow.blockracing.managers.Game.redTeamChest;
 import static top.lqsnow.blockracing.managers.Game.blueTeamChest;
@@ -15,11 +14,9 @@ import static top.lqsnow.blockracing.managers.Team.blueTeamPlayers;
 import static top.lqsnow.blockracing.managers.Team.redTeamPlayers;
 
 public class Gui {
-    public static Inventory checkBlockInventory = Bukkit.createInventory(null, 9, Component.text("Check Block Inventory"));
-
     public static void openMenu(Player player) {
-        if (currentGameState.equals(Game.GameState.PREGAME)) new PreGameMenu().displayTo(player);
-        if (currentGameState.equals(Game.GameState.INGAME)) new GameMenu().displayTo(player);
+        if (currentGameState.equals(Game.GameState.PREGAME)) new PreGameMenu().open(player);
+        if (currentGameState.equals(Game.GameState.INGAME)) new GameMenu().open(player);
     }
 
     public static void openTeamChest(Player player, int index) {
@@ -37,14 +34,7 @@ public class Gui {
     }
 
     // Update menu
-    public static void updateMenu(Menu menu) {
-        Bukkit.getOnlinePlayers().forEach((Player player) -> {
-            try {
-                Menu playerMenu = Menu.getMenu(player);
-                if (playerMenu.getClass().equals(menu.getClass())) {
-                    playerMenu.restartMenu();
-                }
-            } catch (NullPointerException ignored) {}
-        });
+    public static void updateMenu(MenuView menu) {
+        MenuManager.refreshOpenMenus(menu.getClass());
     }
 }

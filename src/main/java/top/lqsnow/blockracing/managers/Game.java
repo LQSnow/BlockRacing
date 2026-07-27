@@ -38,11 +38,9 @@ import org.bukkit.inventory.meta.Repairable;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.mineacademy.fo.menu.model.ItemCreator;
-import org.mineacademy.fo.remain.CompMaterial;
-
 import top.lqsnow.blockracing.Main;
 import top.lqsnow.blockracing.commands.Restart;
+import top.lqsnow.blockracing.toolkit.item.ItemBuilder;
 import top.lqsnow.blockracing.toolkit.material.Materials;
 import static top.lqsnow.blockracing.listeners.BasicListener.editAmountPlayer;
 import static top.lqsnow.blockracing.managers.Block.blocks;
@@ -288,9 +286,9 @@ public class Game {
         player.setFoodLevel(20);
         player.setSaturation(10);
         player.setGameMode(GameMode.SURVIVAL);
-        player.getInventory().addItem(ItemCreator.of(CompMaterial.STONE_PICKAXE).amount(1).make());
-        player.getInventory().addItem(ItemCreator.of(CompMaterial.STONE_AXE).amount(1).make());
-        player.getInventory().addItem(ItemCreator.of(CompMaterial.STONE_SHOVEL).amount(1).make());
+        player.getInventory().addItem(ItemBuilder.of(Material.STONE_PICKAXE).build());
+        player.getInventory().addItem(ItemBuilder.of(Material.STONE_AXE).build());
+        player.getInventory().addItem(ItemBuilder.of(Material.STONE_SHOVEL).build());
         for (PotionEffect effect : player.getActivePotionEffects()) {
             player.removePotionEffect(effect.getType());
         }
@@ -306,9 +304,10 @@ public class Game {
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, -1, 1, false, false));
             }, 1300L); // 延迟发放 避免冲突
-            player.getInventory()
-                    .addItem(ItemCreator.of(CompMaterial.IRON_PICKAXE).enchant(Enchantment.SILK_TOUCH, 1).make());
-            player.getInventory().addItem(ItemCreator.of(CompMaterial.GOLDEN_CARROT).amount(64).make());
+            player.getInventory().addItem(ItemBuilder.of(Material.IRON_PICKAXE)
+                    .enchant(Enchantment.SILK_TOUCH, 1)
+                    .build());
+            player.getInventory().addItem(ItemBuilder.of(Material.GOLDEN_CARROT).amount(64).build());
 
             ItemStack damagedElytra = new ItemStack(Material.ELYTRA);
             ItemMeta elytraMeta = damagedElytra.getItemMeta();

@@ -49,7 +49,7 @@ public class Menu implements CommandExecutor, TabCompleter {
             }
             if (redTeamPlayers.contains(player.getName())) {
                 if (args.length == 1) {
-                    new GameMenu().new TeamChestSelectMenu().displayTo(player);
+                    new GameMenu.TeamChestSelectMenu().open(player);
                     return true;
                 }
                 Integer ith = parseIndex(args[1], redTeamChest.size());
@@ -60,7 +60,7 @@ public class Menu implements CommandExecutor, TabCompleter {
                 player.openInventory(redTeamChest.get(ith-1));
             } else if (blueTeamPlayers.contains(player.getName())) {
                 if (args.length == 1) {
-                    new GameMenu().new TeamChestSelectMenu().displayTo(player);
+                    new GameMenu.TeamChestSelectMenu().open(player);
                     return true;
                 }
                 Integer ith = parseIndex(args[1], blueTeamChest.size());
@@ -81,9 +81,9 @@ public class Menu implements CommandExecutor, TabCompleter {
 
             if (args.length == 1) {
                 if (redTeamPlayers.contains(player.getName())) {
-                    new GameMenu().new WayPointMenu(redWaypoint,redWaypointIconCache).displayTo(player);
+                    new GameMenu.WayPointMenu(redWaypoint, redWaypointIconCache).open(player);
                 } else if (blueTeamPlayers.contains(player.getName())) {
-                    new GameMenu().new WayPointMenu(blueWaypoint,blueWaypointIconCache).displayTo(player);
+                    new GameMenu.WayPointMenu(blueWaypoint, blueWaypointIconCache).open(player);
                 }
                 return true;
             }

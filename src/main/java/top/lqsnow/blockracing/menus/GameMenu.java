@@ -1,310 +1,225 @@
 package top.lqsnow.blockracing.menus;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
-import org.mineacademy.fo.menu.Menu;
-import org.mineacademy.fo.menu.button.Button;
-import org.mineacademy.fo.menu.button.ButtonMenu;
-import org.mineacademy.fo.menu.button.annotation.Position;
-import org.mineacademy.fo.menu.model.ItemCreator;
-import org.mineacademy.fo.remain.CompMaterial;
-
 import top.lqsnow.blockracing.managers.Game;
-import static top.lqsnow.blockracing.managers.Game.blueTeamScore;
-import static top.lqsnow.blockracing.managers.Game.blueWaypoint;
-import static top.lqsnow.blockracing.managers.Game.blueWaypointIconCache;
-import static top.lqsnow.blockracing.managers.Game.freeRandomTPList;
-import static top.lqsnow.blockracing.managers.Game.getCoords;
-import static top.lqsnow.blockracing.managers.Game.locateCost;
-import static top.lqsnow.blockracing.managers.Game.randomTeleport;
-import static top.lqsnow.blockracing.managers.Game.redTeamScore;
-import static top.lqsnow.blockracing.managers.Game.redWaypoint;
-import static top.lqsnow.blockracing.managers.Game.redWaypointIconCache;
-import static top.lqsnow.blockracing.managers.Game.waypoint;
-import static top.lqsnow.blockracing.managers.Gui.openTeamChest;
-import static top.lqsnow.blockracing.managers.Gui.updateMenu;
 import top.lqsnow.blockracing.managers.Message;
 import top.lqsnow.blockracing.managers.Scoreboard;
 import top.lqsnow.blockracing.managers.Setting;
+import top.lqsnow.blockracing.toolkit.item.ItemBuilder;
+import top.lqsnow.blockracing.toolkit.menu.MenuButton;
+import top.lqsnow.blockracing.toolkit.menu.MenuView;
+
+import java.util.HashMap;
+import java.util.List;
+
+import static top.lqsnow.blockracing.managers.Game.*;
+import static top.lqsnow.blockracing.managers.Gui.openTeamChest;
+import static top.lqsnow.blockracing.managers.Gui.updateMenu;
 import static top.lqsnow.blockracing.managers.Team.blueTeamPlayers;
 import static top.lqsnow.blockracing.managers.Team.redTeamPlayers;
 import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
 
-public class GameMenu extends Menu {
-
-    @Position(0)
-    private final Button teamChest;
-
-    @Position(2)
-    private final Button roll;
-
-    @Position(4)
-    private final Button locate;
-
-    @Position(6)
-    private final Button waypoint;
-
-    @Position(8)
-    private final Button randomTP;
-
+public final class GameMenu extends MenuView {
     public GameMenu() {
-        setTitle(Message.MENU_GAME_TITLE.getString());
-        setSize(1 * 9);
+        super(9, Message.MENU_GAME_TITLE.getString());
 
-        // Open team chest menu
-        this.teamChest = new ButtonMenu(new TeamChestSelectMenu(), ItemCreator.of(CompMaterial.CHEST, Message.MENU_TEAM_CHEST.getString(), Message.MENU_TEAM_CHEST_LORE.getStringList()).make());
-
-        // Roll
-        this.roll = new Button() {
-            @Override
-            public void onClickedInMenu(Player player, Menu menu, ClickType click) {
-                Game.roll(player);
-                player.closeInventory();
-            }
-
-            @Override
-            public ItemStack getItem() {
-                return ItemCreator.of(CompMaterial.TOTEM_OF_UNDYING, Message.MENU_ROLL.getString(), Message.MENU_ROLL_LORE.getString()).make();
-            }
-        };
-
-        // Locate
-        this.locate = new Button() {
-            @Override
-            public void onClickedInMenu(Player player, Menu menu, ClickType click) {
-                Game.locate(player);
-                player.closeInventory();
-            }
-
-            @Override
-            public ItemStack getItem() {
-                return ItemCreator.of(CompMaterial.COMPASS, Message.MENU_LOCATE.getString(), replacePlaceholders(Message.MENU_LOCATE_LORE.getStringList())).make();
-            }
-        };
-
-        // Open waypoint menu
-        this.waypoint = new Button() {
-            @Override
-            public void onClickedInMenu(Player player, Menu menu, ClickType click) {
-                if (redTeamPlayers.contains(player.getName())) new WayPointMenu(redWaypoint,redWaypointIconCache).displayTo(player);
-                else if (blueTeamPlayers.contains(player.getName())) new WayPointMenu(blueWaypoint,blueWaypointIconCache).displayTo(player);
-            }
-
-            @Override
-            public ItemStack getItem() {
-                return ItemCreator.of(CompMaterial.PAPER, Message.MENU_WAYPOINTS.getString(), Message.MENU_WAYPOINTS_LORE.getStringList()).make();
-            }
-        };
-
-        // Random tp
-        this.randomTP = new Button() {
-            @Override
-            public void onClickedInMenu(Player player, Menu menu, ClickType click) {
-                if (freeRandomTPList.contains(player.getName())) {
-                    Game.randomTeleport(player, false);
-                    freeRandomTPList.remove(player.getName());
-                } else {
-                    if (redTeamPlayers.contains(player.getName())) {
-                        if (redTeamScore < 2) {
-                            player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString());
-                            return;
-                        }
-                    } else if (blueTeamPlayers.contains(player.getName())) {
-                        if (blueTeamScore < 2) {
-                            player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString());
-                            return;
-                        }
-                    }
+        setButton(0, MenuButton.of(
+                () -> ItemBuilder.of(Material.CHEST)
+                        .name(Message.MENU_TEAM_CHEST.getString())
+                        .lore(Message.MENU_TEAM_CHEST_LORE.getStringList())
+                        .build(),
+                (player, click) -> new TeamChestSelectMenu().open(player)
+        ));
+        setButton(2, MenuButton.of(
+                () -> ItemBuilder.of(Material.TOTEM_OF_UNDYING)
+                        .name(Message.MENU_ROLL.getString())
+                        .lore(List.of(Message.MENU_ROLL_LORE.getString()))
+                        .build(),
+                (player, click) -> {
+                    Game.roll(player);
                     player.closeInventory();
-                    randomTeleport(player, false);
+                }
+        ));
+        setButton(4, MenuButton.of(
+                () -> ItemBuilder.of(Material.COMPASS)
+                        .name(Message.MENU_LOCATE.getString())
+                        .lore(replaceScorePlaceholder(Message.MENU_LOCATE_LORE.getStringList()))
+                        .build(),
+                (player, click) -> {
+                    Game.locate(player);
+                    player.closeInventory();
+                }
+        ));
+        setButton(6, MenuButton.of(
+                () -> ItemBuilder.of(Material.PAPER)
+                        .name(Message.MENU_WAYPOINTS.getString())
+                        .lore(Message.MENU_WAYPOINTS_LORE.getStringList())
+                        .build(),
+                (player, click) -> {
                     if (redTeamPlayers.contains(player.getName())) {
-                        redTeamScore -= 2;
-                        sendAll(Message.NOTICE_RANDOM_TP.getString().replace("%player%", Message.TEAM_RED_COLOR.getString() + player.getName()));
+                        new WayPointMenu(redWaypoint, redWaypointIconCache).open(player);
                     } else if (blueTeamPlayers.contains(player.getName())) {
-                        blueTeamScore -= 2;
-                        sendAll(Message.NOTICE_RANDOM_TP.getString().replace("%player%", Message.TEAM_BLUE_COLOR.getString() + player.getName()));
+                        new WayPointMenu(blueWaypoint, blueWaypointIconCache).open(player);
                     }
-                    Scoreboard.updateScoreboard();
                 }
-            }
-
-            @Override
-            public ItemStack getItem() {
-                return ItemCreator.of(CompMaterial.ENDER_PEARL, Message.MENU_RANDOM_TP.getString(), Message.MENU_RANDOM_TP_LORE.getStringList()).make();
-            }
-        };
-
+        ));
+        setButton(8, MenuButton.of(
+                () -> ItemBuilder.of(Material.ENDER_PEARL)
+                        .name(Message.MENU_RANDOM_TP.getString())
+                        .lore(Message.MENU_RANDOM_TP_LORE.getStringList())
+                        .build(),
+                (player, click) -> handleRandomTeleport(player)
+        ));
     }
 
-    // Team chest select menu
-    public class TeamChestSelectMenu extends Menu {
+    private void handleRandomTeleport(Player player) {
+        if (freeRandomTPList.remove(player.getName())) {
+            Game.randomTeleport(player, false);
+            return;
+        }
 
+        if (redTeamPlayers.contains(player.getName()) && redTeamScore < 2
+                || blueTeamPlayers.contains(player.getName()) && blueTeamScore < 2) {
+            player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString());
+            return;
+        }
+
+        player.closeInventory();
+        randomTeleport(player, false);
+        if (redTeamPlayers.contains(player.getName())) {
+            redTeamScore -= 2;
+            sendAll(Message.NOTICE_RANDOM_TP.getString()
+                    .replace("%player%", Message.TEAM_RED_COLOR.getString() + player.getName()));
+        } else if (blueTeamPlayers.contains(player.getName())) {
+            blueTeamScore -= 2;
+            sendAll(Message.NOTICE_RANDOM_TP.getString()
+                    .replace("%player%", Message.TEAM_BLUE_COLOR.getString() + player.getName()));
+        }
+        Scoreboard.updateScoreboard();
+    }
+
+    public static final class TeamChestSelectMenu extends MenuView {
         public TeamChestSelectMenu() {
-            super(GameMenu.this);
+            super(menuSize(Setting.getMaxTeamChestNum()), Message.MENU_TEAM_CHEST_SELECT_TITLE.getString());
 
-            setTitle(Message.MENU_TEAM_CHEST_SELECT_TITLE.getString());
+            for (int slot = 0; slot < Setting.getMaxTeamChestNum(); slot++) {
+                int chestIndex = slot;
+                setButton(slot, MenuButton.of(
+                        () -> ItemBuilder.of(Material.CHEST)
+                                .name(Message.MENU_TEAM_CHEST_SELECT_CHEST.getString() + (chestIndex + 1))
+                                .build(),
+                        (player, click) -> openTeamChest(player, chestIndex)
+                ));
+            }
+            setButton(getInventory().getSize() - 1, backButton());
+        }
+    }
 
-            int teamChestNum = Setting.getMaxTeamChestNum();
-            int teamChestMenuSize = ((teamChestNum) / 9 + 1) * 9;
-            setSize(teamChestMenuSize);
+    public static final class WayPointMenu extends MenuView {
+        private final HashMap<Integer, Location> waypoints;
+        private final HashMap<Integer, Material> iconCache;
 
-            for (int i = 0; i < teamChestNum; i++) {
-                Button button = new Button(i) {
-                    @Override
-                    public void onClickedInMenu(Player player, Menu menu, ClickType click) {
-                        openTeamChest(player, this.getSlot());
-                    }
+        public WayPointMenu(HashMap<Integer, Location> waypoints, HashMap<Integer, Material> iconCache) {
+            super(menuSize(Setting.getMaxTeamWaypointNum()), Message.MENU_WAYPOINT_TITLE.getString());
+            this.waypoints = waypoints;
+            this.iconCache = iconCache;
 
-                    @Override
-                    public ItemStack getItem() {
-                        return ItemCreator.of(CompMaterial.CHEST, Message.MENU_TEAM_CHEST_SELECT_CHEST.getString() + (this.getSlot() + 1)).make();
-                    }
-                };
+            for (int slot = 0; slot < Setting.getMaxTeamWaypointNum(); slot++) {
+                int index = slot + 1;
+                setButton(slot, MenuButton.of(
+                        () -> createWaypointItem(index),
+                        (player, click) -> {
+                            if (waypoint(player, index, click)) {
+                                updateMenu(this);
+                            }
+                        }
+                ));
+            }
+            setButton(getInventory().getSize() - 1, backButton());
+        }
 
-                this.registerButton(button);
+        private ItemStack createWaypointItem(int index) {
+            Location waypoint = waypoints.get(index);
+            if (waypoint == null) {
+                iconCache.remove(index);
+                return ItemBuilder.of(Material.MAP)
+                        .name(Message.MENU_WAYPOINT_EMPTY.getString() + index)
+                        .lore(Message.MENU_WAYPOINT_EMPTY_LORE.getStringList())
+                        .build();
             }
 
-            Button back = new Button(teamChestMenuSize - 1) {
-                @Override
-                public void onClickedInMenu(Player player, Menu menu, ClickType click) {
-                    new GameMenu().displayTo(player);
-                }
-
-                @Override
-                public ItemStack getItem() {
-                    return ItemCreator.of(CompMaterial.ARROW, Message.MENU_ALL_RETURN_BACK.getString()).make();
-                }
-            };
-
-            this.registerButton(back);
-
-        }
-
-        @Override
-        protected boolean addReturnButton() {
-            return false;
-        }
-    }
-
-    public class WayPointMenu extends Menu {
-        public WayPointMenu(HashMap<Integer, Location> wayPointMap, HashMap<Integer, Material> wayPointIconCache) {
-            super(GameMenu.this);
-
-            setTitle(Message.MENU_WAYPOINT_TITLE.getString());
-
-            int teamWaypointNum = Setting.getMaxTeamWaypointNum();
-            int teamWaypointMenuNum = ((teamWaypointNum) / 9 + 1) * 9;
-            setSize(teamWaypointMenuNum);
-
-            for (int i = 1; i <= teamWaypointNum; i++) {
-                Button button = new Button(i-1) {
-                    @Override
-                    public void onClickedInMenu(Player player, Menu menu, ClickType click) {
-                        boolean isChanged = waypoint(player, this.getSlot() + 1, click); 
-                        if (isChanged) {
-                            updateMenu(WayPointMenu.this);
-                        }
-                    }
-
-                    @Override
-                    public ItemStack getItem() {
-                        int ith = this.getSlot() + 1;
-                        Location wayPoint = wayPointMap.get(ith);
-
-                        if (wayPoint != null) {
-                            Material icon = wayPointIconCache.get(ith);
-                            
-                            if(icon == null){
-                                Block block = wayPoint.getBlock();
-                                while (block.isEmpty()&&block.getY()>-64) {
-                                    block = block.getRelative(0, -1, 0);
-                                }
-                                icon = block.getType();
-                                if(block.isEmpty()){
-                                    switch(block.getWorld().getEnvironment()){
-                                        case NORMAL:icon = Material.GRASS_BLOCK;break;
-                                        case NETHER:icon = Material.NETHERRACK;break;
-                                        case THE_END:icon = Material.END_STONE;break;
-                                        default:icon = Material.FILLED_MAP;break;
-                                    }
-                                }
-                                wayPointIconCache.put(ith,icon);
-                            }
-                            
-                            ItemStack itemStack;
-                            try {
-                                itemStack = ItemCreator.of(new ItemStack(icon))
-                                        .name(Message.MENU_WAYPOINT_FILLED.getString() + ith)
-                                        .lore(new ArrayList<>(replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), wayPoint.getWorld().getName(), getCoords(wayPoint), wayPoint.getBlock().getBiome().getKey().getKey())))
-                                        .make();
-                            } catch (Exception e) {
-                                itemStack = ItemCreator.of(CompMaterial.FILLED_MAP, Message.MENU_WAYPOINT_FILLED.getString() + ith, replacePlaceholders(Message.MENU_WAYPOINT_FILLED_LORE.getStringList(), wayPoint.getWorld().getName(), getCoords(wayPoint), wayPoint.getBlock().getBiome().getKey().getKey())).make();
-                            }
-                            return itemStack;
-                        } else {
-                            wayPointIconCache.remove(ith);
-                            return ItemCreator.of(CompMaterial.MAP, Message.MENU_WAYPOINT_EMPTY.getString() + ith, Message.MENU_WAYPOINT_EMPTY_LORE.getStringList()).make();
-                        }
-                    }
-
-                };
-
-                this.registerButton(button);
+            Material icon = iconCache.computeIfAbsent(index, ignored -> findWaypointIcon(waypoint));
+            try {
+                return ItemBuilder.of(icon)
+                        .name(Message.MENU_WAYPOINT_FILLED.getString() + index)
+                        .lore(replaceWaypointPlaceholders(
+                                Message.MENU_WAYPOINT_FILLED_LORE.getStringList(),
+                                waypoint.getWorld().getName(),
+                                getCoords(waypoint),
+                                waypoint.getBlock().getBiome().getKey().getKey()
+                        ))
+                        .build();
+            } catch (IllegalArgumentException ex) {
+                iconCache.put(index, Material.FILLED_MAP);
+                return ItemBuilder.of(Material.FILLED_MAP)
+                        .name(Message.MENU_WAYPOINT_FILLED.getString() + index)
+                        .lore(replaceWaypointPlaceholders(
+                                Message.MENU_WAYPOINT_FILLED_LORE.getStringList(),
+                                waypoint.getWorld().getName(),
+                                getCoords(waypoint),
+                                waypoint.getBlock().getBiome().getKey().getKey()
+                        ))
+                        .build();
             }
+        }
 
-            Button back = new Button(teamWaypointMenuNum - 1) {
-                @Override
-                public void onClickedInMenu(Player player, Menu menu, ClickType click) {
-                    new GameMenu().displayTo(player);
-                }
-
-                @Override
-                public ItemStack getItem() {
-                    return ItemCreator.of(CompMaterial.ARROW, Message.MENU_ALL_RETURN_BACK.getString()).make();
-                }
+        private Material findWaypointIcon(Location waypoint) {
+            Block block = waypoint.getBlock();
+            while (block.isEmpty() && block.getY() > block.getWorld().getMinHeight()) {
+                block = block.getRelative(0, -1, 0);
+            }
+            if (!block.isEmpty() && block.getType().isItem()) {
+                return block.getType();
+            }
+            return switch (block.getWorld().getEnvironment()) {
+                case NORMAL -> Material.GRASS_BLOCK;
+                case NETHER -> Material.NETHERRACK;
+                case THE_END -> Material.END_STONE;
+                default -> Material.FILLED_MAP;
             };
-            this.registerButton(back);
-        }
-
-        @Override
-        protected boolean addReturnButton() {
-            return false;
         }
     }
 
-    private Collection<String> replacePlaceholders(Collection<String> lore) {
-        List<String> modifiedLore = new ArrayList<>();
-
-        for (String line : lore) {
-            line = line.replace("%score%", String.valueOf(locateCost));
-
-            modifiedLore.add(line);
-        }
-        return modifiedLore;
+    private static MenuButton backButton() {
+        return MenuButton.of(
+                () -> ItemBuilder.of(Material.ARROW)
+                        .name(Message.MENU_ALL_RETURN_BACK.getString())
+                        .build(),
+                (player, click) -> new GameMenu().open(player)
+        );
     }
 
-    private Collection<String> replacePlaceholders(Collection<String> lore, String dimension, String coords, String biome) {
-        List<String> modifiedLore = new ArrayList<>();
-
-        for (String line : lore) {
-            line = line
-                    .replace("%dimension%", dimension)
-                    .replace("%coords%", coords)
-                    .replace("%biome%", biome);
-
-            modifiedLore.add(line);
-        }
-        return modifiedLore;
+    private static int menuSize(int contentSlots) {
+        return Math.min(54, ((contentSlots / 9) + 1) * 9);
     }
 
+    private static List<String> replaceScorePlaceholder(List<String> lore) {
+        return lore.stream()
+                .map(line -> line.replace("%score%", String.valueOf(locateCost)))
+                .toList();
+    }
 
+    private static List<String> replaceWaypointPlaceholders(List<String> lore, String dimension,
+                                                             String coords, String biome) {
+        return lore.stream()
+                .map(line -> line
+                        .replace("%dimension%", dimension)
+                        .replace("%coords%", coords)
+                        .replace("%biome%", biome))
+                .toList();
+    }
 }

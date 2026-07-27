@@ -4,28 +4,34 @@ import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameRules;
 import org.bukkit.World;
-import org.mineacademy.fo.plugin.SimplePlugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import top.lqsnow.blockracing.commands.*;
 import top.lqsnow.blockracing.listeners.BasicListener;
 import top.lqsnow.blockracing.managers.*;
+import top.lqsnow.blockracing.toolkit.menu.MenuListener;
 
 import static org.bukkit.Bukkit.getPluginCommand;
 import static org.bukkit.Bukkit.getPluginManager;
 
 
-public class Main extends SimplePlugin {
+public class Main extends JavaPlugin {
     private static Main instance;
 
     public static Main getInstance() {
         return instance;
     }
 
+    public static String getVersion() {
+        return instance.getPluginMeta().getVersion();
+    }
+
     @Override
-    protected void onPluginStart() {
+    public void onEnable() {
         instance = this;
 
         // Register events
         getPluginManager().registerEvents(new BasicListener(), this);
+        getPluginManager().registerEvents(new MenuListener(), this);
 
         // Register commands
         getPluginCommand("debug").setExecutor(new Debug());
@@ -65,6 +71,7 @@ public class Main extends SimplePlugin {
         Team.createTeam();
         Scoreboard.createScoreboard();
         new Block();
+        Block.checkBlock();
         Setting.setBlockAmount(Math.max(10, Math.min(Setting.getBlockAmount(), Block.maxBlockAmount)));
         Scoreboard.setPreGameScoreboard();
         new Game.runPer2Tick().runTaskTimer(this, 0L, 2L);
@@ -87,8 +94,7 @@ public class Main extends SimplePlugin {
     }
 
     @Override
-    protected void onPluginStop() {
-        super.onPluginStop();
+    public void onDisable() {
         Config.saveConfig();
     }
 

@@ -1,7 +1,7 @@
 package top.lqsnow.blockracing.managers;
 
 import org.bukkit.Bukkit;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.Material;
 import top.lqsnow.blockracing.Main;
 import top.lqsnow.blockracing.toolkit.material.Materials;
 
@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 
-import static top.lqsnow.blockracing.managers.Gui.checkBlockInventory;
 import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
 
 public class Block {
@@ -215,8 +214,10 @@ public class Block {
         boolean flag = true;
         for (String str : blocks) {
             try {
-                ItemStack item = Materials.stack(str, 64);
-                checkBlockInventory.setItem(0, item);
+                Material material = Materials.require(str);
+                if (!material.isItem()) {
+                    throw new IllegalArgumentException("Material cannot be represented as an item: " + str);
+                }
             } catch (Exception e) {
                 Bukkit.getLogger().severe(String.format("[BlockRacing] " + Message.NOTICE_ERROR_BLOCK.getString(), str));
                 sendAll(String.format(Message.NOTICE_ERROR_BLOCK.getString(), str));
