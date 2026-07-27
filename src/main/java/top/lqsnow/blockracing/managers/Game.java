@@ -9,6 +9,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.lang.reflect.Method;
+import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
@@ -38,6 +40,7 @@ import org.mineacademy.fo.remain.CompMaterial;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import top.lqsnow.blockracing.Main;
+import top.lqsnow.blockracing.commands.Restart;
 import static top.lqsnow.blockracing.listeners.BasicListener.editAmountPlayer;
 import static top.lqsnow.blockracing.managers.Block.blocks;
 import static top.lqsnow.blockracing.managers.Block.blueTeamBlocks;
@@ -90,6 +93,8 @@ public class Game {
     public static int locateCost;
     public static Map<String, Integer> collectAmount = new HashMap<>();
     private static final Deque<Location> randomTpPool = new ArrayDeque<>();
+    private static Method asyncChunkMethod;
+    private static boolean asyncChunkMethodChecked;
 
     public static void initChest() {
         int teamChestNum = Setting.getMaxTeamChestNum();
@@ -107,7 +112,7 @@ public class Game {
             player.sendMessage(Message.NOTICE_WELCOME.getString());
             player.sendMessage(t(
                     "&eNot your language? Please follow the tutorial to change the language: https://github.com/LQSnow/BlockRacing/blob/3.0/docs/en/TranslationTutorial-en.md"));
-            player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
+            player.teleport(getPrimaryWorld().getSpawnLocation());
         } else if (getCurrentGameState().equals(GameState.INGAME)) {
             // Spectator
             if (!redTeamPlayers.contains(player.getName()) && !blueTeamPlayers.contains(player.getName())) {
@@ -156,6 +161,7 @@ public class Game {
         blueRollPlayers.remove(player.getName());
         readyPlayers.remove(player.getName());
         editAmountPlayer.remove(player.getName());
+        Restart.removeVote(player);
     }
 
     public static void playerReady(Player player) {
@@ -223,7 +229,7 @@ public class Game {
         updateScoreboard();
         Bukkit.getOnlinePlayers().forEach((Player player) -> freeRandomTPList.add(player.getName()));
         new runPer5Tick().runTaskTimer(Main.getInstance(), 0L, 5L);
-        World world = Bukkit.getWorlds().get(0);
+        World world = getPrimaryWorld();
         world.setDifficulty(Difficulty.EASY);
         world.setTime(1000);
         world.setStorm(false);
@@ -369,14 +375,78 @@ public class Game {
 
     // Random Teleport
     public static void randomTeleport(Player player, boolean avoidOcean) {
+        World playerWorld = getPrimaryWorld();
+        int maxAttempts = avoidOcean ? 12 : 1;
+        if (startAsyncRandomTeleport(player, playerWorld, avoidOcean, 1, maxAttempts)) {
+            return;
+        }
+        randomTeleportSynchronously(player, playerWorld, avoidOcean, Math.min(maxAttempts, 3));
+    }
+
+    private static void randomTeleportSynchronously(Player player, World playerWorld, boolean avoidOcean,
+                                                    int maxAttempts) {
         Random random = new Random();
-        World playerWorld = Bukkit.getWorlds().get(0);
+        Location offset = null;
+        for (int attempt = 0; attempt < maxAttempts; attempt++) {
+            Location candidate = pollRandomTeleportCandidate();
+            double randX = candidate != null ? candidate.getX() : (random.nextInt(20000) - 10000);
+            double randZ = candidate != null ? candidate.getZ() : (random.nextInt(20000) - 10000);
+            Location current = playerWorld.getHighestBlockAt(new Location(playerWorld, randX, 0, randZ)).getLocation().add(0, 1, 0);
+            offset = current;
+            if (!avoidOcean || !isOcean(current.getBlock().getBiome())) {
+                break;
+            }
+        }
+        if (offset == null) return;
+        completeRandomTeleport(player, offset, avoidOcean);
+    }
+
+    private static boolean startAsyncRandomTeleport(Player player, World world, boolean avoidOcean,
+                                                    int attempt, int maxAttempts) {
+        Method method = getAsyncChunkMethod(world);
+        if (method == null) return false;
+
+        Random random = new Random();
         Location candidate = pollRandomTeleportCandidate();
-        double randX = candidate != null ? candidate.getX() : (random.nextInt(20000) - 10000);
-        double randZ = candidate != null ? candidate.getZ() : (random.nextInt(20000) - 10000);
-        Location offset = playerWorld.getHighestBlockAt(new Location(playerWorld, randX, 0, randZ)).getLocation();
-        double Y = offset.getY() + 1;
-        offset.setY(Y);
+        int blockX = candidate != null ? candidate.getBlockX() : random.nextInt(20000) - 10000;
+        int blockZ = candidate != null ? candidate.getBlockZ() : random.nextInt(20000) - 10000;
+        try {
+            Object result = method.invoke(world, blockX >> 4, blockZ >> 4, true);
+            if (!(result instanceof CompletableFuture<?> future)) return false;
+            future.whenComplete((chunk, error) -> Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
+                if (!player.isOnline()) return;
+                if (error != null) {
+                    randomTeleportSynchronously(player, world, avoidOcean, Math.max(1, maxAttempts - attempt + 1));
+                    return;
+                }
+                Location offset = world.getHighestBlockAt(blockX, blockZ).getLocation().add(0, 1, 0);
+                if (avoidOcean && isOcean(offset.getBlock().getBiome()) && attempt < maxAttempts) {
+                    if (!startAsyncRandomTeleport(player, world, true, attempt + 1, maxAttempts)) {
+                        randomTeleportSynchronously(player, world, true, 1);
+                    }
+                    return;
+                }
+                completeRandomTeleport(player, offset, avoidOcean);
+            }));
+            return true;
+        } catch (ReflectiveOperationException ex) {
+            return false;
+        }
+    }
+
+    private static Method getAsyncChunkMethod(World world) {
+        if (!asyncChunkMethodChecked) {
+            asyncChunkMethodChecked = true;
+            try {
+                asyncChunkMethod = world.getClass().getMethod("getChunkAtAsync", int.class, int.class, boolean.class);
+            } catch (NoSuchMethodException ignored) {
+                asyncChunkMethod = null;
+            }
+        }
+        return asyncChunkMethod;
+    }
+
+    private static void completeRandomTeleport(Player player, Location offset, boolean avoidOcean) {
         player.teleport(offset);
 
         String x = String.format("%.1f", offset.getX());
@@ -384,15 +454,15 @@ public class Game {
         String z = String.format("%.1f", offset.getZ());
 
         player.sendMessage(Message.NOTICE_TP_SUCCESS.getString().replace("%x%", x).replace("%y%", y).replace("%z%", z));
-        if (avoidOcean) {
-            Biome biome = player.getLocation().getBlock().getBiome();
-            if (biome == Biome.OCEAN || biome == Biome.DEEP_OCEAN || biome == Biome.DEEP_COLD_OCEAN
-                    || biome == Biome.LUKEWARM_OCEAN || biome == Biome.DEEP_FROZEN_OCEAN || biome == Biome.COLD_OCEAN
-                    || biome == Biome.WARM_OCEAN || biome == Biome.DEEP_LUKEWARM_OCEAN || biome == Biome.FROZEN_OCEAN) {
-                player.sendMessage(Message.NOTICE_TP_OCEAN.getString());
-                randomTeleport(player, true);
-            }
+        if (avoidOcean && isOcean(offset.getBlock().getBiome())) {
+            player.sendMessage(Message.NOTICE_TP_OCEAN.getString());
         }
+    }
+
+    private static boolean isOcean(Biome biome) {
+        return biome == Biome.OCEAN || biome == Biome.DEEP_OCEAN || biome == Biome.DEEP_COLD_OCEAN
+                || biome == Biome.LUKEWARM_OCEAN || biome == Biome.DEEP_FROZEN_OCEAN || biome == Biome.COLD_OCEAN
+                || biome == Biome.WARM_OCEAN || biome == Biome.DEEP_LUKEWARM_OCEAN || biome == Biome.FROZEN_OCEAN;
     }
 
     public static synchronized void addRandomTeleportCandidate(Location location) {
@@ -508,11 +578,13 @@ public class Game {
                 redWin();
                 showRanking();
                 this.cancel();
+                return;
             }
             if (blueTeamRemainingBlocks.isEmpty()) {
                 blueWin();
                 showRanking();
                 this.cancel();
+                return;
             }
 
             // Roll check
@@ -779,5 +851,12 @@ public class Game {
 
     public static void setCurrentGameState(GameState currentGameState) {
         Game.currentGameState = currentGameState;
+    }
+
+    private static World getPrimaryWorld() {
+        return Bukkit.getWorlds().stream()
+                .filter(world -> world.getEnvironment() == World.Environment.NORMAL)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No overworld is loaded"));
     }
 }

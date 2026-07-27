@@ -9,31 +9,41 @@ import org.jetbrains.annotations.NotNull;
 import top.lqsnow.blockracing.managers.Message;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
 
 public class Restart implements CommandExecutor {
-    public static List<Player> typeRestartPlayers = new ArrayList<>();
+    private static final Set<UUID> restartVotes = new HashSet<>();
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        Player player = (Player) sender;
-        if (typeRestartPlayers.contains(player)) {
-            typeRestartPlayers.remove(player);
-                sendAll(Message.NOTICE_RESTART_CANCEL.getString().replace("%player%", player.getName()));
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage("This command can only be run by a player.");
             return true;
         }
-        typeRestartPlayers.add(player);
-            sendAll(Message.NOTICE_RESTART.getString().replace("%player%", player.getName()));
+        if (restartVotes.remove(player.getUniqueId())) {
+            sendAll(Message.NOTICE_RESTART_CANCEL.getString().replace("%player%", player.getName()));
+            return true;
+        }
+        restartVotes.add(player.getUniqueId());
+        sendAll(Message.NOTICE_RESTART.getString().replace("%player%", player.getName()));
         check();
         return true;
     }
 
     public static void check() {
         if (Bukkit.getOnlinePlayers().isEmpty()) return;
-        if (typeRestartPlayers.size() == Bukkit.getOnlinePlayers().size()) {
+        restartVotes.retainAll(Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).toList());
+        if (restartVotes.size() == Bukkit.getOnlinePlayers().size()) {
             Bukkit.getServer().shutdown();
         }
+    }
+
+    public static void removeVote(Player player) {
+        restartVotes.remove(player.getUniqueId());
     }
 }

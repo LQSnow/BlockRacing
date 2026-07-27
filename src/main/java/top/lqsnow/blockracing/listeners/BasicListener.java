@@ -13,6 +13,7 @@ import top.lqsnow.blockracing.menus.PreGameMenu;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static top.lqsnow.blockracing.managers.Gui.updateMenu;
 import static top.lqsnow.blockracing.managers.Scoreboard.updateScoreboard;
@@ -23,7 +24,7 @@ import static top.lqsnow.blockracing.managers.Block.*;
 import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
 
 public class BasicListener implements Listener {
-    public static List<String> editAmountPlayer = new ArrayList<>();
+    public static List<String> editAmountPlayer = new CopyOnWriteArrayList<>();
 
     @EventHandler
     private void onPlayerJoin(PlayerJoinEvent event) {
@@ -50,28 +51,10 @@ public class BasicListener implements Listener {
 
         // Change block amount
         if (editAmountPlayer.contains(player.getName())) {
-            if (!Game.getCurrentGameState().equals(Game.GameState.PREGAME)) return;
-            if (event.getMessage().equals("quit")) {
-                player.sendMessage(Message.NOTICE_SET_BLOCKS_QUIT.getString());
-                editAmountPlayer.remove(player.getName());
-                event.setCancelled(true);
-                return;
-            }
-            boolean flag;
-            int blockAmount = 0;
-            try {
-                blockAmount = Integer.parseInt(event.getMessage());
-                flag = true;
-            } catch (Exception ex) {
-                player.sendMessage(Message.NOTICE_SET_BLOCKS_ERROR.getString());
-                flag = false;
-            } finally {
-                event.setCancelled(true);
-            }
-            if (flag) {
-                setBlockAmount(blockAmount, true);
-                editAmountPlayer.remove(player.getName());
-            }
+            event.setCancelled(true);
+            String message = event.getMessage();
+            Bukkit.getScheduler().runTask(Main.getInstance(), () -> handleBlockAmountInput(player, message));
+            return;
         }
 
         // Change chat format
@@ -79,6 +62,25 @@ public class BasicListener implements Listener {
             event.setFormat(t(Message.TEAM_RED_CHAT.getString()));
         } else if (isPlayerInBlueTeam(player)) {
             event.setFormat(t(Message.TEAM_BLUE_CHAT.getString()));
+        }
+    }
+
+    private void handleBlockAmountInput(Player player, String message) {
+        if (!editAmountPlayer.contains(player.getName())) return;
+        if (!Game.getCurrentGameState().equals(Game.GameState.PREGAME)) {
+            editAmountPlayer.remove(player.getName());
+            return;
+        }
+        if (message.equalsIgnoreCase("quit")) {
+            player.sendMessage(Message.NOTICE_SET_BLOCKS_QUIT.getString());
+            editAmountPlayer.remove(player.getName());
+            return;
+        }
+        try {
+            setBlockAmount(Integer.parseInt(message), true);
+            editAmountPlayer.remove(player.getName());
+        } catch (NumberFormatException ex) {
+            player.sendMessage(Message.NOTICE_SET_BLOCKS_ERROR.getString());
         }
     }
 

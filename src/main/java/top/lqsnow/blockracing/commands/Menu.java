@@ -33,12 +33,16 @@ public class Menu implements CommandExecutor, TabCompleter {
 
         if (Game.getCurrentGameState().equals(Game.GameState.END)) return true;
 
-        if (args.length == 0 || args[0].equalsIgnoreCase("main")) {
+        if (args.length == 0 || (args.length == 1 && args[0].equalsIgnoreCase("main"))) {
             Gui.openMenu(player);
             return true;
         }
 
         if (args[0].equalsIgnoreCase("chest")) {
+            if (args.length > 2) {
+                player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+                return true;
+            }
             if (Game.getCurrentGameState().equals(Game.GameState.PREGAME)) {
                 sender.sendMessage(Message.NOTICE_GAME_NOT_START.getString());
                 return true;
@@ -48,17 +52,25 @@ public class Menu implements CommandExecutor, TabCompleter {
                     new GameMenu().new TeamChestSelectMenu().displayTo(player);
                     return true;
                 }
-                int ith = Integer.parseInt(args[1]);
+                Integer ith = parseIndex(args[1], redTeamChest.size());
+                if (ith == null) {
+                    player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+                    return true;
+                }
                 player.openInventory(redTeamChest.get(ith-1));
             } else if (blueTeamPlayers.contains(player.getName())) {
                 if (args.length == 1) {
                     new GameMenu().new TeamChestSelectMenu().displayTo(player);
                     return true;
                 }
-                int ith = Integer.parseInt(args[1]);
+                Integer ith = parseIndex(args[1], blueTeamChest.size());
+                if (ith == null) {
+                    player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+                    return true;
+                }
                 player.openInventory(blueTeamChest.get(ith-1));
             }
-
+            return true;
         }
 
         if (args[0].equalsIgnoreCase("waypoints")) {
@@ -76,29 +88,38 @@ public class Menu implements CommandExecutor, TabCompleter {
                 return true;
             }
 
-            if (args[1].equalsIgnoreCase("use")) {
-                int index = Integer.parseInt(args[2]);
+            if (args.length == 3 && args[1].equalsIgnoreCase("use")) {
+                Integer index = parseIndex(args[2], Setting.getMaxTeamWaypointNum());
+                if (index == null) {
+                    player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+                    return true;
+                }
                 waypoint(player, index, ClickType.LEFT);
+            } else {
+                player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
             }
+            return true;
         }
 
-        if (args[0].equalsIgnoreCase("roll")) {
+        if (args[0].equalsIgnoreCase("roll") && args.length == 1) {
             if (Game.getCurrentGameState().equals(Game.GameState.PREGAME)) {
                 sender.sendMessage(Message.NOTICE_GAME_NOT_START.getString());
                 return true;
             }
             roll(player);
+            return true;
         }
 
-        if (args[0].equalsIgnoreCase("locate")) {
+        if (args[0].equalsIgnoreCase("locate") && args.length == 1) {
             if (Game.getCurrentGameState().equals(Game.GameState.PREGAME)) {
                 sender.sendMessage(Message.NOTICE_GAME_NOT_START.getString());
                 return true;
             }
             locate(player);
+            return true;
         }
 
-        if (args[0].equalsIgnoreCase("randomTP")) {
+        if (args[0].equalsIgnoreCase("randomTP") && args.length == 1) {
             if (Game.getCurrentGameState().equals(Game.GameState.PREGAME)) {
                 sender.sendMessage(Message.NOTICE_GAME_NOT_START.getString());
                 return true;
@@ -129,9 +150,20 @@ public class Menu implements CommandExecutor, TabCompleter {
                 }
                 Scoreboard.updateScoreboard();
             }
+            return true;
         }
 
+        player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
         return true;
+    }
+
+    private static Integer parseIndex(String value, int maximum) {
+        try {
+            int index = Integer.parseInt(value);
+            return index >= 1 && index <= maximum ? index : null;
+        } catch (NumberFormatException ex) {
+            return null;
+        }
     }
 
     @Override

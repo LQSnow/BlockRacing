@@ -10,6 +10,7 @@
 
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <repositories>
@@ -46,6 +47,12 @@
             <artifactId>annotations</artifactId>
             <version>24.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.11.4</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -75,6 +82,7 @@
                      ONLY ADD THE LIBRARIES HERE YOU WANT TO BE INCLUDED IN YOUR PLUGIN.JAR
                      -->
                             <include>com.github.kangarko:Foundation*</include>
+                            <include>com.googlecode.json-simple:json-simple</include>
                         </includes>
                     </artifactSet>
                     <relocations>
@@ -83,6 +91,10 @@
                         <relocation>
                             <pattern>org.mineacademy.fo</pattern>
                             <!--shadedPattern>your.plugin.main.package.lib</shadedPattern-->
+                        </relocation>
+                        <relocation>
+                            <pattern>org.json.simple</pattern>
+                            <shadedPattern>top.lqsnow.blockracing.lib.jsonsimple</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

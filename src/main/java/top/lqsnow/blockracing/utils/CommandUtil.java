@@ -14,16 +14,16 @@ public class CommandUtil {
     }
 
     public static void sendRed(String message) {
-        try {
-            redTeamPlayers.forEach((String player) -> Bukkit.getPlayer(player).sendMessage(t(message)));
-        } catch (NullPointerException ignored) {
-        }
+        redTeamPlayers.forEach(playerName -> {
+            Player player = Bukkit.getPlayerExact(playerName);
+            if (player != null) player.sendMessage(t(message));
+        });
     }
 
     public static void sendBlue(String message) {
-        try {
-            blueTeamPlayers.forEach((String player) -> Bukkit.getPlayer(player).sendMessage(t(message)));
-        } catch (NullPointerException ignored) {
-        }
+        blueTeamPlayers.forEach(playerName -> {
+            Player player = Bukkit.getPlayerExact(playerName);
+            if (player != null) player.sendMessage(t(message));
+        });
     }
 }

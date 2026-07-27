@@ -23,11 +23,16 @@ public class LocateBiome implements CommandExecutor, TabCompleter {
             Bukkit.getLogger().info("This command can only be run by a player.");
             return true;
         }
+        if (args.length != 1) {
+            player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+            return true;
+        }
 
         if (locateCommandPermission.contains(player.getName())) {
-            player.performCommand("locate biome " + args[0]);
-            locateCommandPermission.remove(player.getName());
-            player.addAttachment(Main.getInstance(), "minecraft.command.locate", false);
+            if (player.performCommand("locate biome " + args[0])) {
+                locateCommandPermission.remove(player.getName());
+                player.addAttachment(Main.getInstance(), "minecraft.command.locate", false);
+            }
         } else player.sendMessage(Message.NOTICE_LOCATE_NO_PERMISSION.getString());
 
         return true;

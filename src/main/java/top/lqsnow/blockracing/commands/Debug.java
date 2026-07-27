@@ -31,8 +31,8 @@ public class Debug implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (args.length == 0) {
-            player.sendMessage(t("&cMissing parameters"));
+        if (!hasValidArguments(args)) {
+            player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
             return true;
         }
 
@@ -53,13 +53,15 @@ public class Debug implements CommandExecutor, TabCompleter {
             }
             if (args[1].equalsIgnoreCase("red")) {
                 if (args[2].equalsIgnoreCase("all") || args[2].isEmpty()) {
-                    for (int i = 0; i < getCurrentBlocks("red").size(); i++) redTaskComplete(redTeamRemainingBlocks.get(0), "Debug");
+                    int amount = getCurrentBlocks("red").size();
+                    for (int i = 0; i < amount; i++) redTaskComplete(redTeamRemainingBlocks.get(0), "Debug");
                     return true;
                 }
                 redTaskComplete(redTeamRemainingBlocks.get(Integer.parseInt(args[2]) - 1), "Debug");
             } else if (args[1].equalsIgnoreCase("blue")) {
                 if (args[2].equalsIgnoreCase("all") || args[2].isEmpty()) {
-                    for (int i = 0; i < getCurrentBlocks("blue").size(); i++) blueTaskComplete(blueTeamRemainingBlocks.get(0), "Debug");
+                    int amount = getCurrentBlocks("blue").size();
+                    for (int i = 0; i < amount; i++) blueTaskComplete(blueTeamRemainingBlocks.get(0), "Debug");
                     return true;
                 }
                 blueTaskComplete(blueTeamRemainingBlocks.get(Integer.parseInt(args[2]) - 1), "Debug");
@@ -116,7 +118,7 @@ public class Debug implements CommandExecutor, TabCompleter {
         if (args[0].equalsIgnoreCase("setteam")) {
             if (args[1].equalsIgnoreCase("red") || args[1].equalsIgnoreCase("blue")) {
                 if (args[2].equalsIgnoreCase("add")) {
-                    Player p = Bukkit.getPlayer(args[3]);
+                    Player p = Bukkit.getPlayerExact(args[3]);
                     if (p == null) {
                         player.sendMessage(t("&cThe player does not exist!"));
                         return true;
@@ -136,13 +138,14 @@ public class Debug implements CommandExecutor, TabCompleter {
                         player.sendMessage(t(String.format("&cThe player has already joined the %s team!", args[1].toLowerCase())));
                     }
                 } else if (args[2].equalsIgnoreCase("remove")) {
+                    String targetName = args[3];
                     boolean result = false;
                     if (args[1].equalsIgnoreCase("red")) {
-                        result = redTeam.removeEntry(player.getName());
-                        redTeamPlayers.remove(player.getName());
+                        result = redTeam.removeEntry(targetName);
+                        redTeamPlayers.remove(targetName);
                     } else if (args[1].equalsIgnoreCase("blue")) {
-                        result = blueTeam.removeEntry(player.getName());
-                        blueTeamPlayers.remove(player.getName());
+                        result = blueTeam.removeEntry(targetName);
+                        blueTeamPlayers.remove(targetName);
                     }
                     if (result) {
                         player.sendMessage(t("&aSuccessfully removed player from team"));
@@ -154,6 +157,44 @@ public class Debug implements CommandExecutor, TabCompleter {
         }
 
         return true;
+    }
+
+    private boolean hasValidArguments(String[] args) {
+        if (args.length == 0) return false;
+        String action = args[0].toLowerCase();
+        if (action.equals("reload") || action.equals("getteam")) return args.length == 1;
+        if (action.equals("skip") || action.equals("setscore") || action.equals("getblock")
+                || action.equals("gettranslation")) {
+            if (args.length != 3 || !isTeam(args[1])) return false;
+            return switch (action) {
+                case "skip" -> args[2].equalsIgnoreCase("all") || isCurrentBlockIndex(args[1], args[2]);
+                case "setscore" -> isInteger(args[2]);
+                case "getblock" -> args[2].equalsIgnoreCase("remain") || args[2].equalsIgnoreCase("all");
+                case "gettranslation" -> isCurrentBlockIndex(args[1], args[2]);
+                default -> false;
+            };
+        }
+        return action.equals("setteam") && args.length == 4 && isTeam(args[1])
+                && (args[2].equalsIgnoreCase("add") || args[2].equalsIgnoreCase("remove"));
+    }
+
+    private boolean isTeam(String value) {
+        return value.equalsIgnoreCase("red") || value.equalsIgnoreCase("blue");
+    }
+
+    private boolean isInteger(String value) {
+        try {
+            Integer.parseInt(value);
+            return true;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+    }
+
+    private boolean isCurrentBlockIndex(String team, String value) {
+        if (!isInteger(value)) return false;
+        int index = Integer.parseInt(value);
+        return index >= 1 && index <= getCurrentBlocks(team.toLowerCase()).size();
     }
 
 

@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import top.lqsnow.blockracing.managers.Message;
+import top.lqsnow.blockracing.managers.Setting;
 
 import static top.lqsnow.blockracing.managers.Game.*;
 import static top.lqsnow.blockracing.managers.Team.*;
@@ -20,8 +21,22 @@ public class WayPoint implements CommandExecutor {
             Bukkit.getLogger().info("This command can only be run by a player.");
             return true;
         }
-        if (args[0].equals("remove")) {
-            int index = Integer.parseInt(args[1]);
+        if (args.length != 2 || !args[0].equalsIgnoreCase("remove")) {
+            player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+            return true;
+        }
+        int index;
+        try {
+            index = Integer.parseInt(args[1]);
+        } catch (NumberFormatException ex) {
+            player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+            return true;
+        }
+        if (index < 1 || index > Setting.getMaxTeamWaypointNum()) {
+            player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+            return true;
+        }
+        if (args[0].equalsIgnoreCase("remove")) {
             if (redTeamPlayers.contains(player.getName())) {
                 boolean flag = removeWaypoint("red", index);
                 if (!flag) return true;

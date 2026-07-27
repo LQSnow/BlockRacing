@@ -62,25 +62,21 @@ public class Main extends SimplePlugin {
         Game.initChest();
         Team.createTeam();
         Scoreboard.createScoreboard();
-        Scoreboard.setPreGameScoreboard();
         new Block();
+        Setting.setBlockAmount(Math.max(10, Math.min(Setting.getBlockAmount(), Block.maxBlockAmount)));
+        Scoreboard.setPreGameScoreboard();
         new Game.runPer2Tick().runTaskTimer(this, 0L, 2L);
 
         // Init world settings
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-            World world = Bukkit.getWorlds().get(0);
+            World world = getPrimaryWorld();
             world.setDifficulty(Difficulty.PEACEFUL);
-            // overworld
-            world.setGameRule(GameRule.KEEP_INVENTORY, true);
-            // nether
-            Bukkit.getWorlds().get(1).setGameRule(GameRule.KEEP_INVENTORY, true);
-            // end
-            Bukkit.getWorlds().get(2).setGameRule(GameRule.KEEP_INVENTORY, true);
+            Bukkit.getWorlds().forEach(loadedWorld -> loadedWorld.setGameRule(GameRule.KEEP_INVENTORY, true));
             world.setTime(1000);
         }, 5);
 
         // Set world border
-        World world = Bukkit.getWorlds().get(0);
+        World world = getPrimaryWorld();
         world.getWorldBorder().setCenter(world.getSpawnLocation());
         world.getWorldBorder().setSize(32);
 
@@ -104,5 +100,12 @@ public class Main extends SimplePlugin {
                 saveResource(path, false); // 只在缺失时复制，避免 WARNING
             }
         }
+    }
+
+    private World getPrimaryWorld() {
+        return Bukkit.getWorlds().stream()
+                .filter(world -> world.getEnvironment() == World.Environment.NORMAL)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No overworld is loaded"));
     }
 }

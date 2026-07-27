@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import top.lqsnow.blockracing.Main;
+import top.lqsnow.blockracing.utils.TranslationUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -204,6 +205,7 @@ public enum Message {
             m.cacheString = null;
             m.cacheStringList = null;
         }
+        TranslationUtil.reload();
     }
 
     private static FileConfiguration getMessageConfig() {

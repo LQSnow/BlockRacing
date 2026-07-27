@@ -30,11 +30,15 @@ public class Setting {
         enableHardBlock = Config.HARD_BLOCK.getBoolean();
         enableDyedBlock = Config.DYED_BLOCK.getBoolean();
         enableEndBlock = Config.END_BLOCK.getBoolean();
-        blockAmount = Config.BLOCK_AMOUNT.getInt();
+        blockAmount = Math.max(10, Config.BLOCK_AMOUNT.getInt());
         speedMode = Config.SPEED_MODE.getBoolean();
-        maxTeamChestNum = Config.MAX_TEAM_CHEST_NUM.getInt();
-        maxTeamWaypointNum = Config.MAX_TEAM_WAYPOINT_NUM.getInt();
-        setCurrentGameMode(GameMode.valueOf(Config.GAME_MODE.getString().toUpperCase()));
+        maxTeamChestNum = Math.max(1, Math.min(53, Config.MAX_TEAM_CHEST_NUM.getInt()));
+        maxTeamWaypointNum = Math.max(1, Math.min(53, Config.MAX_TEAM_WAYPOINT_NUM.getInt()));
+        try {
+            setCurrentGameMode(GameMode.valueOf(Config.GAME_MODE.getString().toUpperCase()));
+        } catch (IllegalArgumentException | NullPointerException ex) {
+            setCurrentGameMode(GameMode.NORMAL);
+        }
     }
 
     public static void setEnableMediumBlock(boolean enableMediumBlock) {

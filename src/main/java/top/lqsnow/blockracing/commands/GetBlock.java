@@ -32,25 +32,34 @@ public class GetBlock implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (args.length == 0) {
+        if (args.length != 2) {
             player.sendMessage(t("&cMissing parameters"));
             return true;
         }
 
-        if (args[1].isEmpty()) {
-            player.sendMessage(t("&cMissing parameters"));
+        if (!args[0].equalsIgnoreCase("red") && !args[0].equalsIgnoreCase("blue")) {
+            player.sendMessage(t("&cParameters error"));
             return true;
-        } else if (Integer.parseInt(args[1]) > 4) {
+        }
+        int index;
+        try {
+            index = Integer.parseInt(args[1]);
+        } catch (NumberFormatException ex) {
+            player.sendMessage(t("&cParameters error"));
+            return true;
+        }
+        List<String> currentBlocks = getCurrentBlocks(args[0].toLowerCase());
+        if (index < 1 || index > currentBlocks.size()) {
             player.sendMessage(t("&cParameters error"));
             return true;
         }
 
         if (args[0].equalsIgnoreCase("red")) {
-            String block = getCurrentBlocks("red").get(Integer.parseInt(args[1]) - 1);
-            sender.sendMessage(String.format(TranslationUtil.getValue(block)));
+            String block = currentBlocks.get(index - 1);
+            sender.sendMessage(TranslationUtil.getValue(block));
         } else if (args[0].equalsIgnoreCase("blue")) {
-            String block = getCurrentBlocks("blue").get(Integer.parseInt(args[1]) - 1);
-            sender.sendMessage(String.format(TranslationUtil.getValue(block)));
+            String block = currentBlocks.get(index - 1);
+            sender.sendMessage(TranslationUtil.getValue(block));
         }
         return true;
     }

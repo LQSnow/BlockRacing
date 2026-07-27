@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static top.lqsnow.blockracing.managers.Scoreboard.scoreboard;
 import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
@@ -12,8 +13,8 @@ import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
 public class Team {
     public static org.bukkit.scoreboard.Team redTeam = scoreboard.registerNewTeam("red");
     public static org.bukkit.scoreboard.Team blueTeam = scoreboard.registerNewTeam("blue");
-    public static List<String> redTeamPlayers = new ArrayList<>();
-    public static List<String> blueTeamPlayers = new ArrayList<>();
+    public static List<String> redTeamPlayers = new CopyOnWriteArrayList<>();
+    public static List<String> blueTeamPlayers = new CopyOnWriteArrayList<>();
 
     public static void createTeam() {
         redTeam.setDisplayName(Message.TEAM_RED_NAME.getString());
