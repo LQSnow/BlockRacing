@@ -12,6 +12,7 @@ import top.lqsnow.blockracing.managers.Setting;
 import top.lqsnow.blockracing.toolkit.item.ItemBuilder;
 import top.lqsnow.blockracing.toolkit.menu.MenuButton;
 import top.lqsnow.blockracing.toolkit.menu.MenuView;
+import top.lqsnow.blockracing.utils.TranslationUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,16 +26,16 @@ import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
 
 public final class GameMenu extends MenuView {
     public GameMenu() {
-        super(9, player -> Message.MENU_GAME_TITLE.getString(player));
+        super(36, player -> Message.MENU_GAME_TITLE.getString(player));
 
-        setButton(0, MenuButton.of(
+        setButton(10, MenuButton.of(
                 player -> ItemBuilder.of(Material.CHEST)
                         .name(Message.MENU_TEAM_CHEST.getString(player))
                         .lore(Message.MENU_TEAM_CHEST_LORE.getStringList(player))
                         .build(),
                 (player, click) -> new TeamChestSelectMenu().open(player)
         ));
-        setButton(2, MenuButton.of(
+        setButton(12, MenuButton.of(
                 player -> ItemBuilder.of(Material.TOTEM_OF_UNDYING)
                         .name(Message.MENU_ROLL.getString(player))
                         .lore(List.of(Message.MENU_ROLL_LORE.getString(player)))
@@ -44,7 +45,7 @@ public final class GameMenu extends MenuView {
                     player.closeInventory();
                 }
         ));
-        setButton(4, MenuButton.of(
+        setButton(14, MenuButton.of(
                 player -> ItemBuilder.of(Material.COMPASS)
                         .name(Message.MENU_LOCATE.getString(player))
                         .lore(replaceScorePlaceholder(Message.MENU_LOCATE_LORE.getStringList(player)))
@@ -54,7 +55,7 @@ public final class GameMenu extends MenuView {
                     player.closeInventory();
                 }
         ));
-        setButton(6, MenuButton.of(
+        setButton(16, MenuButton.of(
                 player -> ItemBuilder.of(Material.PAPER)
                         .name(Message.MENU_WAYPOINTS.getString(player))
                         .lore(Message.MENU_WAYPOINTS_LORE.getStringList(player))
@@ -67,17 +68,53 @@ public final class GameMenu extends MenuView {
                     }
                 }
         ));
-        setButton(8, MenuButton.of(
+        setButton(21, MenuButton.of(
                 player -> ItemBuilder.of(Material.ENDER_PEARL)
                         .name(Message.MENU_RANDOM_TP.getString(player))
                         .lore(Message.MENU_RANDOM_TP_LORE.getStringList(player))
                         .build(),
                 (player, click) -> handleRandomTeleport(player)
         ));
-        setButton(1, MenuButton.of(
+        setButton(23, MenuButton.of(
+                player -> ItemBuilder.of(Material.WRITABLE_BOOK)
+                        .name(Message.MENU_CURRENT_BLOCKS.getString(player))
+                        .lore(Message.MENU_CURRENT_BLOCKS_LORE.getStringList(player))
+                        .build(),
+                (player, click) -> showCurrentBlocks(player)
+        ));
+        setButton(25, MenuButton.of(
                 () -> ItemBuilder.of(Material.KNOWLEDGE_BOOK).name("§bLanguage / 语言").build(),
                 (player, click) -> new LanguageMenu().open(player)
         ));
+    }
+
+    @Override
+    protected ItemStack getBackgroundItem(int slot, Player player) {
+        Material material = slot < 9 || slot >= 27
+                ? Material.BLACK_STAINED_GLASS_PANE
+                : Material.GRAY_STAINED_GLASS_PANE;
+        return ItemBuilder.of(material).name(" ").build();
+    }
+
+    private static void showCurrentBlocks(Player player) {
+        player.closeInventory();
+        player.sendMessage(Message.NOTICE_BLOCK_OVERVIEW_DIVIDER.getString(player));
+        player.sendMessage(Message.NOTICE_BLOCK_OVERVIEW_TITLE.getString(player));
+        player.sendMessage(Message.NOTICE_BLOCK_OVERVIEW_RED.getString(player));
+        sendBlockSection(player, getCurrentBlocks("red"));
+        player.sendMessage(Message.NOTICE_BLOCK_OVERVIEW_DIVIDER.getString(player));
+        player.sendMessage(Message.NOTICE_BLOCK_OVERVIEW_BLUE.getString(player));
+        sendBlockSection(player, getCurrentBlocks("blue"));
+        player.sendMessage(Message.NOTICE_BLOCK_OVERVIEW_DIVIDER.getString(player));
+    }
+
+    private static void sendBlockSection(Player player, List<String> blocks) {
+        for (int index = 0; index < blocks.size(); index++) {
+            String block = blocks.get(index);
+            player.sendMessage(Message.NOTICE_BLOCK_OVERVIEW_ENTRY.getString(player)
+                    .replace("%index%", String.valueOf(index + 1))
+                    .replace("%block%", TranslationUtil.getValue(block, player)));
+        }
     }
 
     private void handleRandomTeleport(Player player) {

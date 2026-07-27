@@ -105,6 +105,8 @@ public enum Message {
     MENU_WAYPOINTS_LORE("menu.game-menu.waypoints-lore"),
     MENU_RANDOM_TP("menu.game-menu.random-tp"),
     MENU_RANDOM_TP_LORE("menu.game-menu.random-tp-lore"),
+    MENU_CURRENT_BLOCKS("menu.game-menu.current-blocks"),
+    MENU_CURRENT_BLOCKS_LORE("menu.game-menu.current-blocks-lore"),
     MENU_TEAM_CHEST_SELECT_TITLE("menu.team-chest-select-menu.title"),
     MENU_TEAM_CHEST_SELECT_CHEST("menu.team-chest-select-menu.chest"),
     MENU_RED_CHEST("menu.team-chest.red-chest"),
@@ -182,7 +184,11 @@ public enum Message {
     NOTICE_VERSION_MISMATCH_TITLE("notice.version-mismatch-title"),
     NOTICE_VERSION_MISMATCH_SUBTITLE("notice.version-mismatch-subtitle"),
     NOTICE_TEAM_SHUFFLE_TRIGGERED("notice.team-shuffle-triggered"),
-    NOTICE_NEW_TARGET_BLOCK("notice.new-target-block"),
+    NOTICE_BLOCK_OVERVIEW_TITLE("notice.block-overview.title"),
+    NOTICE_BLOCK_OVERVIEW_RED("notice.block-overview.red"),
+    NOTICE_BLOCK_OVERVIEW_BLUE("notice.block-overview.blue"),
+    NOTICE_BLOCK_OVERVIEW_ENTRY("notice.block-overview.entry"),
+    NOTICE_BLOCK_OVERVIEW_DIVIDER("notice.block-overview.divider"),
 
     // other
     MESSAGE_LANG("lang"),

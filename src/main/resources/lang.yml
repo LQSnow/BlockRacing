@@ -124,6 +124,10 @@ menu:
     random-tp: "&9随机传送"
     random-tp-lore:
       - "&b花费2积分在&l主世界&r&b随机传送，首次免费"
+    current-blocks: "&6当前目标方块"
+    current-blocks-lore:
+      - "&b在聊天框中显示红蓝两队"
+      - "&b当前可见的全部目标方块"
   team-chest-select-menu:
     title: "&0队伍箱子选择"
     chest: "&b队伍箱子"
@@ -213,7 +217,12 @@ notice:
   team-shuffle-confirm-button: "&a&l[点击确认随机组队]"
   team-shuffle-confirm-hover: "&7确认后将清除当前队伍分配并重新平均分队"
   team-shuffle-confirm-expired: "&c随机组队确认已失效，请重新发起！"
-  new-target-block: "&a新的目标方块：&b%block%"
+  block-overview:
+    title: "&b&l当前目标方块"
+    red: "&c&l红队"
+    blue: "&9&l蓝队"
+    entry: "&7%index%. &f%block%"
+    divider: "&8&m--------------------------------"
 
 # Internal compatibility value. Do not edit this manually.
 lang-version: 26.2.1

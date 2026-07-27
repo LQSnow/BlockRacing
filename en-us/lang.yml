@@ -132,6 +132,10 @@ menu:
     random-tp-lore:
       - "&bSpend 2 points to &lrandomly teleport&r&b"
       - "&bin the &lOverworld&r&b, first time is free"
+    current-blocks: "&6Current Target Blocks"
+    current-blocks-lore:
+      - "&bShow every currently visible target"
+      - "&bfor both teams in chat"
   team-chest-select-menu:
     title: "&0Team Chest Selection"
     chest: "&gTeam Chest "
@@ -221,7 +225,12 @@ notice:
   team-shuffle-confirm-button: "&a&l[Click to confirm random teams]"
   team-shuffle-confirm-hover: "&7This clears current teams and creates new balanced teams"
   team-shuffle-confirm-expired: "&cThe random-team confirmation expired. Please try again!"
-  new-target-block: "&aNew target block: &b%block%"
+  block-overview:
+    title: "&b&lCurrent Target Blocks"
+    red: "&c&lRed Team"
+    blue: "&9&lBlue Team"
+    entry: "&7%index%. &f%block%"
+    divider: "&8&m--------------------------------"
 
 # Internal compatibility value. Do not edit this manually.
 lang-version: 26.2.1
