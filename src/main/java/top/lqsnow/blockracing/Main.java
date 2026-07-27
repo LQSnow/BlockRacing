@@ -72,7 +72,7 @@ public class Main extends JavaPlugin {
         Scoreboard.createScoreboard();
         new Block();
         Block.checkBlock();
-        Setting.setBlockAmount(Math.max(10, Math.min(Setting.getBlockAmount(), Block.maxBlockAmount)));
+        Block.refreshAvailableBlocksAndClampAmount();
         Scoreboard.setPreGameScoreboard();
         new Game.runPer2Tick().runTaskTimer(this, 0L, 2L);
 

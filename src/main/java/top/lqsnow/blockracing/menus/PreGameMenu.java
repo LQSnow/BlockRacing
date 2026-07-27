@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import top.lqsnow.blockracing.commands.RandomTeam;
+import top.lqsnow.blockracing.managers.Block;
 import top.lqsnow.blockracing.managers.Game;
 import top.lqsnow.blockracing.managers.Message;
 import top.lqsnow.blockracing.managers.Setting;
@@ -144,6 +145,7 @@ public final class PreGameMenu extends MenuView {
                 ),
                 (player, click) -> {
                     toggle.run();
+                    Block.refreshAvailableBlocksAndClampAmount();
                     refreshSettings();
                 }
         );

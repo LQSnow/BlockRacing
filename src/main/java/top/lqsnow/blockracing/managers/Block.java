@@ -43,7 +43,25 @@ public class Block {
         maxBlockAmount = blocks.size();
     }
 
+    public static boolean refreshAvailableBlocksAndClampAmount() {
+        addUpBlocks();
+        int clampedAmount = clampBlockAmount(Setting.getBlockAmount(), maxBlockAmount);
+        if (clampedAmount == Setting.getBlockAmount()) {
+            return false;
+        }
+        Setting.setBlockAmount(clampedAmount);
+        return true;
+    }
+
+    public static int clampBlockAmount(int requestedAmount, int availableBlocks) {
+        if (availableBlocks < 0) {
+            throw new IllegalArgumentException("Available block amount cannot be negative");
+        }
+        return Math.min(Math.max(10, requestedAmount), availableBlocks);
+    }
+
     public static void setupBlocks() {
+        refreshAvailableBlocksAndClampAmount();
         if (Setting.getCurrentGameMode().equals(Setting.GameMode.NORMAL)) {
             redTeamBlocks = generateBlocks();
             blueTeamBlocks = generateBlocks();
