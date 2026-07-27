@@ -18,9 +18,9 @@ If the language is not what you need:
 
 1. The game comes with language files for Simplified Chinese and English, which can be downloaded from Github:
 
-   English version: [https://github.com/LQSnow/BlockRacing/tree/3.0/en-us](https://github.com/LQSnow/BlockRacing/tree/3.0/en-us)
+   [English version](../../en-us)
 
-   Simplified Chinese version: [https://github.com/LQSnow/BlockRacing/tree/3.0/zh-cn](https://github.com/LQSnow/BlockRacing/tree/3.0/zh-cn)
+   [Simplified Chinese version](../../zh-cn)
 
    Replace the two files directly in the `BlockRacing` folder and remember to restart the server.
 

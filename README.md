@@ -19,7 +19,7 @@
 1. 没有自定义配置：删除旧的 `config.yml`、`lang.yml`、五个方块库和两个翻译 JSON，重启服务器自动生成当前版本文件。
 2. 有自定义配置：将自定义内容手动合并到当前版本的默认文件中，不要只修改文件末尾的版本号。
 
-当前版本的默认配置和资源文件可在 [GitHub `src/main/resources` 目录](https://github.com/LQSnow/BlockRacing/tree/26.2/src/main/resources) 查看。
+当前版本的默认配置和资源文件可在 [`src/main/resources` 目录](./src/main/resources) 查看。
 
 # 特色功能
 
@@ -162,14 +162,14 @@ en_us.json 翻译文件
 `/locatestructure <structure>`
 - `<structure>`: 要定位的结构名称。
 
-### /restart - 重启服务器
+### /restartgame - 重启服务器
 
-`/restart`
+`/restartgame`
 - 在所有玩家确认重启之后，关闭服务器并重新启动。
 
-### /getblock - 获取方块信息
+### /block - 获取方块信息
 
-`/getblock <red|blue> <index>`
+`/block <red|blue> <index>`
 - `<red|blue>`: 队伍颜色。
 - `<index>`: 方块索引（1, 2, 3 或 4）。
 
@@ -213,6 +213,6 @@ en_us.json 翻译文件
 
 # 版权说明
 
-该项目签署 [**GNU Affero General Public License v3.0**](https://github.com/LQSnow/BlockRacing/blob/main/LICENSE) 授权许可
+该项目签署 [**GNU Affero General Public License v3.0**](./LICENSE) 授权许可
 
-The project is licensed under the [**GNU Affero General Public License v3.0**](https://github.com/LQSnow/BlockRacing/blob/main/LICENSE)
+The project is licensed under the [**GNU Affero General Public License v3.0**](./LICENSE)

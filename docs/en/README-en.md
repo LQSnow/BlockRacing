@@ -1,6 +1,6 @@
-[English](../en/README-en.md) | [简体中文](../../README.md)
+[English](./README-en.md) | [简体中文](../../README.md)
 
-[Translation Tutorial](../en/TranslationTutorial-en.md) | [翻译教程](../../TranslationTutorial)
+[Translation Tutorial](./TranslationTutorial-en.md) | [翻译教程](../../TranslationTutorial.md)
 
 # BlockRacing
 
@@ -19,7 +19,7 @@ Back up `plugins/BlockRacing` before upgrading, then choose one method:
 1. No customizations: delete the old `config.yml`, `lang.yml`, five block pools, and two translation JSON files, then restart the server to generate current files.
 2. Customized files: manually merge your changes into the current default files. Do not change only the version number at the end of a file.
 
-See the current default configuration and resource files in the [GitHub `src/main/resources` directory](https://github.com/LQSnow/BlockRacing/tree/26.2/src/main/resources).
+See the current default configuration and resource files in the [`src/main/resources` directory](../../src/main/resources).
 
 # Features
 
@@ -161,14 +161,14 @@ End: When game progress exceeds the percentage of non-End dimension blocks in to
 `/locatestructure <structure>`
 - `<structure>`: The name of the structure to locate.
 
-### /restart - Restart Server
+### /restartgame - Restart Server
 
-`/restart`
+`/restartgame`
 - Shutdown the server and restart it after all players confirm the restart.
 
-### /getblock - Get Block Information
+### /block - Get Block Information
 
-`/getblock <red|blue> <index>`
+`/block <red|blue> <index>`
 - `<red|blue>`: The team color.
 - `<index>`: The block index (1, 2, 3, or 4).
 
@@ -212,4 +212,4 @@ Contact:
 
 # License
 
-This project is licensed under the [**GNU Affero General Public License v3.0**](https://github.com/LQSnow/BlockRacing/blob/main/LICENSE).
+This project is licensed under the [**GNU Affero General Public License v3.0**](../../LICENSE).

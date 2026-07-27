@@ -18,9 +18,9 @@
 
 1. 游戏自带简体中文和英语的语言文件，可前往Github下载：
 
-   英文版本：https://github.com/LQSnow/BlockRacing/tree/3.0/en-us
+   [英文版本](./en-us)
 
-   简体中文版本：https://github.com/LQSnow/BlockRacing/tree/3.0/zh-cn
+   [简体中文版本](./zh-cn)
 
    将两个文件直接替换到`BlockRacing`文件夹中即可，记得重启服务器。
 
