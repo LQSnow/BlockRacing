@@ -238,7 +238,8 @@ public class Block {
                 }
             } catch (Exception e) {
                 Bukkit.getLogger().severe(String.format("[BlockRacing] " + Message.NOTICE_ERROR_BLOCK.getString(), str));
-                sendAll(String.format(Message.NOTICE_ERROR_BLOCK.getString(), str));
+                sendAll(Message.NOTICE_ERROR_BLOCK,
+                        (viewer, text) -> String.format(text, str));
                 flag = false;
             }
         }

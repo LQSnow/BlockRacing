@@ -33,3 +33,7 @@ commands:
   randomteam:
     usage: "/randomteam [confirm]"
     description: "Request or confirm balanced random teams."
+  language:
+    aliases: [lang]
+    usage: "/language [auto|zh_cn|en_us]"
+    description: "Select your display language."

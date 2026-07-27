@@ -48,6 +48,9 @@ public class Main extends JavaPlugin {
         getPluginCommand("block").setExecutor(new GetBlock());
         getPluginCommand("block").setTabCompleter(new GetBlock());
         getPluginCommand("randomteam").setExecutor(new RandomTeam());
+        Language language = new Language();
+        getPluginCommand("language").setExecutor(language);
+        getPluginCommand("language").setTabCompleter(language);
 
         // Save resources
         saveIfAbsent(
@@ -57,7 +60,8 @@ public class Main extends JavaPlugin {
                 "DyedBlocks.txt",
                 "EndBlocks.txt",
                 "zh_cn.json",
-                "en_us.json"
+                "en_us.json",
+                "languages/en_us/lang.yml"
         );
 
 
@@ -66,6 +70,7 @@ public class Main extends JavaPlugin {
         Config.load();
         Message.saveDefaultConfig();
         Message.load();
+        LanguageManager.load();
         Setting.getSettings();
         Game.initChest();
         Team.createTeam();

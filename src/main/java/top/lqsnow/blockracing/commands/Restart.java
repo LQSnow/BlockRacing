@@ -26,11 +26,13 @@ public class Restart implements CommandExecutor {
             return true;
         }
         if (restartVotes.remove(player.getUniqueId())) {
-            sendAll(Message.NOTICE_RESTART_CANCEL.getString().replace("%player%", player.getName()));
+            sendAll(Message.NOTICE_RESTART_CANCEL,
+                    (viewer, text) -> text.replace("%player%", player.getName()));
             return true;
         }
         restartVotes.add(player.getUniqueId());
-        sendAll(Message.NOTICE_RESTART.getString().replace("%player%", player.getName()));
+        sendAll(Message.NOTICE_RESTART,
+                (viewer, text) -> text.replace("%player%", player.getName()));
         check();
         return true;
     }

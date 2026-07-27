@@ -10,6 +10,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import top.lqsnow.blockracing.managers.LanguageManager;
 import top.lqsnow.blockracing.managers.Message;
 import top.lqsnow.blockracing.utils.TranslationUtil;
 
@@ -32,13 +33,14 @@ public class Debug implements CommandExecutor, TabCompleter {
         }
 
         if (!hasValidArguments(args)) {
-            player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+            player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString(player));
             return true;
         }
 
         // Reload
         if (args[0].equalsIgnoreCase("reload")) {
             Message.load();
+            LanguageManager.load();
             if (getCurrentGameState().equals(GameState.PREGAME)) {
                 reloadBlock();
             }

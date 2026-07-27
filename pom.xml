@@ -46,6 +46,18 @@
         </dependency>
     </dependencies>
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>en-us</directory>
+                <includes>
+                    <include>lang.yml</include>
+                </includes>
+                <targetPath>languages/en_us</targetPath>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

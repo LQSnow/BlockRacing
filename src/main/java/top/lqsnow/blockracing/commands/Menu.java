@@ -40,11 +40,11 @@ public class Menu implements CommandExecutor, TabCompleter {
 
         if (args[0].equalsIgnoreCase("chest")) {
             if (args.length > 2) {
-                player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+                player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString(player));
                 return true;
             }
             if (Game.getCurrentGameState().equals(Game.GameState.PREGAME)) {
-                sender.sendMessage(Message.NOTICE_GAME_NOT_START.getString());
+                player.sendMessage(Message.NOTICE_GAME_NOT_START.getString(player));
                 return true;
             }
             if (redTeamPlayers.contains(player.getName())) {
@@ -54,7 +54,7 @@ public class Menu implements CommandExecutor, TabCompleter {
                 }
                 Integer ith = parseIndex(args[1], redTeamChest.size());
                 if (ith == null) {
-                    player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+                    player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString(player));
                     return true;
                 }
                 player.openInventory(redTeamChest.get(ith-1));
@@ -65,7 +65,7 @@ public class Menu implements CommandExecutor, TabCompleter {
                 }
                 Integer ith = parseIndex(args[1], blueTeamChest.size());
                 if (ith == null) {
-                    player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+                    player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString(player));
                     return true;
                 }
                 player.openInventory(blueTeamChest.get(ith-1));
@@ -75,7 +75,7 @@ public class Menu implements CommandExecutor, TabCompleter {
 
         if (args[0].equalsIgnoreCase("waypoints")) {
             if (Game.getCurrentGameState().equals(Game.GameState.PREGAME)) {
-                sender.sendMessage(Message.NOTICE_GAME_NOT_START.getString());
+                player.sendMessage(Message.NOTICE_GAME_NOT_START.getString(player));
                 return true;
             }
 
@@ -91,19 +91,19 @@ public class Menu implements CommandExecutor, TabCompleter {
             if (args.length == 3 && args[1].equalsIgnoreCase("use")) {
                 Integer index = parseIndex(args[2], Setting.getMaxTeamWaypointNum());
                 if (index == null) {
-                    player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+                    player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString(player));
                     return true;
                 }
                 waypoint(player, index, ClickType.LEFT);
             } else {
-                player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+                player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString(player));
             }
             return true;
         }
 
         if (args[0].equalsIgnoreCase("roll") && args.length == 1) {
             if (Game.getCurrentGameState().equals(Game.GameState.PREGAME)) {
-                sender.sendMessage(Message.NOTICE_GAME_NOT_START.getString());
+                player.sendMessage(Message.NOTICE_GAME_NOT_START.getString(player));
                 return true;
             }
             roll(player);
@@ -112,7 +112,7 @@ public class Menu implements CommandExecutor, TabCompleter {
 
         if (args[0].equalsIgnoreCase("locate") && args.length == 1) {
             if (Game.getCurrentGameState().equals(Game.GameState.PREGAME)) {
-                sender.sendMessage(Message.NOTICE_GAME_NOT_START.getString());
+                player.sendMessage(Message.NOTICE_GAME_NOT_START.getString(player));
                 return true;
             }
             locate(player);
@@ -121,7 +121,7 @@ public class Menu implements CommandExecutor, TabCompleter {
 
         if (args[0].equalsIgnoreCase("randomTP") && args.length == 1) {
             if (Game.getCurrentGameState().equals(Game.GameState.PREGAME)) {
-                sender.sendMessage(Message.NOTICE_GAME_NOT_START.getString());
+                player.sendMessage(Message.NOTICE_GAME_NOT_START.getString(player));
                 return true;
             }
             if (freeRandomTPList.contains(player.getName())) {
@@ -130,12 +130,12 @@ public class Menu implements CommandExecutor, TabCompleter {
             } else {
                 if (redTeamPlayers.contains(player.getName())) {
                     if (redTeamScore < 2) {
-                        player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString());
+                        player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString(player));
                         return true;
                     }
                 } else if (blueTeamPlayers.contains(player.getName())) {
                     if (blueTeamScore < 2) {
-                        player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString());
+                        player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString(player));
                         return true;
                     }
                 }
@@ -143,17 +143,19 @@ public class Menu implements CommandExecutor, TabCompleter {
                 randomTeleport(player, false);
                 if (redTeamPlayers.contains(player.getName())) {
                     redTeamScore -= 2;
-                    sendAll(Message.NOTICE_RANDOM_TP.getString().replace("%player%", Message.TEAM_RED_COLOR.getString() + player.getName()));
+                    sendAll(Message.NOTICE_RANDOM_TP, (viewer, text) -> text.replace("%player%",
+                            Message.TEAM_RED_COLOR.getString(viewer) + player.getName()));
                 } else if (blueTeamPlayers.contains(player.getName())) {
                     blueTeamScore -= 2;
-                    sendAll(Message.NOTICE_RANDOM_TP.getString().replace("%player%", Message.TEAM_BLUE_COLOR.getString() + player.getName()));
+                    sendAll(Message.NOTICE_RANDOM_TP, (viewer, text) -> text.replace("%player%",
+                            Message.TEAM_BLUE_COLOR.getString(viewer) + player.getName()));
                 }
                 Scoreboard.updateScoreboard();
             }
             return true;
         }
 
-        player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+        player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString(player));
         return true;
     }
 

@@ -28,14 +28,14 @@ public final class PreGameMenu extends MenuView {
     private static final Set<Integer> BLUE_BACKGROUND = Set.of(13, 14, 15, 31, 32, 40, 41, 42);
 
     public PreGameMenu() {
-        super(54, Message.MENU_PREGAME_TITLE.getString());
+        super(54, player -> Message.MENU_PREGAME_TITLE.getString(player));
 
         setButton(11, MenuButton.of(
-                () -> item(Material.RED_WOOL, Message.MENU_JOIN_RED.getString()),
+                player -> item(Material.RED_WOOL, Message.MENU_JOIN_RED.getString(player)),
                 (player, click) -> Team.joinTeam(player, redTeam, true)
         ));
         setButton(12, MenuButton.of(
-                () -> item(Material.BLUE_WOOL, Message.MENU_JOIN_BLUE.getString()),
+                player -> item(Material.BLUE_WOOL, Message.MENU_JOIN_BLUE.getString(player)),
                 (player, click) -> Team.joinTeam(player, Team.blueTeam, true)
         ));
         setButton(20, toggleButton(
@@ -59,14 +59,14 @@ public final class PreGameMenu extends MenuView {
                 Message.MENU_END_BLOCKS
         ));
         setButton(24, MenuButton.of(
-                () -> ItemBuilder.of(Material.NAME_TAG)
-                        .name(Message.MENU_BLOCK_AMOUNT.getString() + Setting.getBlockAmount())
-                        .lore(Message.MENU_BLOCK_AMOUNT_LORE.getStringList())
+                player -> ItemBuilder.of(Material.NAME_TAG)
+                        .name(Message.MENU_BLOCK_AMOUNT.getString(player) + Setting.getBlockAmount())
+                        .lore(Message.MENU_BLOCK_AMOUNT_LORE.getStringList(player))
                         .build(),
                 (player, click) -> {
                     player.closeInventory();
                     editAmountPlayer.add(player.getName());
-                    player.sendMessage(Message.NOTICE_SET_BLOCKS.getString());
+                    player.sendMessage(Message.NOTICE_SET_BLOCKS.getString(player));
                 }
         ));
         setButton(29, MenuButton.of(this::normalModeItem, (player, click) -> {
@@ -78,11 +78,11 @@ public final class PreGameMenu extends MenuView {
             refreshSettings();
         }));
         setButton(33, MenuButton.of(
-                () -> ItemBuilder.of(Setting.isSpeedMode() ? Material.GREEN_CONCRETE : Material.YELLOW_CONCRETE)
+                player -> ItemBuilder.of(Setting.isSpeedMode() ? Material.GREEN_CONCRETE : Material.YELLOW_CONCRETE)
                         .name(Setting.isSpeedMode()
-                                ? Message.MENU_SPEED_MODE_ENABLED.getString()
-                                : Message.MENU_SPEED_MODE_DISABLED.getString())
-                        .lore(Message.MENU_SPEED_MODE_LORE.getStringList())
+                                ? Message.MENU_SPEED_MODE_ENABLED.getString(player)
+                                : Message.MENU_SPEED_MODE_DISABLED.getString(player))
+                        .lore(Message.MENU_SPEED_MODE_LORE.getStringList(player))
                         .build(),
                 (player, click) -> {
                     Setting.toggleSpeedMode();
@@ -90,25 +90,31 @@ public final class PreGameMenu extends MenuView {
                 }
         ));
         setButton(38, MenuButton.of(
-                () -> ItemBuilder.of(Material.EMERALD)
-                        .name(Message.MENU_READY.getString())
-                        .lore(Message.MENU_READY_LORE.getStringList())
+                player -> ItemBuilder.of(Material.EMERALD)
+                        .name(Message.MENU_READY.getString(player))
+                        .lore(Message.MENU_READY_LORE.getStringList(player))
                         .build(),
                 (player, click) -> Game.playerReady(player)
         ));
         setButton(39, MenuButton.of(
-                () -> ItemBuilder.of(Material.DIAMOND)
-                        .name(Message.MENU_START.getString())
-                        .lore(Message.MENU_START_LORE.getStringList())
+                player -> ItemBuilder.of(Material.DIAMOND)
+                        .name(Message.MENU_START.getString(player))
+                        .lore(Message.MENU_START_LORE.getStringList(player))
                         .build(),
                 (player, click) -> Game.checkStartDemands(player)
         ));
         setButton(41, MenuButton.of(
-                () -> ItemBuilder.of(Material.PLAYER_HEAD)
-                        .name(Message.MENU_RANDOM_TEAM.getString())
-                        .lore(Message.MENU_RANDOM_TEAM_LORE.getStringList())
+                player -> ItemBuilder.of(Material.PLAYER_HEAD)
+                        .name(Message.MENU_RANDOM_TEAM.getString(player))
+                        .lore(Message.MENU_RANDOM_TEAM_LORE.getStringList(player))
                         .build(),
                 (player, click) -> RandomTeam.requestConfirmation(player)
+        ));
+        setButton(52, MenuButton.of(
+                () -> ItemBuilder.of(Material.KNOWLEDGE_BOOK)
+                        .name("§bLanguage / 语言")
+                        .build(),
+                (player, click) -> new LanguageMenu().open(player)
         ));
     }
 
@@ -121,27 +127,27 @@ public final class PreGameMenu extends MenuView {
             return item(Material.LIGHT_BLUE_STAINED_GLASS_PANE, " ");
         }
         if (slot == 10 || slot == 16) {
-            return item(Material.YELLOW_STAINED_GLASS_PANE, Message.MENU_SELECT_TEAM.getString());
+            return item(Material.YELLOW_STAINED_GLASS_PANE, Message.MENU_SELECT_TEAM.getString(player));
         }
         if (slot == 19 || slot == 25) {
-            return item(Material.YELLOW_STAINED_GLASS_PANE, Message.MENU_BLOCK_SETTING.getString());
+            return item(Material.YELLOW_STAINED_GLASS_PANE, Message.MENU_BLOCK_SETTING.getString(player));
         }
         if (slot == 28 || slot == 34) {
-            return item(Material.YELLOW_STAINED_GLASS_PANE, Message.MENU_SELECT_MODE.getString());
+            return item(Material.YELLOW_STAINED_GLASS_PANE, Message.MENU_SELECT_MODE.getString(player));
         }
         if (slot == 37 || slot == 43) {
-            return item(Material.YELLOW_STAINED_GLASS_PANE, Message.MENU_READY_AND_START.getString());
+            return item(Material.YELLOW_STAINED_GLASS_PANE, Message.MENU_READY_AND_START.getString(player));
         }
         return null;
     }
 
     private MenuButton toggleButton(BooleanSupplier enabled, Runnable toggle, Message label) {
         return MenuButton.of(
-                () -> item(
+                player -> item(
                         enabled.getAsBoolean() ? Material.GREEN_CONCRETE : Material.RED_CONCRETE,
-                        label.getString() + (enabled.getAsBoolean()
-                                ? Message.MENU_ENABLED.getString()
-                                : Message.MENU_DISABLED.getString())
+                        label.getString(player) + (enabled.getAsBoolean()
+                                ? Message.MENU_ENABLED.getString(player)
+                                : Message.MENU_DISABLED.getString(player))
                 ),
                 (player, click) -> {
                     toggle.run();
@@ -151,21 +157,21 @@ public final class PreGameMenu extends MenuView {
         );
     }
 
-    private ItemStack normalModeItem() {
+    private ItemStack normalModeItem(Player player) {
         boolean selected = Setting.getCurrentGameMode() == Setting.GameMode.NORMAL;
         return ItemBuilder.of(selected ? Material.GREEN_CONCRETE : Material.YELLOW_CONCRETE)
-                .name((selected ? Message.MENU_CURRENT_MODE : Message.MENU_SWITCH_TO).getString()
-                        + Message.MENU_NORMAL_MODE.getString())
-                .lore(Message.MENU_NORMAL_MODE_LORE.getStringList())
+                .name((selected ? Message.MENU_CURRENT_MODE : Message.MENU_SWITCH_TO).getString(player)
+                        + Message.MENU_NORMAL_MODE.getString(player))
+                .lore(Message.MENU_NORMAL_MODE_LORE.getStringList(player))
                 .build();
     }
 
-    private ItemStack racingModeItem() {
+    private ItemStack racingModeItem(Player player) {
         boolean selected = Setting.getCurrentGameMode() == Setting.GameMode.RACING;
         return ItemBuilder.of(selected ? Material.GREEN_CONCRETE : Material.YELLOW_CONCRETE)
-                .name((selected ? Message.MENU_CURRENT_MODE : Message.MENU_SWITCH_TO).getString()
-                        + Message.MENU_RACING_MODE.getString())
-                .lore(Message.MENU_RACING_MODE_LORE.getStringList())
+                .name((selected ? Message.MENU_CURRENT_MODE : Message.MENU_SWITCH_TO).getString(player)
+                        + Message.MENU_RACING_MODE.getString(player))
+                .lore(Message.MENU_RACING_MODE_LORE.getStringList(player))
                 .build();
     }
 

@@ -110,6 +110,10 @@ menu:
     block-setting: "&aBlock Setting"
     select-mode: "&aMode Selection"
     ready-and-start: "&aReady and Start Game"
+    random-team: "&dRandom Teams"
+    random-team-lore:
+      - "&bRandomly balance all online players between both teams"
+      - "&eRequires confirmation in chat"
   game-menu:
     title: "&0Main Menu"
     team-chest: "&aTeam Chest"
@@ -216,7 +220,11 @@ notice:
   version-mismatch: "&cWarning! The current file versions of your config.yml and lang.yml do not correspond to the plugin version! You may have updated the plugin, but did not update the configuration file! This may lead to some unexpected errors! You can delete the two configuration files in the \\plugins\\BlockRacing folder, and then restart the server, or download the latest version of the configuration file on GitHub to replace it!"
   version-mismatch-title: "&cWarning! Version Mismatch!"
   version-mismatch-subtitle: "&cPlease check the specific information in the chat!"
-  team-shuffle: "&aRandom team shuffle complete!"
+  team-shuffle-triggered: "&d%player% &atriggered random teams. All online players have been balanced!"
+  team-shuffle-confirm: "&eRandomly reassign all online players to balanced teams?"
+  team-shuffle-confirm-button: "&a&l[Click to confirm random teams]"
+  team-shuffle-confirm-hover: "&7This clears current teams and creates new balanced teams"
+  team-shuffle-confirm-expired: "&cThe random-team confirmation expired. Please try again!"
 
 # If you don't know what this is, don't touch it
-lang-version: 3.6
+lang-version: 26.2.1

@@ -25,7 +25,7 @@ public class LocateBiome implements CommandExecutor, TabCompleter {
             return true;
         }
         if (args.length != 1) {
-            player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+            player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString(player));
             return true;
         }
 
@@ -34,7 +34,7 @@ public class LocateBiome implements CommandExecutor, TabCompleter {
                 locateCommandPermission.remove(player.getName());
                 player.addAttachment(Main.getInstance(), "minecraft.command.locate", false);
             }
-        } else player.sendMessage(Message.NOTICE_LOCATE_NO_PERMISSION.getString());
+        } else player.sendMessage(Message.NOTICE_LOCATE_NO_PERMISSION.getString(player));
 
         return true;
     }

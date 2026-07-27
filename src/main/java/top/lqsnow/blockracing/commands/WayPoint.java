@@ -22,29 +22,31 @@ public class WayPoint implements CommandExecutor {
             return true;
         }
         if (args.length != 2 || !args[0].equalsIgnoreCase("remove")) {
-            player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+            player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString(player));
             return true;
         }
         int index;
         try {
             index = Integer.parseInt(args[1]);
         } catch (NumberFormatException ex) {
-            player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+            player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString(player));
             return true;
         }
         if (index < 1 || index > Setting.getMaxTeamWaypointNum()) {
-            player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+            player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString(player));
             return true;
         }
         if (args[0].equalsIgnoreCase("remove")) {
             if (redTeamPlayers.contains(player.getName())) {
                 boolean flag = removeWaypoint("red", index);
                 if (!flag) return true;
-                sendRed(Message.NOTICE_RED_REMOVE_WAYPOINT.getString().replace("%player%", player.getName()).replace("%index%", String.valueOf(index)));
+                sendRed(Message.NOTICE_RED_REMOVE_WAYPOINT, (viewer, text) -> text
+                        .replace("%player%", player.getName()).replace("%index%", String.valueOf(index)));
             } else if (blueTeamPlayers.contains(player.getName())) {
                 boolean flag = removeWaypoint("blue", index);
                 if (!flag) return true;
-                sendBlue(Message.NOTICE_BLUE_REMOVE_WAYPOINT.getString().replace("%player%", player.getName()).replace("%index%", String.valueOf(index)));
+                sendBlue(Message.NOTICE_BLUE_REMOVE_WAYPOINT, (viewer, text) -> text
+                        .replace("%player%", player.getName()).replace("%index%", String.valueOf(index)));
                 }
             }
         return true;

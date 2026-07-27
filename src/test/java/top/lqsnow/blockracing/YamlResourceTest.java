@@ -10,6 +10,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class YamlResourceTest {
     @Test
@@ -29,6 +34,36 @@ class YamlResourceTest {
             try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
                 yaml.load(reader);
             }
+        }
+    }
+
+    @Test
+    void bundledLanguagesContainTheSameMessageKeys() throws Exception {
+        LoaderOptions options = new LoaderOptions();
+        Yaml yaml = new Yaml(new SafeConstructor(options));
+        Set<String> chinese = loadLeafKeys(yaml, Path.of("src/main/resources/lang.yml"));
+        Set<String> english = loadLeafKeys(yaml, Path.of("en-us/lang.yml"));
+
+        assertEquals(chinese, english);
+    }
+
+    private static Set<String> loadLeafKeys(Yaml yaml, Path path) throws Exception {
+        try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+            Set<String> result = new TreeSet<>();
+            collectLeafKeys("", yaml.load(reader), result);
+            return result;
+        }
+    }
+
+    private static void collectLeafKeys(String prefix, Object value, Set<String> result) {
+        if (value instanceof Map<?, ?> map) {
+            map.forEach((key, child) -> collectLeafKeys(
+                    prefix.isEmpty() ? key.toString() : prefix + "." + key,
+                    child,
+                    result
+            ));
+        } else {
+            result.add(prefix);
         }
     }
 }

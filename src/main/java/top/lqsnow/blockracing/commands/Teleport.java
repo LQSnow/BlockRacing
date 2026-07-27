@@ -24,21 +24,21 @@ public class Teleport implements CommandExecutor, TabCompleter {
             return true;
         }
         if (args.length != 1) {
-            player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+            player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString(player));
             return true;
         }
         if (getCurrentGameState().equals(GameState.PREGAME)) {
-            sender.sendMessage(Message.NOTICE_GAME_NOT_START.getString());
+            player.sendMessage(Message.NOTICE_GAME_NOT_START.getString(player));
             return true;
         } else if (!redTeamPlayers.contains(player.getName()) && !blueTeamPlayers.contains(player.getName())) {
             // Spectator
             Player target = Bukkit.getPlayerExact(args[0]);
             if (target != null) {
                 player.teleport(target);
-                sender.sendMessage(Message.NOTICE_SPECTATOR_TP_PLAYER_SUCCESS.getString().replace("%player%", target.getName()));
+                player.sendMessage(Message.NOTICE_SPECTATOR_TP_PLAYER_SUCCESS.getString(player).replace("%player%", target.getName()));
                 return true;
             } else {
-                sender.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+                player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString(player));
                 return true;
             }
         }
@@ -47,15 +47,15 @@ public class Teleport implements CommandExecutor, TabCompleter {
         if (redTeamPlayers.contains(player.getName())) {
             Player target = Bukkit.getPlayerExact(args[0]);
             if (target == null) {
-                player.sendMessage(Message.NOTICE_PLAYER_NOT_EXIST.getString());
+                player.sendMessage(Message.NOTICE_PLAYER_NOT_EXIST.getString(player));
                 return true;
             }
             if (redTeamPlayers.contains(target.getName())) {
                 player.teleport(target);
-                sender.sendMessage(Message.NOTICE_TP_PLAYER_SUCCESS.getString().replace("%player%", target.getName()));
+                player.sendMessage(Message.NOTICE_TP_PLAYER_SUCCESS.getString(player).replace("%player%", target.getName()));
                 return true;
             } else {
-                sender.sendMessage(Message.NOTICE_PLAYER_NOT_IN_SAME_TEAM.getString());
+                player.sendMessage(Message.NOTICE_PLAYER_NOT_IN_SAME_TEAM.getString(player));
                 return true;
             }
         }
@@ -64,15 +64,15 @@ public class Teleport implements CommandExecutor, TabCompleter {
         if (blueTeamPlayers.contains(player.getName())) {
             Player target = Bukkit.getPlayerExact(args[0]);
             if (target == null) {
-                player.sendMessage(Message.NOTICE_PLAYER_NOT_EXIST.getString());
+                player.sendMessage(Message.NOTICE_PLAYER_NOT_EXIST.getString(player));
                 return true;
             }
             if (blueTeamPlayers.contains(target.getName())) {
                 player.teleport(target);
-                sender.sendMessage(Message.NOTICE_TP_PLAYER_SUCCESS.getString().replace("%player%", target.getName()));
+                player.sendMessage(Message.NOTICE_TP_PLAYER_SUCCESS.getString(player).replace("%player%", target.getName()));
                 return true;
             } else {
-                sender.sendMessage(Message.NOTICE_PLAYER_NOT_IN_SAME_TEAM.getString());
+                player.sendMessage(Message.NOTICE_PLAYER_NOT_IN_SAME_TEAM.getString(player));
                 return true;
             }
         }

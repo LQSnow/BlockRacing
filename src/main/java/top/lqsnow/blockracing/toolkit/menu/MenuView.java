@@ -11,20 +11,28 @@ import top.lqsnow.blockracing.toolkit.text.Texts;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public abstract class MenuView implements InventoryHolder {
-    private final Inventory inventory;
+    private final int size;
+    private final Function<Player, String> titleFactory;
+    private Inventory inventory;
     private final Map<Integer, MenuButton> buttons = new HashMap<>();
 
     protected MenuView(int size, String title) {
+        this(size, player -> title);
+    }
+
+    protected MenuView(int size, Function<Player, String> titleFactory) {
         if (size < 9 || size > 54 || size % 9 != 0) {
             throw new IllegalArgumentException("Menu size must be a multiple of 9 between 9 and 54");
         }
-        this.inventory = Bukkit.createInventory(this, size, Texts.component(title));
+        this.size = size;
+        this.titleFactory = titleFactory;
     }
 
     protected final void setButton(int slot, MenuButton button) {
-        if (slot < 0 || slot >= inventory.getSize()) {
+        if (slot < 0 || slot >= size) {
             throw new IllegalArgumentException("Button slot outside menu: " + slot);
         }
         buttons.put(slot, button);
@@ -35,6 +43,7 @@ public abstract class MenuView implements InventoryHolder {
     }
 
     public final void open(Player player) {
+        inventory = Bukkit.createInventory(this, size, Texts.component(titleFactory.apply(player)));
         render(player);
         player.openInventory(inventory);
     }
@@ -64,6 +73,13 @@ public abstract class MenuView implements InventoryHolder {
 
     @Override
     public final @NotNull Inventory getInventory() {
+        if (inventory == null) {
+            throw new IllegalStateException("Menu inventory has not been opened yet");
+        }
         return inventory;
+    }
+
+    protected final int getSize() {
+        return size;
     }
 }

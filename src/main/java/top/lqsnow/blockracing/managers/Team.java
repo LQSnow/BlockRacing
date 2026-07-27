@@ -31,7 +31,7 @@ public class Team {
         if (team.equals(redTeam)) {
             if (redTeamPlayers.contains(player.getName())) {
                 if (sendMessage) {
-                    player.sendMessage(Message.NOTICE_ALREADY_IN_RED.getString());
+                    player.sendMessage(Message.NOTICE_ALREADY_IN_RED.getString(player));
                 }
                 return false;
             }
@@ -42,13 +42,14 @@ public class Team {
             redTeam.addEntry(player.getName());
             redTeamPlayers.add(player.getName());
             if (sendMessage) {
-                sendAll(Message.NOTICE_JOIN_RED.getString().replace("%player%", player.getName()));
+                sendAll(Message.NOTICE_JOIN_RED,
+                        (viewer, text) -> text.replace("%player%", player.getName()));
             }
         }
         else if (team.equals(blueTeam)) {
             if (blueTeamPlayers.contains(player.getName())) {
                 if (sendMessage) {
-                    player.sendMessage(Message.NOTICE_ALREADY_IN_BLUE.getString());
+                    player.sendMessage(Message.NOTICE_ALREADY_IN_BLUE.getString(player));
                 }
                 return false;
             }
@@ -59,7 +60,8 @@ public class Team {
             blueTeam.addEntry(player.getName());
             blueTeamPlayers.add(player.getName());
             if (sendMessage) {
-                sendAll(Message.NOTICE_JOIN_BLUE.getString().replace("%player%", player.getName()));
+                sendAll(Message.NOTICE_JOIN_BLUE,
+                        (viewer, text) -> text.replace("%player%", player.getName()));
             }
         }
         return true;

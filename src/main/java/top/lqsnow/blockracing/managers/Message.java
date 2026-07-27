@@ -232,11 +232,23 @@ public enum Message {
         return cacheString != null ? cacheString : (cacheString = t(getMessageConfig().getString(path)));
     }
 
+    public String getString(org.bukkit.entity.Player player) {
+        return LanguageManager.getString(this, player);
+    }
+
     public List<String> getStringList() {
         return cacheStringList != null ? cacheStringList : (cacheStringList = Collections.unmodifiableList(
                 getMessageConfig().getStringList(path).stream()
                         .map(msg -> t(msg))
                         .collect(Collectors.toList())
         ));
+    }
+
+    public List<String> getStringList(org.bukkit.entity.Player player) {
+        return LanguageManager.getStringList(this, player);
+    }
+
+    public String getPath() {
+        return path;
     }
 }

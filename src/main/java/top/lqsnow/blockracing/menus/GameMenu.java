@@ -25,19 +25,19 @@ import static top.lqsnow.blockracing.utils.CommandUtil.sendAll;
 
 public final class GameMenu extends MenuView {
     public GameMenu() {
-        super(9, Message.MENU_GAME_TITLE.getString());
+        super(9, player -> Message.MENU_GAME_TITLE.getString(player));
 
         setButton(0, MenuButton.of(
-                () -> ItemBuilder.of(Material.CHEST)
-                        .name(Message.MENU_TEAM_CHEST.getString())
-                        .lore(Message.MENU_TEAM_CHEST_LORE.getStringList())
+                player -> ItemBuilder.of(Material.CHEST)
+                        .name(Message.MENU_TEAM_CHEST.getString(player))
+                        .lore(Message.MENU_TEAM_CHEST_LORE.getStringList(player))
                         .build(),
                 (player, click) -> new TeamChestSelectMenu().open(player)
         ));
         setButton(2, MenuButton.of(
-                () -> ItemBuilder.of(Material.TOTEM_OF_UNDYING)
-                        .name(Message.MENU_ROLL.getString())
-                        .lore(List.of(Message.MENU_ROLL_LORE.getString()))
+                player -> ItemBuilder.of(Material.TOTEM_OF_UNDYING)
+                        .name(Message.MENU_ROLL.getString(player))
+                        .lore(List.of(Message.MENU_ROLL_LORE.getString(player)))
                         .build(),
                 (player, click) -> {
                     Game.roll(player);
@@ -45,9 +45,9 @@ public final class GameMenu extends MenuView {
                 }
         ));
         setButton(4, MenuButton.of(
-                () -> ItemBuilder.of(Material.COMPASS)
-                        .name(Message.MENU_LOCATE.getString())
-                        .lore(replaceScorePlaceholder(Message.MENU_LOCATE_LORE.getStringList()))
+                player -> ItemBuilder.of(Material.COMPASS)
+                        .name(Message.MENU_LOCATE.getString(player))
+                        .lore(replaceScorePlaceholder(Message.MENU_LOCATE_LORE.getStringList(player)))
                         .build(),
                 (player, click) -> {
                     Game.locate(player);
@@ -55,9 +55,9 @@ public final class GameMenu extends MenuView {
                 }
         ));
         setButton(6, MenuButton.of(
-                () -> ItemBuilder.of(Material.PAPER)
-                        .name(Message.MENU_WAYPOINTS.getString())
-                        .lore(Message.MENU_WAYPOINTS_LORE.getStringList())
+                player -> ItemBuilder.of(Material.PAPER)
+                        .name(Message.MENU_WAYPOINTS.getString(player))
+                        .lore(Message.MENU_WAYPOINTS_LORE.getStringList(player))
                         .build(),
                 (player, click) -> {
                     if (redTeamPlayers.contains(player.getName())) {
@@ -68,11 +68,15 @@ public final class GameMenu extends MenuView {
                 }
         ));
         setButton(8, MenuButton.of(
-                () -> ItemBuilder.of(Material.ENDER_PEARL)
-                        .name(Message.MENU_RANDOM_TP.getString())
-                        .lore(Message.MENU_RANDOM_TP_LORE.getStringList())
+                player -> ItemBuilder.of(Material.ENDER_PEARL)
+                        .name(Message.MENU_RANDOM_TP.getString(player))
+                        .lore(Message.MENU_RANDOM_TP_LORE.getStringList(player))
                         .build(),
                 (player, click) -> handleRandomTeleport(player)
+        ));
+        setButton(1, MenuButton.of(
+                () -> ItemBuilder.of(Material.KNOWLEDGE_BOOK).name("§bLanguage / 语言").build(),
+                (player, click) -> new LanguageMenu().open(player)
         ));
     }
 
@@ -84,7 +88,7 @@ public final class GameMenu extends MenuView {
 
         if (redTeamPlayers.contains(player.getName()) && redTeamScore < 2
                 || blueTeamPlayers.contains(player.getName()) && blueTeamScore < 2) {
-            player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString());
+            player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString(player));
             return;
         }
 
@@ -92,30 +96,33 @@ public final class GameMenu extends MenuView {
         randomTeleport(player, false);
         if (redTeamPlayers.contains(player.getName())) {
             redTeamScore -= 2;
-            sendAll(Message.NOTICE_RANDOM_TP.getString()
-                    .replace("%player%", Message.TEAM_RED_COLOR.getString() + player.getName()));
+            sendAll(Message.NOTICE_RANDOM_TP,
+                    (viewer, text) -> text.replace("%player%",
+                            Message.TEAM_RED_COLOR.getString(viewer) + player.getName()));
         } else if (blueTeamPlayers.contains(player.getName())) {
             blueTeamScore -= 2;
-            sendAll(Message.NOTICE_RANDOM_TP.getString()
-                    .replace("%player%", Message.TEAM_BLUE_COLOR.getString() + player.getName()));
+            sendAll(Message.NOTICE_RANDOM_TP,
+                    (viewer, text) -> text.replace("%player%",
+                            Message.TEAM_BLUE_COLOR.getString(viewer) + player.getName()));
         }
         Scoreboard.updateScoreboard();
     }
 
     public static final class TeamChestSelectMenu extends MenuView {
         public TeamChestSelectMenu() {
-            super(menuSize(Setting.getMaxTeamChestNum()), Message.MENU_TEAM_CHEST_SELECT_TITLE.getString());
+            super(menuSize(Setting.getMaxTeamChestNum()),
+                    player -> Message.MENU_TEAM_CHEST_SELECT_TITLE.getString(player));
 
             for (int slot = 0; slot < Setting.getMaxTeamChestNum(); slot++) {
                 int chestIndex = slot;
                 setButton(slot, MenuButton.of(
-                        () -> ItemBuilder.of(Material.CHEST)
-                                .name(Message.MENU_TEAM_CHEST_SELECT_CHEST.getString() + (chestIndex + 1))
+                        player -> ItemBuilder.of(Material.CHEST)
+                                .name(Message.MENU_TEAM_CHEST_SELECT_CHEST.getString(player) + (chestIndex + 1))
                                 .build(),
                         (player, click) -> openTeamChest(player, chestIndex)
                 ));
             }
-            setButton(getInventory().getSize() - 1, backButton());
+            setButton(getSize() - 1, backButton());
         }
     }
 
@@ -124,14 +131,15 @@ public final class GameMenu extends MenuView {
         private final HashMap<Integer, Material> iconCache;
 
         public WayPointMenu(HashMap<Integer, Location> waypoints, HashMap<Integer, Material> iconCache) {
-            super(menuSize(Setting.getMaxTeamWaypointNum()), Message.MENU_WAYPOINT_TITLE.getString());
+            super(menuSize(Setting.getMaxTeamWaypointNum()),
+                    player -> Message.MENU_WAYPOINT_TITLE.getString(player));
             this.waypoints = waypoints;
             this.iconCache = iconCache;
 
             for (int slot = 0; slot < Setting.getMaxTeamWaypointNum(); slot++) {
                 int index = slot + 1;
                 setButton(slot, MenuButton.of(
-                        () -> createWaypointItem(index),
+                        player -> createWaypointItem(player, index),
                         (player, click) -> {
                             if (waypoint(player, index, click)) {
                                 updateMenu(this);
@@ -139,25 +147,25 @@ public final class GameMenu extends MenuView {
                         }
                 ));
             }
-            setButton(getInventory().getSize() - 1, backButton());
+            setButton(getSize() - 1, backButton());
         }
 
-        private ItemStack createWaypointItem(int index) {
+        private ItemStack createWaypointItem(Player player, int index) {
             Location waypoint = waypoints.get(index);
             if (waypoint == null) {
                 iconCache.remove(index);
                 return ItemBuilder.of(Material.MAP)
-                        .name(Message.MENU_WAYPOINT_EMPTY.getString() + index)
-                        .lore(Message.MENU_WAYPOINT_EMPTY_LORE.getStringList())
+                        .name(Message.MENU_WAYPOINT_EMPTY.getString(player) + index)
+                        .lore(Message.MENU_WAYPOINT_EMPTY_LORE.getStringList(player))
                         .build();
             }
 
             Material icon = iconCache.computeIfAbsent(index, ignored -> findWaypointIcon(waypoint));
             try {
                 return ItemBuilder.of(icon)
-                        .name(Message.MENU_WAYPOINT_FILLED.getString() + index)
+                        .name(Message.MENU_WAYPOINT_FILLED.getString(player) + index)
                         .lore(replaceWaypointPlaceholders(
-                                Message.MENU_WAYPOINT_FILLED_LORE.getStringList(),
+                                Message.MENU_WAYPOINT_FILLED_LORE.getStringList(player),
                                 waypoint.getWorld().getName(),
                                 getCoords(waypoint),
                                 waypoint.getBlock().getBiome().getKey().getKey()
@@ -166,9 +174,9 @@ public final class GameMenu extends MenuView {
             } catch (IllegalArgumentException ex) {
                 iconCache.put(index, Material.FILLED_MAP);
                 return ItemBuilder.of(Material.FILLED_MAP)
-                        .name(Message.MENU_WAYPOINT_FILLED.getString() + index)
+                        .name(Message.MENU_WAYPOINT_FILLED.getString(player) + index)
                         .lore(replaceWaypointPlaceholders(
-                                Message.MENU_WAYPOINT_FILLED_LORE.getStringList(),
+                                Message.MENU_WAYPOINT_FILLED_LORE.getStringList(player),
                                 waypoint.getWorld().getName(),
                                 getCoords(waypoint),
                                 waypoint.getBlock().getBiome().getKey().getKey()
@@ -196,8 +204,8 @@ public final class GameMenu extends MenuView {
 
     private static MenuButton backButton() {
         return MenuButton.of(
-                () -> ItemBuilder.of(Material.ARROW)
-                        .name(Message.MENU_ALL_RETURN_BACK.getString())
+                player -> ItemBuilder.of(Material.ARROW)
+                        .name(Message.MENU_ALL_RETURN_BACK.getString(player))
                         .build(),
                 (player, click) -> new GameMenu().open(player)
         );

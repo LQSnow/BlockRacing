@@ -41,7 +41,7 @@ public class RandomTeam implements CommandExecutor {
             return true;
         }
         if (!getCurrentGameState().equals(Game.GameState.PREGAME)) {
-            sender.sendMessage(Message.NOTICE_GAME_HAS_START.getString());
+            player.sendMessage(Message.NOTICE_GAME_HAS_START.getString(player));
             return true;
         }
 
@@ -54,13 +54,13 @@ public class RandomTeam implements CommandExecutor {
             return true;
         }
 
-        player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString());
+        player.sendMessage(Message.NOTICE_ERROR_COMMAND.getString(player));
         return true;
     }
 
     public static void requestConfirmation(Player player) {
         if (!getCurrentGameState().equals(Game.GameState.PREGAME)) {
-            player.sendMessage(Message.NOTICE_GAME_HAS_START.getString());
+            player.sendMessage(Message.NOTICE_GAME_HAS_START.getString(player));
             return;
         }
 
@@ -69,11 +69,11 @@ public class RandomTeam implements CommandExecutor {
         PENDING_CONFIRMATIONS.put(player.getUniqueId(), now + CONFIRM_TIMEOUT_MILLIS);
         player.closeInventory();
 
-        Component button = Texts.component(Message.NOTICE_TEAM_SHUFFLE_CONFIRM_BUTTON.getString())
+        Component button = Texts.component(Message.NOTICE_TEAM_SHUFFLE_CONFIRM_BUTTON.getString(player))
                 .clickEvent(ClickEvent.runCommand("/randomteam confirm"))
                 .hoverEvent(HoverEvent.showText(
-                        Texts.component(Message.NOTICE_TEAM_SHUFFLE_CONFIRM_HOVER.getString())));
-        player.sendMessage(Texts.component(Message.NOTICE_TEAM_SHUFFLE_CONFIRM.getString())
+                        Texts.component(Message.NOTICE_TEAM_SHUFFLE_CONFIRM_HOVER.getString(player))));
+        player.sendMessage(Texts.component(Message.NOTICE_TEAM_SHUFFLE_CONFIRM.getString(player))
                 .append(Component.space())
                 .append(button));
     }
@@ -81,7 +81,7 @@ public class RandomTeam implements CommandExecutor {
     private static void confirm(Player player) {
         Long expiresAt = PENDING_CONFIRMATIONS.remove(player.getUniqueId());
         if (expiresAt == null || expiresAt < System.currentTimeMillis()) {
-            player.sendMessage(Message.NOTICE_TEAM_SHUFFLE_CONFIRM_EXPIRED.getString());
+            player.sendMessage(Message.NOTICE_TEAM_SHUFFLE_CONFIRM_EXPIRED.getString(player));
             return;
         }
 
@@ -90,8 +90,8 @@ public class RandomTeam implements CommandExecutor {
         teams.get(0).forEach(member -> Team.joinTeam(member, Team.redTeam, false));
         teams.get(1).forEach(member -> Team.joinTeam(member, Team.blueTeam, false));
 
-        CommandUtil.sendAll(Message.NOTICE_TEAM_SHUFFLE_TRIGGERED.getString()
-                .replace("%player%", player.getName()));
+        CommandUtil.sendAll(Message.NOTICE_TEAM_SHUFFLE_TRIGGERED,
+                (viewer, text) -> text.replace("%player%", player.getName()));
         Gui.updateMenu(new PreGameMenu());
         Scoreboard.updateScoreboard();
     }

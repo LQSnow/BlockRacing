@@ -12,6 +12,7 @@ import org.bukkit.potion.PotionEffectType;
 import top.lqsnow.blockracing.Main;
 import top.lqsnow.blockracing.managers.*;
 import top.lqsnow.blockracing.menus.PreGameMenu;
+import top.lqsnow.blockracing.menus.LanguageMenu;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,9 @@ public class BasicListener implements Listener {
     @EventHandler
     private void onPlayerJoin(PlayerJoinEvent event) {
         Game.playerLogin(event.getPlayer());
+        if (LanguageManager.registerFirstJoin(event.getPlayer())) {
+            LanguageMenu.sendFirstJoinPrompt(event.getPlayer());
+        }
     }
 
     @EventHandler
@@ -61,19 +65,24 @@ public class BasicListener implements Listener {
 
         // Change chat format
         if (isPlayerInRedTeam(player)) {
-            applyTeamChatFormat(event, Message.TEAM_RED_CHAT.getString());
+            applyTeamChatFormat(event, Message.TEAM_RED_CHAT);
         } else if (isPlayerInBlueTeam(player)) {
-            applyTeamChatFormat(event, Message.TEAM_BLUE_CHAT.getString());
+            applyTeamChatFormat(event, Message.TEAM_BLUE_CHAT);
         }
     }
 
-    private void applyTeamChatFormat(AsyncChatEvent event, String format) {
-        event.renderer((source, sourceDisplayName, message, viewer) ->
+    private void applyTeamChatFormat(AsyncChatEvent event, Message formatMessage) {
+        event.renderer((source, sourceDisplayName, message, viewer) -> {
+            String format = viewer instanceof Player player
+                    ? formatMessage.getString(player)
+                    : formatMessage.getString();
+            return
                 LEGACY_SERIALIZER.deserialize(String.format(
                         format,
                         source.getName(),
                         LEGACY_SERIALIZER.serialize(message)
-                )));
+                ));
+        });
     }
 
     private void handleBlockAmountInput(Player player, String message) {
@@ -83,7 +92,7 @@ public class BasicListener implements Listener {
             return;
         }
         if (message.equalsIgnoreCase("quit")) {
-            player.sendMessage(Message.NOTICE_SET_BLOCKS_QUIT.getString());
+            player.sendMessage(Message.NOTICE_SET_BLOCKS_QUIT.getString(player));
             editAmountPlayer.remove(player.getName());
             return;
         }
@@ -91,13 +100,13 @@ public class BasicListener implements Listener {
             setBlockAmount(Integer.parseInt(message), true);
             editAmountPlayer.remove(player.getName());
         } catch (NumberFormatException ex) {
-            player.sendMessage(Message.NOTICE_SET_BLOCKS_ERROR.getString());
+            player.sendMessage(Message.NOTICE_SET_BLOCKS_ERROR.getString(player));
         }
     }
 
     @EventHandler
     private void onPlayerRespawn(PlayerRespawnEvent event) {
-        event.getPlayer().sendMessage(Message.NOTICE_SPAWN_PROTECT.getString());
+        event.getPlayer().sendMessage(Message.NOTICE_SPAWN_PROTECT.getString(event.getPlayer()));
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, -1, 0, false, false));
             if (Game.getCurrentGameState().equals(Game.GameState.INGAME) && Setting.isSpeedMode()) event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.HASTE, -1, 4, false, false));
@@ -109,7 +118,11 @@ public class BasicListener implements Listener {
     public static void setBlockAmount(int blockAmount, Boolean sendMessage) {
         Block.addUpBlocks();
         blockAmount = Block.clampBlockAmount(blockAmount, maxBlockAmount);
-        if (sendMessage) sendAll(Message.NOTICE_SET_BLOCKS_SUCCESS.getString() + blockAmount);
+        if (sendMessage) {
+            int finalBlockAmount = blockAmount;
+            sendAll(Message.NOTICE_SET_BLOCKS_SUCCESS,
+                    (viewer, text) -> text + finalBlockAmount);
+        }
         Setting.setBlockAmount(blockAmount);
         updateMenu(new PreGameMenu());
         updateScoreboard();
