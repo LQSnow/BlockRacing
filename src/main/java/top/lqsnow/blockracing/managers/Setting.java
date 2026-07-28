@@ -8,6 +8,7 @@ public class Setting {
     private static int blockAmount;
     private static int maxTeamChestNum;
     private static  int maxTeamWaypointNum;
+    private static int maxRollCount;
     private static boolean speedMode;
     public enum GameMode {NORMAL, RACING}
     private static GameMode currentGameMode = GameMode.NORMAL;
@@ -21,6 +22,7 @@ public class Setting {
         speedMode = Config.SPEED_MODE.getBoolean();
         maxTeamChestNum = Math.max(1, Math.min(53, Config.MAX_TEAM_CHEST_NUM.getInt()));
         maxTeamWaypointNum = Math.max(1, Math.min(53, Config.MAX_TEAM_WAYPOINT_NUM.getInt()));
+        maxRollCount = Math.max(0, Config.MAX_ROLL_COUNT.getInt());
         try {
             setCurrentGameMode(GameMode.valueOf(Config.GAME_MODE.getString().toUpperCase()));
         } catch (IllegalArgumentException | NullPointerException ex) {
@@ -109,6 +111,10 @@ public class Setting {
 
     public static int getMaxTeamWaypointNum() {
         return maxTeamWaypointNum;
+    }
+
+    public static int getMaxRollCount() {
+        return maxRollCount;
     }
 
     public static boolean isSpeedMode() {

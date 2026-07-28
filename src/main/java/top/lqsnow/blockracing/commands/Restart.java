@@ -7,6 +7,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import top.lqsnow.blockracing.managers.Message;
+import top.lqsnow.blockracing.managers.Game;
+import top.lqsnow.blockracing.managers.GameProgressStore;
+import top.lqsnow.blockracing.managers.WorldResetMarker;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,6 +44,9 @@ public class Restart implements CommandExecutor {
         if (Bukkit.getOnlinePlayers().isEmpty()) return;
         restartVotes.retainAll(Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).toList());
         if (restartVotes.size() == Bukkit.getOnlinePlayers().size()) {
+            Game.setCurrentGameState(Game.GameState.END);
+            GameProgressStore.clear();
+            WorldResetMarker.request();
             Bukkit.getServer().shutdown();
         }
     }

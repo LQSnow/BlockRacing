@@ -110,7 +110,7 @@ public final class PreGameMenu extends MenuView {
                         .build(),
                 (player, click) -> RandomTeam.requestConfirmation(player)
         ));
-        setButton(52, MenuButton.of(
+        setButton(42, MenuButton.of(
                 () -> ItemBuilder.of(Material.KNOWLEDGE_BOOK)
                         .name("§bLanguage / 语言")
                         .build(),

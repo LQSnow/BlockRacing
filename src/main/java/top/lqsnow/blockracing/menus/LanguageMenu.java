@@ -25,10 +25,10 @@ public final class LanguageMenu extends MenuView {
     }
 
     public static void sendFirstJoinPrompt(Player player) {
-        Component openMenu = Texts.component("§a[Open language menu / 打开语言菜单]")
+        Component openMenu = Texts.component("§a[Open / 打开]")
                 .clickEvent(ClickEvent.runCommand("/language"))
                 .hoverEvent(HoverEvent.showText(Texts.component("§7/language")));
-        player.sendMessage(Texts.component("§eCan't read this language? / 看不懂当前语言？ ")
+        player.sendMessage(Texts.component("§7Language / 语言  ")
                 .append(openMenu));
     }
 

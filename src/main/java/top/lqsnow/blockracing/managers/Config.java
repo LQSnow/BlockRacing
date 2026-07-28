@@ -21,7 +21,8 @@ public enum Config {
     SPEED_MODE("speed-mode"),
     CONFIG_VERSION("config-version"),
     MAX_TEAM_CHEST_NUM("max-team-chest-num"),
-    MAX_TEAM_WAYPOINT_NUM("max-team-waypoint-num");
+    MAX_TEAM_WAYPOINT_NUM("max-team-waypoint-num"),
+    MAX_ROLL_COUNT("max-roll-count");
 
     private static File file;
     private static FileConfiguration config;
@@ -50,9 +51,14 @@ public enum Config {
             Main.getInstance().getLogger().log(Level.SEVERE, "[BlockRacing] Error reading config.yml!", ex);
         }
         config = loaded;
+        boolean missingMaxRollCount = !config.contains(MAX_ROLL_COUNT.path);
         try (Reader reader = new InputStreamReader(Main.getInstance().getResource("config.yml"), StandardCharsets.UTF_8)) {
             YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(reader);
             config.setDefaults(defConfig);
+            if (missingMaxRollCount) {
+                config.set(MAX_ROLL_COUNT.path, defConfig.getInt(MAX_ROLL_COUNT.path));
+                saveConfig();
+            }
         } catch (IOException ioe) {
             Main.getInstance().getLogger().log(Level.SEVERE, "[BlockRacing] Error reading config.yml!", ioe);
         }

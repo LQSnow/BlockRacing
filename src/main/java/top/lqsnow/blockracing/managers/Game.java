@@ -35,6 +35,7 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Repairable;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -42,6 +43,7 @@ import top.lqsnow.blockracing.Main;
 import top.lqsnow.blockracing.commands.Restart;
 import top.lqsnow.blockracing.toolkit.item.ItemBuilder;
 import top.lqsnow.blockracing.toolkit.material.Materials;
+import top.lqsnow.blockracing.toolkit.text.Texts;
 import static top.lqsnow.blockracing.listeners.BasicListener.editAmountPlayer;
 import static top.lqsnow.blockracing.managers.Block.blocks;
 import static top.lqsnow.blockracing.managers.Block.blueTeamBlocks;
@@ -111,9 +113,22 @@ public class Game {
 
         if (getCurrentGameState().equals(GameState.PREGAME)) {
             player.setGameMode(GameMode.ADVENTURE);
-            player.sendMessage(Message.NOTICE_WELCOME.getString(player));
+            player.getInventory().clear();
+            player.getInventory().addItem(createRuleBook(player));
+            Message.NOTICE_WELCOME_LINES.getStringList(player).stream()
+                    .map(line -> line.replace("%player%", player.getName()))
+                    .forEach(player::sendMessage);
             player.teleport(getPrimaryWorld().getSpawnLocation());
         } else if (getCurrentGameState().equals(GameState.INGAME)) {
+            if (GameProgressStore.hasRecoveredGame()) {
+                Message.NOTICE_RECOVERED_GAME.getStringList(player).forEach(player::sendMessage);
+                player.sendMessage(LEGACY_SERIALIZER.deserialize(
+                                Message.NOTICE_RECOVERED_RESET_BUTTON.getString(player))
+                        .clickEvent(ClickEvent.runCommand("/restartgame"))
+                        .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(
+                                LEGACY_SERIALIZER.deserialize(
+                                        Message.NOTICE_RECOVERED_RESET_HOVER.getString(player)))));
+            }
             // Spectator
             if (!redTeamPlayers.contains(player.getName()) && !blueTeamPlayers.contains(player.getName())) {
                 player.setGameMode(GameMode.SPECTATOR);
@@ -143,7 +158,8 @@ public class Game {
         if (!Config.CONFIG_VERSION.getString().equals(Main.getVersion())
                 || !Message.MESSAGE_VERSION.getString().equals(Main.getVersion())) {
             if (Message.NOTICE_VERSION_MISMATCH.getString() != null) {
-                player.sendMessage(Message.NOTICE_VERSION_MISMATCH.getString(player));
+                Message.NOTICE_VERSION_MISMATCH_LINES.getStringList(player)
+                        .forEach(player::sendMessage);
                 player.showTitle(Title.title(
                         LEGACY_SERIALIZER.deserialize(Message.NOTICE_VERSION_MISMATCH_TITLE.getString(player)),
                         LEGACY_SERIALIZER.deserialize(Message.NOTICE_VERSION_MISMATCH_SUBTITLE.getString(player)),
@@ -271,6 +287,11 @@ public class Game {
         else if (Setting.getCurrentGameMode().equals(Setting.GameMode.RACING))
             Bukkit.getLogger().info("Game mode: Racing");
         Bukkit.getLogger().info(Setting.isSpeedMode() ? "Speed mode: On" : "Speed mode: Off");
+        GameProgressStore.saveNow();
+    }
+
+    public static void resumeRecoveredGame() {
+        new runPer5Tick().runTaskTimer(Main.getInstance(), 0L, 5L);
     }
 
     // Player init
@@ -327,8 +348,8 @@ public class Game {
     // Roll
     public static void roll(Player player) {
         if (redTeamPlayers.contains(player.getName())) {
-            if (redTeamRollCount >= 3) {
-                player.sendMessage(Message.NOTICE_CANNOT_ROLL.getString(player));
+            if (redTeamRollCount >= Setting.getMaxRollCount()) {
+                player.sendMessage(rollLimitMessage(player));
                 return;
             }
             if (!redRollPlayers.contains(player.getName())) {
@@ -339,8 +360,8 @@ public class Game {
                 sendRed(Message.NOTICE_ROLL_REQUEST_CANCEL, (viewer, text) -> text.replace("%player%", player.getName()));
             }
         } else if (blueTeamPlayers.contains(player.getName())) {
-            if (blueTeamRollCount >= 3) {
-                player.sendMessage(Message.NOTICE_CANNOT_ROLL.getString(player));
+            if (blueTeamRollCount >= Setting.getMaxRollCount()) {
+                player.sendMessage(rollLimitMessage(player));
                 return;
             }
             if (!blueRollPlayers.contains(player.getName())) {
@@ -365,6 +386,7 @@ public class Game {
                 locateCommandPermission.add(player.getName());
                 sendAll(Message.NOTICE_BUY_LOCATE, (viewer, text) -> text.replace("%player%", player.getName()));
                 player.addAttachment(Main.getInstance(), "minecraft.command.locate", true);
+                GameProgressStore.saveNow();
             } else {
                 player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString(player));
             }
@@ -375,6 +397,7 @@ public class Game {
                 locateCommandPermission.add(player.getName());
                 sendAll(Message.NOTICE_BUY_LOCATE, (viewer, text) -> text.replace("%player%", player.getName()));
                 player.addAttachment(Main.getInstance(), "minecraft.command.locate", true);
+                GameProgressStore.saveNow();
             } else {
                 player.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString(player));
             }
@@ -386,6 +409,16 @@ public class Game {
         World playerWorld = getPrimaryWorld();
         int maxAttempts = avoidOcean ? 12 : 1;
         startAsyncRandomTeleport(player, playerWorld, avoidOcean, 1, maxAttempts);
+    }
+
+    private static ItemStack createRuleBook(Player player) {
+        ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
+        BookMeta meta = (BookMeta) book.getItemMeta();
+        meta.title(Texts.component(Message.RULE_BOOK_TITLE.getString(player)));
+        meta.author(Texts.component(Message.RULE_BOOK_AUTHOR.getString(player)));
+        meta.pages(Texts.components(Message.RULE_BOOK_PAGES.getStringList(player)));
+        book.setItemMeta(meta);
+        return book;
     }
 
     private static void randomTeleportSynchronously(Player player, World playerWorld, boolean avoidOcean,
@@ -443,6 +476,66 @@ public class Game {
         if (avoidOcean && isOcean(offset.getBlock().getBiome())) {
             player.sendMessage(Message.NOTICE_TP_OCEAN.getString(player));
         }
+    }
+
+    public static void buySupply(Player buyer) {
+        if (!Setting.isSpeedMode()) {
+            buyer.sendMessage(Message.NOTICE_SUPPLY_SPEED_ONLY.getString(buyer));
+            return;
+        }
+        List<String> team;
+        String teamName;
+        if (redTeamPlayers.contains(buyer.getName())) {
+            if (redTeamScore < 5) {
+                buyer.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString(buyer));
+                return;
+            }
+            redTeamScore -= 5;
+            team = redTeamPlayers;
+            teamName = "red";
+        } else if (blueTeamPlayers.contains(buyer.getName())) {
+            if (blueTeamScore < 5) {
+                buyer.sendMessage(Message.NOTICE_NOT_ENOUGH_SCORE.getString(buyer));
+                return;
+            }
+            blueTeamScore -= 5;
+            team = blueTeamPlayers;
+            teamName = "blue";
+        } else {
+            return;
+        }
+
+        for (String playerName : team) {
+            Player teammate = Bukkit.getPlayerExact(playerName);
+            if (teammate == null) {
+                continue;
+            }
+            giveOrDrop(teammate, new ItemStack(Material.GOLDEN_CARROT, 16));
+            giveOrDrop(teammate, new ItemStack(Material.FIREWORK_ROCKET, 32));
+        }
+        String selectedTeam = teamName;
+        sendAll(Message.NOTICE_SUPPLY_PURCHASED, (viewer, text) -> text
+                .replace("%player%", buyer.getName())
+                .replace("%team%", selectedTeam.equals("red")
+                        ? Message.TEAM_RED_NAME.getString(viewer)
+                        : Message.TEAM_BLUE_NAME.getString(viewer)));
+        updateScoreboard();
+        GameProgressStore.saveNow();
+    }
+
+    private static void giveOrDrop(Player player, ItemStack item) {
+        player.getInventory().addItem(item).values().forEach(leftover ->
+                player.getWorld().dropItemNaturally(player.getLocation(), leftover));
+    }
+
+    private static String rollLimitMessage(Player player) {
+        String message = Message.NOTICE_CANNOT_ROLL.getString(player);
+        if (!message.contains("%count%")) {
+            message = LanguageManager.usesChinese(player)
+                    ? "§c您的队伍已经用完本局 %count% 次轮换机会！"
+                    : "§cYour team has used all %count% rerolls for this game!";
+        }
+        return message.replace("%count%", String.valueOf(Setting.getMaxRollCount()));
     }
 
     private static boolean isOcean(Biome biome) {
@@ -524,6 +617,7 @@ public class Game {
                 blueWaypoint.put(index, waypoint);
             }
         }
+        GameProgressStore.saveNow();
     }
 
     private static void removeWaypoint(Player player, int index) {
@@ -598,6 +692,7 @@ public class Game {
                         .replace("%player%", entry.getKey()).replace("%amount%", entry.getValue().toString()));
             }
         }
+        sendAll(Message.NOTICE_RANKING_DIVIDER);
     }
 
     private static void checkRedRoll() {
@@ -615,6 +710,7 @@ public class Game {
             redTeamRollCount += 1;
             redRollPlayers.clear();
             updateScoreboard();
+            GameProgressStore.saveNow();
         }
     }
 
@@ -633,6 +729,7 @@ public class Game {
             blueTeamRollCount += 1;
             blueRollPlayers.clear();
             updateScoreboard();
+            GameProgressStore.saveNow();
         }
     }
 
@@ -724,12 +821,14 @@ public class Game {
                     continue;
                 }
                 chest.setItem(emptyPos, Materials.stack(block, 64));
+                GameProgressStore.saveNow();
                 return;
             }
             sendAll(Message.NOTICE_TEAM_CHEST_FULL, (viewer, text) -> text
                     .replace("%team%", Message.TEAM_BLUE_NAME.getString(viewer))
                     .replace("%block%", TranslationUtil.getValue(block, viewer)));
         }
+        GameProgressStore.saveNow();
     }
 
     public static void blueTaskComplete(String block, String player) {
@@ -759,12 +858,14 @@ public class Game {
                     continue;
                 }
                 chest.setItem(emptyPos, Materials.stack(block, 64));
+                GameProgressStore.saveNow();
                 return;
             }
             sendAll(Message.NOTICE_TEAM_CHEST_FULL, (viewer, text) -> text
                     .replace("%team%", Message.TEAM_RED_NAME.getString(viewer))
                     .replace("%block%", TranslationUtil.getValue(block, viewer)));
         }
+        GameProgressStore.saveNow();
     }
 
     public static void redWin() {
@@ -779,6 +880,7 @@ public class Game {
         sendAll(Message.NOTICE_RED_WIN);
         playSound(Sound.UI_TOAST_CHALLENGE_COMPLETE);
         setCurrentGameState(GameState.END);
+        GameProgressStore.clear();
     }
 
     public static void blueWin() {
@@ -793,6 +895,7 @@ public class Game {
         sendAll(Message.NOTICE_BLUE_WIN);
         playSound(Sound.UI_TOAST_CHALLENGE_COMPLETE);
         setCurrentGameState(GameState.END);
+        GameProgressStore.clear();
     }
 
     public static List<String> getCurrentBlocks(String team) {

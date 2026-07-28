@@ -34,5 +34,9 @@ max-team-chest-num: 8
 # 最大：53
 max-team-waypoint-num: 8
 
+# 每支队伍每局最多可轮换目标方块的次数
+# 该项仅供服务器管理员修改，不会出现在准备菜单中
+max-roll-count: 3
+
 # 内部兼容版本，请勿手动修改
 config-version: 26.2.1

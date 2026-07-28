@@ -86,4 +86,16 @@ public class Team {
         Scoreboard.syncPlayerTeams();
     }
 
+    public static void restoreTeams(List<String> redPlayers, List<String> bluePlayers) {
+        new HashSet<>(redTeam.getEntries()).forEach(redTeam::removeEntry);
+        new HashSet<>(blueTeam.getEntries()).forEach(blueTeam::removeEntry);
+        redTeamPlayers.clear();
+        blueTeamPlayers.clear();
+        redTeamPlayers.addAll(redPlayers);
+        blueTeamPlayers.addAll(bluePlayers);
+        redPlayers.forEach(redTeam::addEntry);
+        bluePlayers.forEach(blueTeam::addEntry);
+        Scoreboard.syncPlayerTeams();
+    }
+
 }

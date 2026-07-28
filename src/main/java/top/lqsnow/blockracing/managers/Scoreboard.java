@@ -13,6 +13,8 @@ import top.lqsnow.blockracing.utils.TranslationUtil;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -170,42 +172,59 @@ public final class Scoreboard {
                 + (Setting.isEnableEndBlock() ? " " + text(Message.SCOREBOARD_BLOCKS_END, player) : "");
 
         setTitle(objective, text(Message.SCOREBOARD_PREGAME_TITLE, player));
+        Map<Integer, String> lines = new HashMap<>();
         for (int slot = 11; slot >= 1; slot--) {
+            if (slot == 8) {
+                continue;
+            }
             String originalMessage = text(Message.valueOf("SCOREBOARD_PREGAME_SLOT" + slot), player);
+            if (slot == 1 && isLegacySlogan(originalMessage)) {
+                originalMessage = player == null || LanguageManager.usesChinese(player)
+                        ? "§7/language §8> §b切换语言"
+                        : "§7/language §8> §bLanguage";
+            }
             if (originalMessage.isEmpty()) {
                 continue;
             }
-            setSlot(board, objective, slot, originalMessage
+            lines.put(slot, originalMessage
                     .replace("%game_mode%", displayedGameMode)
                     .replace("%block_amount%", String.valueOf(Setting.getBlockAmount()))
                     .replace("%blocks%", blocks));
         }
+        lines.forEach((slot, line) -> setSlot(board, objective, slot, line));
+        setSlot(board, objective, 8, dynamicDivider(lines.values()));
     }
 
     private static void renderInGame(org.bukkit.scoreboard.Scoreboard board,
                                      Objective objective, Player player) {
         clearLines(board);
         setTitle(objective, text(Message.SCOREBOARD_INGAME_TITLE, player));
-        setSlot(board, objective, 12, text(Message.SCOREBOARD_RED_SCORE, player)
+        List<String> contentLines = new ArrayList<>();
+        String redScore = text(Message.SCOREBOARD_RED_SCORE, player)
                 .replace("%score%", String.valueOf(redTeamScore))
                 .replace("%current_block%", String.valueOf(redTeamCurrentBlockAmount))
-                .replace("%total_block%", String.valueOf(redTeamTotalBlockAmount)));
+                .replace("%total_block%", String.valueOf(redTeamTotalBlockAmount));
+        contentLines.add(redScore);
+        setSlot(board, objective, 11, redScore);
 
         for (int i = 0; i < getCurrentBlocks("red").size(); i++) {
-            setSlot(board, objective, 11 - i,
-                    getBlockDisplay(redTeamRemainingBlocks.get(i), player));
+            String block = getBlockDisplay(redTeamRemainingBlocks.get(i), player);
+            contentLines.add(block);
+            setSlot(board, objective, 10 - i, block);
         }
-        setSlot(board, objective, 7, text(Message.SCOREBOARD_DIVIDING_LINE, player));
-        setSlot(board, objective, 6, text(Message.SCOREBOARD_BLUE_SCORE, player)
+        String blueScore = text(Message.SCOREBOARD_BLUE_SCORE, player)
                 .replace("%score%", String.valueOf(blueTeamScore))
                 .replace("%current_block%", String.valueOf(blueTeamCurrentBlockAmount))
-                .replace("%total_block%", String.valueOf(blueTeamTotalBlockAmount)));
+                .replace("%total_block%", String.valueOf(blueTeamTotalBlockAmount));
+        contentLines.add(blueScore);
+        setSlot(board, objective, 5, blueScore);
 
         for (int i = 0; i < getCurrentBlocks("blue").size(); i++) {
-            setSlot(board, objective, 5 - i,
-                    getBlockDisplay(blueTeamRemainingBlocks.get(i), player));
+            String block = getBlockDisplay(blueTeamRemainingBlocks.get(i), player);
+            contentLines.add(block);
+            setSlot(board, objective, 4 - i, block);
         }
-        setSlot(board, objective, 1, text(Message.SCOREBOARD_BOTTOM_SLOT, player));
+        setSlot(board, objective, 6, dynamicDivider(contentLines));
     }
 
     private static void syncPlayerTeams(PlayerBoard view, Player player) {
@@ -231,6 +250,42 @@ public final class Scoreboard {
 
     private static String text(Message message, Player player) {
         return player == null ? message.getString() : message.getString(player);
+    }
+
+    private static boolean isLegacySlogan(String text) {
+        return text != null
+                && text.replaceAll("(?i)§[0-9A-FK-OR]", "").equalsIgnoreCase("Enjoy the game!");
+    }
+
+    private static String dynamicDivider(Iterable<String> lines) {
+        int widest = 0;
+        for (String line : lines) {
+            widest = Math.max(widest, approximatePixelWidth(line));
+        }
+        int hyphens = Math.max(8, Math.min(24, (widest + 5) / 6));
+        return "§8§m" + "-".repeat(hyphens);
+    }
+
+    static int approximatePixelWidth(String text) {
+        if (text == null) {
+            return 0;
+        }
+        String plain = text.replaceAll("(?i)§[0-9A-FK-OR]", "");
+        int width = 0;
+        for (int offset = 0; offset < plain.length(); ) {
+            int codePoint = plain.codePointAt(offset);
+            offset += Character.charCount(codePoint);
+            if (codePoint > 127) {
+                width += 9;
+            } else {
+                width += switch (codePoint) {
+                    case ' ', 'i', '!', '.', ',', ':', ';', '\'', '|' -> 3;
+                    case 'I', '[', ']', '(', ')', 't', 'f', 'k', '<', '>' -> 5;
+                    default -> 6;
+                };
+            }
+        }
+        return width;
     }
 
     private static void clearLines(org.bukkit.scoreboard.Scoreboard board) {

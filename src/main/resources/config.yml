@@ -33,5 +33,9 @@ max-team-chest-num: 8
 # Number of waypoints per team (default: 8, maximum: 53)
 max-team-waypoint-num: 8
 
+# Maximum number of target rerolls available to each team per game
+# This is an administrator setting and is not exposed in the preparation menu.
+max-roll-count: 3
+
 # Internal compatibility value. Do not edit this manually.
 config-version: 26.2.1

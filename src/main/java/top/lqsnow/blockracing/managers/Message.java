@@ -107,6 +107,17 @@ public enum Message {
     MENU_RANDOM_TP_LORE("menu.game-menu.random-tp-lore"),
     MENU_CURRENT_BLOCKS("menu.game-menu.current-blocks"),
     MENU_CURRENT_BLOCKS_LORE("menu.game-menu.current-blocks-lore"),
+    MENU_TEAMMATE_TELEPORT("menu.game-menu.teammate-teleport"),
+    MENU_TEAMMATE_TELEPORT_LORE("menu.game-menu.teammate-teleport-lore"),
+    MENU_TEAMMATE_TELEPORT_TITLE("menu.teammate-teleport.title"),
+    MENU_TEAMMATE_TELEPORT_PLAYER_LORE("menu.teammate-teleport.player-lore"),
+    MENU_TEAMMATE_TELEPORT_EMPTY("menu.teammate-teleport.empty"),
+    MENU_TEAMMATE_TELEPORT_EMPTY_LORE("menu.teammate-teleport.empty-lore"),
+    MENU_SUPPLY("menu.game-menu.supply"),
+    MENU_SUPPLY_LORE("menu.game-menu.supply-lore"),
+    RULE_BOOK_TITLE("rule-book.title"),
+    RULE_BOOK_AUTHOR("rule-book.author"),
+    RULE_BOOK_PAGES("rule-book.pages"),
     MENU_TEAM_CHEST_SELECT_TITLE("menu.team-chest-select-menu.title"),
     MENU_TEAM_CHEST_SELECT_CHEST("menu.team-chest-select-menu.chest"),
     MENU_RED_CHEST("menu.team-chest.red-chest"),
@@ -120,6 +131,10 @@ public enum Message {
 
     // notice
     NOTICE_WELCOME("notice.welcome"),
+    NOTICE_WELCOME_LINES("notice.welcome-lines"),
+    NOTICE_RECOVERED_GAME("notice.recovered-game"),
+    NOTICE_RECOVERED_RESET_BUTTON("notice.recovered-reset-button"),
+    NOTICE_RECOVERED_RESET_HOVER("notice.recovered-reset-hover"),
     NOTICE_JOIN_RED("notice.join-red"),
     NOTICE_JOIN_BLUE("notice.join-blue"),
     NOTICE_ALREADY_IN_RED("notice.already-in-red"),
@@ -144,6 +159,8 @@ public enum Message {
     NOTICE_RED_COLLECT("notice.red-collect"),
     NOTICE_BLUE_COLLECT("notice.blue-collect"),
     NOTICE_TEAM_CHEST_FULL("notice.team-chest-full"),
+    NOTICE_SUPPLY_PURCHASED("notice.supply-purchased"),
+    NOTICE_SUPPLY_SPEED_ONLY("notice.supply-speed-only"),
     NOTICE_TEAM_SHUFFLE_CONFIRM("notice.team-shuffle-confirm"),
     NOTICE_TEAM_SHUFFLE_CONFIRM_BUTTON("notice.team-shuffle-confirm-button"),
     NOTICE_TEAM_SHUFFLE_CONFIRM_HOVER("notice.team-shuffle-confirm-hover"),
@@ -180,7 +197,9 @@ public enum Message {
     NOTICE_RANKING_RED("notice.ranking-red"),
     NOTICE_RANKING_BLUE("notice.ranking-blue"),
     NOTICE_RANKING_OFFLINE("notice.ranking-offline"),
+    NOTICE_RANKING_DIVIDER("notice.ranking-divider"),
     NOTICE_VERSION_MISMATCH("notice.version-mismatch"),
+    NOTICE_VERSION_MISMATCH_LINES("notice.version-mismatch-lines"),
     NOTICE_VERSION_MISMATCH_TITLE("notice.version-mismatch-title"),
     NOTICE_VERSION_MISMATCH_SUBTITLE("notice.version-mismatch-subtitle"),
     NOTICE_TEAM_SHUFFLE_TRIGGERED("notice.team-shuffle-triggered"),
@@ -189,6 +208,10 @@ public enum Message {
     NOTICE_BLOCK_OVERVIEW_BLUE("notice.block-overview.blue"),
     NOTICE_BLOCK_OVERVIEW_ENTRY("notice.block-overview.entry"),
     NOTICE_BLOCK_OVERVIEW_DIVIDER("notice.block-overview.divider"),
+
+    // chat
+    CHAT_GLOBAL_FORMAT("chat.global-format"),
+    CHAT_TEAM_HINT("chat.team-hint"),
 
     // other
     MESSAGE_LANG("lang"),

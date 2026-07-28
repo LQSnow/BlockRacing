@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import top.lqsnow.blockracing.managers.Message;
+import top.lqsnow.blockracing.managers.GameProgressStore;
 import top.lqsnow.blockracing.managers.Setting;
 
 import static top.lqsnow.blockracing.managers.Game.*;
@@ -58,6 +59,7 @@ public class WayPoint implements CommandExecutor {
         } else {
             blueWaypoint.remove(index);
         }
+        GameProgressStore.saveNow();
 
         return true;
     }

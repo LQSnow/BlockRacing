@@ -5,7 +5,10 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 import top.lqsnow.blockracing.managers.Game;
+import top.lqsnow.blockracing.managers.GameProgressStore;
+import top.lqsnow.blockracing.managers.LanguageManager;
 import top.lqsnow.blockracing.managers.Message;
 import top.lqsnow.blockracing.managers.Scoreboard;
 import top.lqsnow.blockracing.managers.Setting;
@@ -15,6 +18,8 @@ import top.lqsnow.blockracing.toolkit.menu.MenuView;
 import top.lqsnow.blockracing.utils.TranslationUtil;
 
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static top.lqsnow.blockracing.managers.Game.*;
@@ -38,7 +43,7 @@ public final class GameMenu extends MenuView {
         setButton(12, MenuButton.of(
                 player -> ItemBuilder.of(Material.TOTEM_OF_UNDYING)
                         .name(Message.MENU_ROLL.getString(player))
-                        .lore(List.of(Message.MENU_ROLL_LORE.getString(player)))
+                        .lore(List.of(rollLore(player)))
                         .build(),
                 (player, click) -> {
                     Game.roll(player);
@@ -75,6 +80,13 @@ public final class GameMenu extends MenuView {
                         .build(),
                 (player, click) -> handleRandomTeleport(player)
         ));
+        setButton(19, MenuButton.of(
+                player -> ItemBuilder.of(Material.PLAYER_HEAD)
+                        .name(Message.MENU_TEAMMATE_TELEPORT.getString(player))
+                        .lore(Message.MENU_TEAMMATE_TELEPORT_LORE.getStringList(player))
+                        .build(),
+                (player, click) -> new TeammateTeleportMenu(player).open(player)
+        ));
         setButton(23, MenuButton.of(
                 player -> ItemBuilder.of(Material.WRITABLE_BOOK)
                         .name(Message.MENU_CURRENT_BLOCKS.getString(player))
@@ -83,9 +95,24 @@ public final class GameMenu extends MenuView {
                 (player, click) -> showCurrentBlocks(player)
         ));
         setButton(25, MenuButton.of(
-                () -> ItemBuilder.of(Material.KNOWLEDGE_BOOK).name("§bLanguage / 语言").build(),
+                () -> ItemBuilder.of(Material.KNOWLEDGE_BOOK)
+                        .name("§bLanguage / 语言")
+                        .lore(List.of("§7Change display language / 切换显示语言"))
+                        .build(),
                 (player, click) -> new LanguageMenu().open(player)
         ));
+        if (Setting.isSpeedMode()) {
+            setButton(31, MenuButton.of(
+                    player -> ItemBuilder.of(Material.FIREWORK_ROCKET)
+                            .name(Message.MENU_SUPPLY.getString(player))
+                            .lore(Message.MENU_SUPPLY_LORE.getStringList(player))
+                            .build(),
+                    (player, click) -> {
+                        Game.buySupply(player);
+                        player.closeInventory();
+                    }
+            ));
+        }
     }
 
     @Override
@@ -143,6 +170,7 @@ public final class GameMenu extends MenuView {
                             Message.TEAM_BLUE_COLOR.getString(viewer) + player.getName()));
         }
         Scoreboard.updateScoreboard();
+        GameProgressStore.saveNow();
     }
 
     public static final class TeamChestSelectMenu extends MenuView {
@@ -158,6 +186,37 @@ public final class GameMenu extends MenuView {
                                 .build(),
                         (player, click) -> openTeamChest(player, chestIndex)
                 ));
+            }
+            setButton(getSize() - 1, backButton());
+        }
+    }
+
+    public static final class TeammateTeleportMenu extends MenuView {
+        public TeammateTeleportMenu(Player viewer) {
+            this(getOnlineTeammates(viewer));
+        }
+
+        private TeammateTeleportMenu(List<Player> teammates) {
+            super(menuSize(Math.max(1, teammates.size())),
+                    player -> Message.MENU_TEAMMATE_TELEPORT_TITLE.getString(player));
+
+            if (teammates.isEmpty()) {
+                setButton(4, MenuButton.of(
+                        player -> ItemBuilder.of(Material.BARRIER)
+                                .name(Message.MENU_TEAMMATE_TELEPORT_EMPTY.getString(player))
+                                .lore(Message.MENU_TEAMMATE_TELEPORT_EMPTY_LORE.getStringList(player))
+                                .build(),
+                        (player, click) -> {
+                        }
+                ));
+            } else {
+                for (int slot = 0; slot < teammates.size() && slot < 53; slot++) {
+                    Player teammate = teammates.get(slot);
+                    setButton(slot, MenuButton.of(
+                            player -> teammateHead(teammate, player),
+                            (player, click) -> teleportToTeammate(player, teammate.getName())
+                    ));
+                }
             }
             setButton(getSize() - 1, backButton());
         }
@@ -248,6 +307,53 @@ public final class GameMenu extends MenuView {
         );
     }
 
+    private static List<Player> getOnlineTeammates(Player player) {
+        List<String> team = redTeamPlayers.contains(player.getName())
+                ? redTeamPlayers
+                : blueTeamPlayers.contains(player.getName()) ? blueTeamPlayers : List.of();
+        List<Player> teammates = new ArrayList<>();
+        for (String name : team) {
+            Player teammate = org.bukkit.Bukkit.getPlayerExact(name);
+            if (teammate != null && teammate.isOnline() && !teammate.equals(player)) {
+                teammates.add(teammate);
+            }
+        }
+        teammates.sort(Comparator.comparing(Player::getName, String.CASE_INSENSITIVE_ORDER));
+        return teammates;
+    }
+
+    private static ItemStack teammateHead(Player teammate, Player viewer) {
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+        if (head.getItemMeta() instanceof SkullMeta meta) {
+            meta.setOwningPlayer(teammate);
+            head.setItemMeta(meta);
+        }
+        return ItemBuilder.of(head)
+                .name("§f" + teammate.getName())
+                .lore(Message.MENU_TEAMMATE_TELEPORT_PLAYER_LORE.getStringList(viewer))
+                .build();
+    }
+
+    private static void teleportToTeammate(Player player, String targetName) {
+        Player target = org.bukkit.Bukkit.getPlayerExact(targetName);
+        if (target == null || !target.isOnline()) {
+            player.sendMessage(Message.NOTICE_PLAYER_NOT_EXIST.getString(player));
+            player.closeInventory();
+            return;
+        }
+        boolean sameTeam = redTeamPlayers.contains(player.getName()) && redTeamPlayers.contains(targetName)
+                || blueTeamPlayers.contains(player.getName()) && blueTeamPlayers.contains(targetName);
+        if (!sameTeam) {
+            player.sendMessage(Message.NOTICE_PLAYER_NOT_IN_SAME_TEAM.getString(player));
+            player.closeInventory();
+            return;
+        }
+        player.teleport(target);
+        player.sendMessage(Message.NOTICE_TP_PLAYER_SUCCESS.getString(player)
+                .replace("%player%", target.getName()));
+        player.closeInventory();
+    }
+
     private static int menuSize(int contentSlots) {
         return Math.min(54, ((contentSlots / 9) + 1) * 9);
     }
@@ -256,6 +362,16 @@ public final class GameMenu extends MenuView {
         return lore.stream()
                 .map(line -> line.replace("%score%", String.valueOf(locateCost)))
                 .toList();
+    }
+
+    private static String rollLore(Player player) {
+        String lore = Message.MENU_ROLL_LORE.getString(player);
+        if (!lore.contains("%count%")) {
+            lore = LanguageManager.usesChinese(player)
+                    ? "§b替换当前目标方块（每局每队最多 %count% 次）"
+                    : "§bReplace current targets (up to %count% times per team)";
+        }
+        return lore.replace("%count%", String.valueOf(Setting.getMaxRollCount()));
     }
 
     private static List<String> replaceWaypointPlaceholders(List<String> lore, String dimension,

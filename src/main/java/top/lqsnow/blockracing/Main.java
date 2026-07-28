@@ -26,6 +26,12 @@ public class Main extends JavaPlugin {
     }
 
     @Override
+    public void onLoad() {
+        instance = this;
+        WorldResetMarker.processPendingReset(this);
+    }
+
+    @Override
     public void onEnable() {
         instance = this;
 
@@ -48,6 +54,7 @@ public class Main extends JavaPlugin {
         getPluginCommand("block").setExecutor(new GetBlock());
         getPluginCommand("block").setTabCompleter(new GetBlock());
         getPluginCommand("randomteam").setExecutor(new RandomTeam());
+        getPluginCommand("shout").setExecutor(new Shout());
         Language language = new Language();
         getPluginCommand("language").setExecutor(language);
         getPluginCommand("language").setTabCompleter(language);
@@ -78,21 +85,29 @@ public class Main extends JavaPlugin {
         new Block();
         Block.checkBlock();
         Block.refreshAvailableBlocksAndClampAmount();
-        Scoreboard.setPreGameScoreboard();
+        boolean recoveredGame = GameProgressStore.load();
+        if (recoveredGame) {
+            Game.resumeRecoveredGame();
+            Scoreboard.setInGameScoreboard();
+        } else {
+            Scoreboard.setPreGameScoreboard();
+        }
+        GameProgressStore.startAutosave();
         new Game.runPer2Tick().runTaskTimer(this, 0L, 2L);
 
-        // Init world settings
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-            World world = getPrimaryWorld();
-            world.setDifficulty(Difficulty.PEACEFUL);
-            Bukkit.getWorlds().forEach(loadedWorld -> loadedWorld.setGameRule(GameRules.KEEP_INVENTORY, true));
-            world.setTime(1000);
-        }, 5);
-
-        // Set world border
-        World world = getPrimaryWorld();
-        world.getWorldBorder().setCenter(world.getSpawnLocation());
-        world.getWorldBorder().setSize(32);
+        if (!recoveredGame) {
+            // Only initialize a fresh pregame world. A recovered game must keep
+            // its world, player positions and border exactly as they were saved.
+            Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+                World world = getPrimaryWorld();
+                world.setDifficulty(Difficulty.PEACEFUL);
+                Bukkit.getWorlds().forEach(loadedWorld ->
+                        loadedWorld.setGameRule(GameRules.KEEP_INVENTORY, true));
+                world.setTime(1000);
+                world.getWorldBorder().setCenter(world.getSpawnLocation());
+                world.getWorldBorder().setSize(32);
+            }, 5);
+        }
 
         // Complete
         Bukkit.getLogger().info("[BlockRacing] Load Complete!");
@@ -100,6 +115,11 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (Game.getCurrentGameState() == Game.GameState.INGAME) {
+            GameProgressStore.saveNow();
+        } else {
+            GameProgressStore.clear();
+        }
         Config.saveConfig();
     }
 

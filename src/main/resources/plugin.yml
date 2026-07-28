@@ -33,6 +33,10 @@ commands:
   randomteam:
     usage: "/randomteam [confirm]"
     description: "Request or confirm balanced random teams."
+  shout:
+    aliases: [all]
+    usage: "/shout <message>"
+    description: "Send a message to every player."
   language:
     aliases: [lang]
     usage: "/language [auto|zh_cn|en_us]"

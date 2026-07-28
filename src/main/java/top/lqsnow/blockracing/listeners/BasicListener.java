@@ -70,26 +70,7 @@ public class BasicListener implements Listener {
             return;
         }
 
-        // Change chat format
-        if (isPlayerInRedTeam(player)) {
-            applyTeamChatFormat(event, Message.TEAM_RED_CHAT);
-        } else if (isPlayerInBlueTeam(player)) {
-            applyTeamChatFormat(event, Message.TEAM_BLUE_CHAT);
-        }
-    }
-
-    private void applyTeamChatFormat(AsyncChatEvent event, Message formatMessage) {
-        event.renderer((source, sourceDisplayName, message, viewer) -> {
-            String format = viewer instanceof Player player
-                    ? formatMessage.getString(player)
-                    : formatMessage.getString();
-            return
-                LEGACY_SERIALIZER.deserialize(String.format(
-                        format,
-                        source.getName(),
-                        LEGACY_SERIALIZER.serialize(message)
-                ));
-        });
+        TeamChat.handle(event);
     }
 
     private void handleBlockAmountInput(Player player, String message) {

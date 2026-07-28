@@ -53,7 +53,12 @@ See the current default configuration and resource files in the [`src/main/resou
 
 - After random teleportation, follow the scoreboard and start collecting blocks.
 
-- Shift+F opens the menu, where players can use team chests, roll, locate, waypoints, and random teleportation.
+- Shift+F opens the menu, where players can use team chests, roll, locate,
+  waypoints, teammate teleportation, random teleportation, and Speed Mode supplies.
+- Team chat is used by default while a game is active. Use `/shout <message>` or
+  begin a message with `@` or `!` to send it to everyone.
+- Unfinished games are saved to `game-progress.yml` and restored automatically
+  after an unexpected server stop.
 
 - After purchasing locate permissions, use /locatestructure or /locatebiome for positioning.
 
@@ -76,16 +81,21 @@ seed=
 
 It's recommended to disable PVP for a block-collecting immersion.
 
-It's recommended to leave the seed empty, delete the `world`, `world_nether`, and `world_the_end` folders after each game to reset the seed.
+Leave the seed empty if each new game should use a random world.
 
-You can also modify the server startup file (`start.bat`) for automatic restart and seed reset:
+After an approved `/restartgame` vote, BlockRacing shuts Paper down and records
+an intentional reset. On the next startup, the plugin runs before the default
+world is opened, moves the old worlds into a dated `world-backups` folder, and
+lets Paper generate fresh worlds. A crash creates no reset request, so the
+existing worlds and saved game progress are restored unchanged.
 
-```
+No world-deletion commands are required in `start.bat`. If the hosting panel
+already restarts stopped/crashed servers, no script change is needed. A simple
+local auto-restart loop is enough:
+
+```bat
 :start
 java -Xmx4G -Xms4G -jar server.jar nogui
-rd /s /q world
-rd /s /q world_nether
-rd /s /q world_the_end
 timeout /nobreak /t 5
 goto start
 ```
@@ -180,6 +190,20 @@ End: When game progress exceeds the percentage of non-End dimension blocks in to
 
 `/restartgame`
 - Shutdown the server and restart it after all players confirm the restart.
+- When a recovered game has actually ended, this vote also discards its saved progress.
+
+### /shout - Global Chat
+
+`/shout <message>`
+
+- Sends a highlighted message to every player. `@message` and `!message` are shortcuts.
+
+### /randomteam - Random Teams
+
+`/randomteam [confirm]`
+
+- Requests a balanced random assignment of all online players before the game.
+- Confirmation can be completed with the clickable chat button or `/randomteam confirm`.
 
 ### /block - Get Block Information
 
