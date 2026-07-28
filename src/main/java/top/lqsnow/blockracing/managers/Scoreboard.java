@@ -235,12 +235,11 @@ public final class Scoreboard {
     private static String padEnglishDifficulty(String value) {
         String trimmed = value.stripTrailing();
         String visibleText = trimmed.replaceAll("§.", "");
-        int spaces = switch (visibleText) {
-            case "MID" -> 3;
-            case "END" -> 2;
-            default -> 0;
+        return switch (visibleText) {
+            case "MID" -> trimmed + "  ";
+            case "END" -> trimmed + " \u2009";
+            default -> trimmed;
         };
-        return trimmed + " ".repeat(spaces);
     }
 
     private static void clearLines(org.bukkit.scoreboard.Scoreboard board) {
