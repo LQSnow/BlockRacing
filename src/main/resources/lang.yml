@@ -24,7 +24,7 @@ scoreboard:
     slot11: ""
     slot10: "&b&lShift+F &f打开菜单"
     slot9: ""
-    slot8: "&8&m----------------"
+    slot8: ""
     slot7: " "
     slot6: "&7模式 &f%game_mode%"
     slot5: "&7目标数量 &f%block_amount%"
@@ -275,7 +275,7 @@ notice:
     entry: "&7%index%. &f%block%"
     divider: "&8&m--------------------------------"
 chat:
-  global-format: "&8[&e&l全部&8] &f%player%&7: &f%message%"
+  global-format: "&8[&e&l全部&8] %team% &f%player%&7: &f%message%"
   team-hint: "&8[&b提示&8] &7当前为队伍聊天；使用 &f/shout 消息&7，或以 &f@ / ! &7开头发送给所有人。"
 
 # Internal compatibility value. Do not edit this manually.

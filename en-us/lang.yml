@@ -23,7 +23,7 @@ scoreboard:
     slot11: ""
     slot10: "&b&lShift+F &fto open the menu"
     slot9: ""
-    slot8: "&8&m----------------"
+    slot8: ""
     slot7: " "
     slot6: "&7Mode &f%game_mode%"
     slot5: "&7Targets &f%block_amount%"
@@ -180,7 +180,8 @@ rule-book:
   pages:
     - "&b&lVanilla Changes\n\n&0• Chat is team-only while a game is active\n• Use /shout or start with @ or ! for global chat\n• /tp only targets teammates\n• Use /teleport or /minecraft:tp for the vanilla command"
     - "&b&lAdmin Settings\n\n&0Team chest count, waypoint count and rerolls per game can be changed in config.yml.\n\nKeys:\nmax-team-chest-num\nmax-team-waypoint-num\nmax-roll-count"
-    - "&b&lCore Rules\n\n&0Both teams collect the target blocks shown on the scoreboard. The first team to finish every target wins.\n\nNormal Mode gives 1 point and sends a stack to the opponent. Racing shares targets without gifts. Speed Mode gives 3 points."
+    - "&b&lCore Rules\n\n&0Both teams collect the target blocks shown on the scoreboard.\n\nThe first team to complete every target wins."
+    - "&b&lModes & Scoring\n\n&0Normal: 1 point and a stack sent to the opponent.\n\nRacing: shared targets, with no item gifts.\n\nSpeed: 3 points per target."
     - "&b&lMenu Features\n\n&0Press Shift+F for the menu.\n\nTeam Chest: shared items\nWaypoints: save/teleport\nReroll: online team vote\nLocate: costs points\nRandom TP: first use free\nSpeed Supplies: 5 points"
     - "&b&lCommands 1/2\n\n&0/language change language\n/randomteam balance teams\n/block <red|blue> <index> show a full target name\n/tp <player> teammate teleport\n/shout <message> global chat"
     - "&b&lCommands 2/2\n\n&0/menu open menu\n/waypoint remove <index>\n/locatebiome <biome>\n/locatestructure <structure>\n/restartgame vote to reset"
@@ -283,7 +284,7 @@ notice:
     entry: "&7%index%. &f%block%"
     divider: "&8&m--------------------------------"
 chat:
-  global-format: "&8[&e&lALL&8] &f%player%&7: &f%message%"
+  global-format: "&8[&e&lALL&8] %team% &f%player%&7: &f%message%"
   team-hint: "&8[&bTip&8] &7You are in team chat. Use &f/shout message&7 or start with &f@ / ! &7to message everyone."
 
 # Internal compatibility value. Do not edit this manually.

@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import top.lqsnow.blockracing.managers.Game;
@@ -106,6 +107,7 @@ public final class GameMenu extends MenuView {
                     player -> ItemBuilder.of(Material.FIREWORK_ROCKET)
                             .name(Message.MENU_SUPPLY.getString(player))
                             .lore(Message.MENU_SUPPLY_LORE.getStringList(player))
+                            .flags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
                             .build(),
                     (player, click) -> {
                         Game.buySupply(player);

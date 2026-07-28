@@ -5,6 +5,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import top.lqsnow.blockracing.managers.Game;
 import top.lqsnow.blockracing.managers.Message;
 import top.lqsnow.blockracing.managers.TeamChat;
 
@@ -14,6 +15,10 @@ public final class Shout implements CommandExecutor {
                              @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage("This command can only be run by a player.");
+            return true;
+        }
+        if (Game.getCurrentGameState() != Game.GameState.INGAME) {
+            player.sendMessage(Message.NOTICE_GAME_NOT_START.getString(player));
             return true;
         }
         if (args.length == 0) {

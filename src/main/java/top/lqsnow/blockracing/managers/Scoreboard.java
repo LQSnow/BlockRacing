@@ -174,9 +174,6 @@ public final class Scoreboard {
         setTitle(objective, text(Message.SCOREBOARD_PREGAME_TITLE, player));
         Map<Integer, String> lines = new HashMap<>();
         for (int slot = 11; slot >= 1; slot--) {
-            if (slot == 8) {
-                continue;
-            }
             String originalMessage = text(Message.valueOf("SCOREBOARD_PREGAME_SLOT" + slot), player);
             if (slot == 1 && isLegacySlogan(originalMessage)) {
                 originalMessage = player == null || LanguageManager.usesChinese(player)
@@ -192,7 +189,6 @@ public final class Scoreboard {
                     .replace("%blocks%", blocks));
         }
         lines.forEach((slot, line) -> setSlot(board, objective, slot, line));
-        setSlot(board, objective, 8, dynamicDivider(lines.values()));
     }
 
     private static void renderInGame(org.bukkit.scoreboard.Scoreboard board,

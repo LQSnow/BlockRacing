@@ -74,9 +74,35 @@ public final class TeamChat {
         String format = viewer == null
                 ? Message.CHAT_GLOBAL_FORMAT.getString()
                 : Message.CHAT_GLOBAL_FORMAT.getString(viewer);
+        String team = globalTeamPrefix(viewer, playerName);
         return Texts.component(format
-                .replace("%player%", playerName)
+                .replace("%team%", team)
+                .replace("%player%", globalPlayerName(viewer, playerName))
                 .replace("%message%", message));
+    }
+
+    private static String globalTeamPrefix(Player viewer, String playerName) {
+        Message prefix;
+        if (Team.redTeamPlayers.contains(playerName)) {
+            prefix = Message.TEAM_RED_PREFIX;
+        } else if (Team.blueTeamPlayers.contains(playerName)) {
+            prefix = Message.TEAM_BLUE_PREFIX;
+        } else {
+            return "&7[--]";
+        }
+        return viewer == null ? prefix.getString() : prefix.getString(viewer);
+    }
+
+    private static String globalPlayerName(Player viewer, String playerName) {
+        Message color;
+        if (Team.redTeamPlayers.contains(playerName)) {
+            color = Message.TEAM_RED_COLOR;
+        } else if (Team.blueTeamPlayers.contains(playerName)) {
+            color = Message.TEAM_BLUE_COLOR;
+        } else {
+            return "&7" + playerName;
+        }
+        return (viewer == null ? color.getString() : color.getString(viewer)) + playerName;
     }
 
     static int globalPrefixLength(String message) {

@@ -84,6 +84,7 @@ public final class WorldResetMarker {
             Path backup = uniqueBackupDirectory(serverRoot);
             Files.createDirectories(backup);
             List<Move> completed = new ArrayList<>();
+            boolean playerStorageRecreated = false;
             try {
                 for (int i = 0; i < worlds.size(); i++) {
                     Path world = worlds.get(i);
@@ -98,10 +99,15 @@ public final class WorldResetMarker {
                         completed.add(new Move(world, destination));
                     }
                 }
+                recreatePlayerStorage(primaryWorld);
+                playerStorageRecreated = true;
                 Files.delete(marker);
                 plugin.getLogger().info("Backed up old worlds to " + backup
                         + "; Paper will generate a fresh world.");
             } catch (IOException moveFailure) {
+                if (playerStorageRecreated) {
+                    removeEmptyPlayerStorage(primaryWorld, plugin);
+                }
                 rollback(completed, plugin);
                 throw moveFailure;
             }
@@ -132,6 +138,43 @@ public final class WorldResetMarker {
             candidate = backups.resolve(base + "-" + suffix++);
         }
         return candidate;
+    }
+
+    /**
+     * Paper creates these directories before plugins are loaded and keeps their
+     * paths for the lifetime of the server. Moving the old world therefore
+     * requires recreating the empty directory structure immediately.
+     */
+    private static void recreatePlayerStorage(Path world) throws IOException {
+        Path players = world.resolve("players");
+        try {
+            Files.createDirectories(players.resolve("data"));
+            Files.createDirectories(players.resolve("stats"));
+            Files.createDirectories(players.resolve("advancements"));
+        } catch (IOException ex) {
+            removeEmptyPlayerStorage(world, null);
+            throw ex;
+        }
+    }
+
+    private static void removeEmptyPlayerStorage(Path world, Main plugin) {
+        Path players = world.resolve("players");
+        List<Path> directories = List.of(
+                players.resolve("advancements"),
+                players.resolve("stats"),
+                players.resolve("data"),
+                players
+        );
+        for (Path directory : directories) {
+            try {
+                Files.deleteIfExists(directory);
+            } catch (IOException ex) {
+                if (plugin != null) {
+                    plugin.getLogger().log(Level.WARNING,
+                            "Could not clean temporary player storage " + directory, ex);
+                }
+            }
+        }
     }
 
     /**

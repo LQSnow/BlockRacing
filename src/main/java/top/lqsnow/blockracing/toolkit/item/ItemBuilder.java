@@ -2,6 +2,7 @@ package top.lqsnow.blockracing.toolkit.item;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import top.lqsnow.blockracing.toolkit.text.Texts;
@@ -15,6 +16,7 @@ public final class ItemBuilder {
     private String name;
     private Collection<String> lore;
     private final Map<Enchantment, Integer> enchantments = new LinkedHashMap<>();
+    private ItemFlag[] flags = new ItemFlag[0];
 
     private ItemBuilder(ItemStack item) {
         this.item = item.clone();
@@ -48,6 +50,11 @@ public final class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder flags(ItemFlag... flags) {
+        this.flags = flags.clone();
+        return this;
+    }
+
     public ItemStack build() {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
@@ -58,6 +65,7 @@ public final class ItemBuilder {
                 meta.lore(Texts.components(lore));
             }
             enchantments.forEach((enchantment, level) -> meta.addEnchant(enchantment, level, true));
+            meta.addItemFlags(flags);
             item.setItemMeta(meta);
         }
         return item.clone();

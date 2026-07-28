@@ -113,8 +113,7 @@ public class Game {
 
         if (getCurrentGameState().equals(GameState.PREGAME)) {
             player.setGameMode(GameMode.ADVENTURE);
-            player.getInventory().clear();
-            player.getInventory().addItem(createRuleBook(player));
+            resetPregameInventory(player);
             Message.NOTICE_WELCOME_LINES.getStringList(player).stream()
                     .map(line -> line.replace("%player%", player.getName()))
                     .forEach(player::sendMessage);
@@ -476,6 +475,11 @@ public class Game {
         if (avoidOcean && isOcean(offset.getBlock().getBiome())) {
             player.sendMessage(Message.NOTICE_TP_OCEAN.getString(player));
         }
+    }
+
+    public static void resetPregameInventory(Player player) {
+        player.getInventory().clear();
+        player.getInventory().addItem(createRuleBook(player));
     }
 
     public static void buySupply(Player buyer) {
