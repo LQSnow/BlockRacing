@@ -36,7 +36,7 @@ scoreboard:
     title: "&b&l方块竞速"
     red-score: "&c红队：&e%score%分  &b(%current_block%/%total_block%)"
     blue-score: "&9蓝队：&e%score%分  &b(%current_block%/%total_block%)"
-    block-format: "%difficulty% | %block%"
+    block-format: "&8[%difficulty%&8] &f%block%"
     dividing-line: "----------------"
     bottom-slot: "&e&lEnjoy the game!"
     block-difficulty:

@@ -71,12 +71,13 @@ public final class Scoreboard {
             return null;
         }
 
-        String difficultyText = text(difficulty, player);
-        if (player != null && !LanguageManager.usesChinese(player)) {
-            difficultyText = padEnglishDifficulty(difficultyText);
+        String difficultyText = text(difficulty, player).stripTrailing();
+        String blockFormat = text(Message.SCOREBOARD_BLOCK_FORMAT, player);
+        if (blockFormat.equals("%difficulty% | %block%")) {
+            blockFormat = "§8[%difficulty%§8] §f%block%";
         }
 
-        return text(Message.SCOREBOARD_BLOCK_FORMAT, player)
+        return blockFormat
                 .replace("%difficulty%", difficultyText)
                 .replace("%block%", player == null
                         ? TranslationUtil.getValue(block)
@@ -230,16 +231,6 @@ public final class Scoreboard {
 
     private static String text(Message message, Player player) {
         return player == null ? message.getString() : message.getString(player);
-    }
-
-    private static String padEnglishDifficulty(String value) {
-        String trimmed = value.stripTrailing();
-        String visibleText = trimmed.replaceAll("§.", "");
-        return switch (visibleText) {
-            case "MID" -> trimmed + "  ";
-            case "END" -> trimmed + " \u2009";
-            default -> trimmed;
-        };
     }
 
     private static void clearLines(org.bukkit.scoreboard.Scoreboard board) {

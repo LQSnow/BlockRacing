@@ -35,7 +35,7 @@ scoreboard:
     title: "&b&lBlock Racing"
     red-score: "&cRed：&e%score% Points  &b(%current_block%/%total_block%)"
     blue-score: "&9Blue：&e%score% Points  &b(%current_block%/%total_block%)"
-    block-format: "%difficulty% | %block%"
+    block-format: "&8[%difficulty%&8] &f%block%"
     dividing-line: "----------------"
     bottom-slot: "&e&lEnjoy the game!"
     block-difficulty:
