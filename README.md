@@ -6,9 +6,9 @@
 
 This is a multiplayer racing mini-game in Minecraft, divided into two teams, where the team that collects the specified blocks first wins.
 
-Version: Java 26.2 (requires Java 25)
+Plugin version: 26.2.1
 
-Requirements: Paper 26.2 and Java 25. Starting with 26.2.1, BlockRacing uses Paper APIs directly and no longer supports Spigot.
+Requirements: Minecraft Java Edition 26.2, Paper 26.2, and Java 25. BlockRacing uses Paper APIs directly and does not support Spigot.
 
 ## Upgrade Notice
 
@@ -23,19 +23,25 @@ See the current default configuration and resource files in the [`src/main/resou
 
 # Features
 
-1. Team Chests: Each team has 3 team chests, and the items inside are shared among team members.
+1. Team Chests: Each team has shared storage. The chest count is configurable with `max-team-chest-num`.
 
 2. Reward Mechanism: Collecting a block grants the opposing team 64 blocks of that block (stored in the team chests).
 
 3. Team Teleportation: Players within the same team can freely teleport to each other.
 
-4. Roll Blocks: When the current required blocks are too difficult to obtain, they can be rotated out, limited to three times per game.
+4. Roll Blocks: A team can vote to replace difficult current targets. The per-game limit is configurable with `max-roll-count`.
 
 5. Locate: Players can spend team points to purchase the locate command for finding biomes or structures.
 
-6. Waypoints: Each team has 3 waypoints for free saving, teleporting, and deleting.
+6. Waypoints: Each team can save, teleport to, and delete shared waypoints. Their count is configurable with `max-team-waypoint-num`.
 
 7. Per-player languages: Messages, titles, menus, team prefixes, block names, and scoreboards can follow the Minecraft client language or be switched manually between English and Simplified Chinese.
+
+8. Team Chat: During a game, messages are team-only by default, with `/shout`, `@`, and `!` available for global chat.
+
+9. Recovery: Unfinished games, scores, targets, team storage, and waypoints are restored after an unexpected shutdown.
+
+10. Team Utilities: The menus include balanced random teams, teammate teleportation, and purchasable Speed Mode supplies.
 
 # Gameplay Instructions
 
@@ -47,7 +53,7 @@ See the current default configuration and resource files in the [`src/main/resou
 - Set the target block quantity in the menu.
 - Switch between modes (normal mode or racing mode, with an option to enable extreme speed mode).
 - Once all players are ready, click the diamond in the menu to start the game.
-- When all players enter /restartgame, the server will automatically restart and start a new game.
+- After a finished game, all players can approve `/restartgame` to reset the worlds on the next server startup.
 
 ## Game Phase
 
@@ -76,7 +82,7 @@ See the current default configuration and resource files in the [`src/main/resou
 
 ```
 pvp=false
-seed=
+level-seed=
 ```
 
 It's recommended to disable PVP for a block-collecting immersion.
@@ -170,7 +176,7 @@ End: When game progress exceeds the percentage of non-End dimension blocks in to
 
 `/menu [main|chest|waypoints|roll|locate|randomTP]`
 - `main`: Open the main menu.
-- `chest [1|2|3]`: Open the team chest menu or a specific team's chest.
+- `chest [index]`: Open the team chest menu or a specific team chest.
 - `waypoints [use <index>]`: Open the waypoints menu or use a specific waypoint.
 - `roll`: Execute a roll operation.
 - `locate`: Buy locate command permission.
@@ -189,14 +195,14 @@ End: When game progress exceeds the percentage of non-End dimension blocks in to
 ### /restartgame - Restart Server
 
 `/restartgame`
-- Shutdown the server and restart it after all players confirm the restart.
+- After all players confirm, mark the worlds for reset and safely shut down the server. The hosting panel or startup loop must start Paper again.
 - When a recovered game has actually ended, this vote also discards its saved progress.
 
 ### /shout - Global Chat
 
 `/shout <message>`
 
-- Sends a highlighted message to every player. `@message` and `!message` are shortcuts.
+- During an active game, sends a highlighted message to every player. `@message` and `!message` are shortcuts.
 
 ### /randomteam - Random Teams
 
@@ -214,7 +220,7 @@ End: When game progress exceeds the percentage of non-End dimension blocks in to
 ### /waypoint - Manage Waypoints
 
 `/waypoint remove <index>`
-- `<index>`: The index of the waypoint to remove (1, 2, or 3).
+- `<index>`: The configurable waypoint index to remove.
 
 ### /debug - Debug Commands (Admin Only)
 
@@ -241,11 +247,11 @@ End: When game progress exceeds the percentage of non-End dimension blocks in to
 
 # Feedback
 
-Game feedback: lq_snow@outlook.com
+Report bugs and request features through [GitHub Issues](https://github.com/LQSnow/BlockRacing/issues).
 
 Contact:
 
-> Email: lq_snow@outlook.com
+> Discord: `ikarion1`
 >
 > QQ: 2784628010
 
