@@ -1,6 +1,8 @@
 package top.lqsnow.blockracing.managers;
 
 public class Setting {
+    private static top.lqsnow.blockracing.pools.DifficultyPreset.Kind difficulty = top.lqsnow.blockracing.pools.DifficultyPreset.Kind.NORMAL;
+    private static boolean copperExtras;
     private static boolean enableMediumBlock;
     private static boolean enableHardBlock;
     private static boolean enableDyedBlock;
@@ -14,6 +16,12 @@ public class Setting {
     private static GameMode currentGameMode = GameMode.NORMAL;
 
     public static void getSettings(){
+        try {
+            difficulty = top.lqsnow.blockracing.pools.DifficultyPreset.Kind.parse(Config.DIFFICULTY.getString());
+        } catch (IllegalArgumentException | NullPointerException ex) {
+            difficulty = top.lqsnow.blockracing.pools.DifficultyPreset.Kind.NORMAL;
+        }
+        copperExtras = Config.COPPER_EXTRAS.getBoolean();
         enableMediumBlock = Config.MEDIUM_BLOCK.getBoolean();
         enableHardBlock = Config.HARD_BLOCK.getBoolean();
         enableDyedBlock = Config.DYED_BLOCK.getBoolean();
@@ -35,6 +43,22 @@ public class Setting {
         Config.MEDIUM_BLOCK.setBoolean(enableMediumBlock);
     }
 
+    public static top.lqsnow.blockracing.pools.DifficultyPreset.Kind getDifficulty() { return difficulty; }
+
+    public static void setDifficulty(top.lqsnow.blockracing.pools.DifficultyPreset.Kind kind) {
+        difficulty = java.util.Objects.requireNonNull(kind);
+        Config.DIFFICULTY.setString(kind.id());
+        Config.saveConfig();
+    }
+
+    public static boolean isCopperExtras() { return copperExtras; }
+
+    public static void setCopperExtras(boolean enabled) {
+        copperExtras = enabled;
+        Config.COPPER_EXTRAS.setBoolean(enabled);
+        Config.saveConfig();
+    }
+
     public static void setEnableHardBlock(boolean enableHardBlock) {
         Setting.enableHardBlock = enableHardBlock;
         Config.HARD_BLOCK.setBoolean(enableHardBlock);
@@ -53,6 +77,7 @@ public class Setting {
     public static void setBlockAmount(int blockAmount) {
         Setting.blockAmount = blockAmount;
         Config.BLOCK_AMOUNT.setInt(blockAmount);
+        Config.saveConfig();
     }
 
     public static void setMaxTeamChestNum(int chestNum) {

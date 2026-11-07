@@ -1,0 +1,15 @@
+# Reviewed data only. Unknown future Material types must not be auto-added.
+schema-version: 1
+minecraft-version: '26.3'
+paper-api-version: '26.3.build.244-stable'
+review-date: '2026-11-07'
+id-format: namespaced-key
+metadata-file: material-metadata.tsv
+acquisition-tags-file: acquisition-tags.tsv
+acquisition-categories: [GATHER, CRAFT, EXPLORE]
+dimensions: [OVERWORLD, NETHER, END]
+tiers: [1, 2, 3, 4, 5, 6]
+# Fresh games use the five presets; old unfinished games retain their original targets.
+gameplay-integration: standard-presets
+copper-extras-default: false
+copper-extra-file: copper-extras.txt

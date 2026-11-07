@@ -12,6 +12,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import top.lqsnow.blockracing.Main;
 
 public enum Config {
+    DIFFICULTY("difficulty"),
+    COPPER_EXTRAS("copper-extras"),
     MEDIUM_BLOCK("medium-block"),
     HARD_BLOCK("hard-block"),
     DYED_BLOCK("dyed-block"),
@@ -52,13 +54,17 @@ public enum Config {
         }
         config = loaded;
         boolean missingMaxRollCount = !config.contains(MAX_ROLL_COUNT.path);
+        boolean missingDifficulty = !config.contains(DIFFICULTY.path);
+        boolean missingCopper = !config.contains(COPPER_EXTRAS.path);
         try (Reader reader = new InputStreamReader(Main.getInstance().getResource("config.yml"), StandardCharsets.UTF_8)) {
             YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(reader);
             config.setDefaults(defConfig);
             if (missingMaxRollCount) {
                 config.set(MAX_ROLL_COUNT.path, defConfig.getInt(MAX_ROLL_COUNT.path));
-                saveConfig();
             }
+            if (missingDifficulty) config.set(DIFFICULTY.path, defConfig.getString(DIFFICULTY.path));
+            if (missingCopper) config.set(COPPER_EXTRAS.path, defConfig.getBoolean(COPPER_EXTRAS.path));
+            if (missingMaxRollCount || missingDifficulty || missingCopper) saveConfig();
         } catch (IOException ioe) {
             Main.getInstance().getLogger().log(Level.SEVERE, "[BlockRacing] Error reading config.yml!", ioe);
         }

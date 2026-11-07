@@ -279,4 +279,46 @@ chat:
   team-hint: "&8[&b提示&8] &7当前为队伍聊天；使用 &f/shout 消息&7，或以 &f@ / ! &7开头发送给所有人。"
 
 # Internal compatibility value. Do not edit this manually.
-lang-version: 26.2.1
+lang-version: 26.3.0
+block-library:
+  title: "&b难度 / 方块库"
+  select: "&e选择："
+  selected: "&a当前："
+  default: " &7（默认）"
+  back: "&e返回准备菜单"
+  off: "关闭"
+  legacy: "&7旧版"
+  presets:
+    casual: "休闲"
+    easy: "简单"
+    normal: "标准"
+    hard: "困难"
+    nightmare: "噩梦"
+  dimensions:
+    overworld: "&a主世界"
+    nether: "&c下界"
+    end: "&d末地"
+  experiences:
+    casual: "&7常见主世界采集和基础合成，轻松游玩"
+    easy: "&7常见采集；完成过半后加入基础下界目标"
+    normal: "&7普通生存与群系、洞穴、结构探索，不需末地"
+    hard: "&7加入稀有资源及后期末地挑战"
+    nightmare: "&7开放极限目标、高投入和长等待内容"
+  preset-lore:
+    - "&7主世界：%overworld%"
+    - "&7下界：%nether% &8| &7开始出现：%nether_unlock%"
+    - "&7末地：%end% &8| &7开始出现：%end_unlock%"
+    - "&7门槛按本队已完成目标的百分比计算"
+    - "&7当前铜开关下的候选数：&f%capacity%"
+    - "&7目标数量单独设置，默认每队 50 个"
+    - "&e点击选择；开局后固定本局规则"
+  copper: "&6铜附属方块："
+  copper-lore:
+    - "&7基础铜矿、粗铜块和普通铜制品保留"
+    - "&7控制氧化、涂蜡变种及铜傀儡雕像"
+    - "&7默认关闭；开启后按所属等级加入难度"
+    - "&7不会扩大难度范围或提前解锁维度"
+  invalid-settings: "&c方块库容量不足，或解锁前的候选不足以填满目标。请减少目标数或检查预设权重、维度门槛。"
+  amount-error: "&c目标数量须为 10～%capacity%。请重新设置。"
+  roll-failed: "&c当前合法替代目标不足，或会导致后续无目标可选；未重抽，也未扣次数。"
+  recovery-failed: "&c旧对局存档无法安全恢复，原文件已保留。请管理员检查日志并修复存档，或明确重置对局。"

@@ -1,0 +1,4 @@
+minecraft:beacon
+minecraft:netherite_block
+minecraft:piglin_head
+minecraft:wither_rose

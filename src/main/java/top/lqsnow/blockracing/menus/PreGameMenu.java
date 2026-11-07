@@ -38,26 +38,13 @@ public final class PreGameMenu extends MenuView {
                 player -> item(Material.BLUE_WOOL, Message.MENU_JOIN_BLUE.getString(player)),
                 (player, click) -> Team.joinTeam(player, Team.blueTeam, true)
         ));
-        setButton(20, toggleButton(
-                Setting::isEnableMediumBlock,
-                Setting::toggleMediumBlock,
-                Message.MENU_MEDIUM_BLOCKS
-        ));
-        setButton(21, toggleButton(
-                Setting::isEnableHardBlock,
-                Setting::toggleHardBlock,
-                Message.MENU_HARD_BLOCKS
-        ));
-        setButton(22, toggleButton(
-                Setting::isEnableDyedBlock,
-                Setting::toggleDyedBlock,
-                Message.MENU_DYED_BLOCKS
-        ));
-        setButton(23, toggleButton(
-                Setting::isEnableEndBlock,
-                Setting::toggleEndBlock,
-                Message.MENU_END_BLOCKS
-        ));
+        setButton(20, MenuButton.of(player -> ItemBuilder.of(Material.BOOK)
+                .name(Message.BLOCK_LIBRARY_TITLE.getString(player) + ": "
+                        + DifficultyMenu.name(Setting.getDifficulty()).getString(player)).build(),
+                (player, click) -> {
+                    if (Game.getCurrentGameState() == Game.GameState.PREGAME) new DifficultyMenu().open(player);
+                }));
+        setButton(22, DifficultyMenu.copperButton());
         setButton(24, MenuButton.of(
                 player -> ItemBuilder.of(Material.NAME_TAG)
                         .name(Message.MENU_BLOCK_AMOUNT.getString(player) + Setting.getBlockAmount())
@@ -141,22 +128,6 @@ public final class PreGameMenu extends MenuView {
         return null;
     }
 
-    private MenuButton toggleButton(BooleanSupplier enabled, Runnable toggle, Message label) {
-        return MenuButton.of(
-                player -> item(
-                        enabled.getAsBoolean() ? Material.GREEN_CONCRETE : Material.RED_CONCRETE,
-                        label.getString(player) + (enabled.getAsBoolean()
-                                ? Message.MENU_ENABLED.getString(player)
-                                : Message.MENU_DISABLED.getString(player))
-                ),
-                (player, click) -> {
-                    toggle.run();
-                    Block.refreshAvailableBlocksAndClampAmount();
-                    refreshSettings();
-                }
-        );
-    }
-
     private ItemStack normalModeItem(Player player) {
         boolean selected = Setting.getCurrentGameMode() == Setting.GameMode.NORMAL;
         return ItemBuilder.of(selected ? Material.GREEN_CONCRETE : Material.YELLOW_CONCRETE)
@@ -184,8 +155,4 @@ public final class PreGameMenu extends MenuView {
         return ItemBuilder.of(material).name(name).build();
     }
 
-    @FunctionalInterface
-    private interface BooleanSupplier {
-        boolean getAsBoolean();
-    }
 }

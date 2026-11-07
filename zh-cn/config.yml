@@ -4,7 +4,11 @@
 # 如果服务器已启动，请前往游戏中的设置界面进行设置，不要在这里调整
 # 每位玩家可使用 /language 独立选择语言，此文件不控制玩家语言
 
-# 除去easy-block以外的四种额外方块库设置
+# 旧选项仅保留用于恢复旧版进行中对局
+# 标准难度：casual / easy / normal / hard / nightmare；铜附属方块默认关闭
+difficulty: normal
+copper-extras: false
+
 medium-block: false
 hard-block: false
 dyed-block: false
@@ -39,4 +43,4 @@ max-team-waypoint-num: 8
 max-roll-count: 3
 
 # 内部兼容版本，请勿手动修改
-config-version: 26.2.1
+config-version: 26.3.0

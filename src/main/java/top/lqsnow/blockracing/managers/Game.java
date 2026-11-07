@@ -110,6 +110,10 @@ public class Game {
 
     public static void playerLogin(Player player) {
         Scoreboard.showScoreboard(player);
+        if (GameProgressStore.hasRecoveryFailure()) {
+            player.sendMessage(Message.BLOCK_LIBRARY_RECOVERY_FAILED.getString(player));
+            return;
+        }
 
         if (getCurrentGameState().equals(GameState.PREGAME)) {
             player.setGameMode(GameMode.ADVENTURE);
@@ -202,6 +206,10 @@ public class Game {
     // Check if the game can start. If not, send the reason to the player; if
     // possible, start the game directly
     public static void checkStartDemands(Player player) {
+        if (GameProgressStore.hasRecoveryFailure()) {
+            player.sendMessage(Message.BLOCK_LIBRARY_RECOVERY_FAILED.getString(player));
+            return;
+        }
 
         // Game already start
         if (getCurrentGameState().equals(GameState.INGAME))
@@ -229,7 +237,11 @@ public class Game {
         }
 
         // Blocks have problems
-        if (!checkBlock()) {
+        try {
+            Block.validateSettings();
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            player.sendMessage(Message.BLOCK_LIBRARY_INVALID_SETTINGS.getString(player));
+            Bukkit.getLogger().warning("[BlockRacing] " + ex.getMessage());
             return;
         }
 
@@ -239,13 +251,14 @@ public class Game {
     }
 
     public static void startGame() {
+        if (GameProgressStore.hasRecoveryFailure()) throw new IllegalStateException("Repair or explicitly reset the saved match first");
         // Init
+        setupBlocks();
         setCurrentGameState(GameState.INGAME);
         closeAllPlayersMenu();
         editAmountPlayer.clear();
-        setupBlocks();
-        redTeamTotalBlockAmount = redTeamBlocks.size();
-        blueTeamTotalBlockAmount = blueTeamBlocks.size();
+        redTeamTotalBlockAmount = Block.targetTotal();
+        blueTeamTotalBlockAmount = Block.targetTotal();
         setLocateScore();
         updateScoreboard();
         Bukkit.getOnlinePlayers().forEach((Player player) -> freeRandomTPList.add(player.getName()));
@@ -347,7 +360,7 @@ public class Game {
     // Roll
     public static void roll(Player player) {
         if (redTeamPlayers.contains(player.getName())) {
-            if (redTeamRollCount >= Setting.getMaxRollCount()) {
+            if (redTeamRollCount >= Block.maxRolls()) {
                 player.sendMessage(rollLimitMessage(player));
                 return;
             }
@@ -359,7 +372,7 @@ public class Game {
                 sendRed(Message.NOTICE_ROLL_REQUEST_CANCEL, (viewer, text) -> text.replace("%player%", player.getName()));
             }
         } else if (blueTeamPlayers.contains(player.getName())) {
-            if (blueTeamRollCount >= Setting.getMaxRollCount()) {
+            if (blueTeamRollCount >= Block.maxRolls()) {
                 player.sendMessage(rollLimitMessage(player));
                 return;
             }
@@ -539,7 +552,7 @@ public class Game {
                     ? "§c您的队伍已经用完本局 %count% 次轮换机会！"
                     : "§cYour team has used all %count% rerolls for this game!";
         }
-        return message.replace("%count%", String.valueOf(Setting.getMaxRollCount()));
+        return message.replace("%count%", String.valueOf(Block.maxRolls()));
     }
 
     private static boolean isOcean(Biome biome) {
@@ -652,19 +665,20 @@ public class Game {
 
         @Override
         public void run() {
+            if (getCurrentGameState() != GameState.INGAME) { cancel(); return; }
 
             // Inventory check
             checkRedInventory();
             checkBlueInventory();
 
             // Win check
-            if (redTeamRemainingBlocks.isEmpty()) {
+            if (redTeamTotalBlockAmount > 0 && redTeamCurrentBlockAmount >= redTeamTotalBlockAmount) {
                 redWin();
                 showRanking();
                 this.cancel();
                 return;
             }
-            if (blueTeamRemainingBlocks.isEmpty()) {
+            if (blueTeamTotalBlockAmount > 0 && blueTeamCurrentBlockAmount >= blueTeamTotalBlockAmount) {
                 blueWin();
                 showRanking();
                 this.cancel();
@@ -700,41 +714,28 @@ public class Game {
     }
 
     private static void checkRedRoll() {
-        Set<String> redSet = new HashSet<>(redRollPlayers);
-        Set<String> redOnlineSet = new HashSet<>(getOnlineTeamPlayers("red"));
-        if (!getOnlineTeamPlayers("red").isEmpty() && redSet.containsAll(redOnlineSet)) {
-            List<String> b = new ArrayList<>(blocks);
-            b.removeAll(redTeamBlocks);
-            Random random = new Random();
-            int rollAmount = getCurrentBlocks("red").size();
-            for (int i = 0; i < rollAmount; i++) {
-                redTeamRemainingBlocks.set(i, b.get(random.nextInt(b.size())));
-            }
-            sendAll(Message.NOTICE_RED_ROLL_SUCCESS);
-            redTeamRollCount += 1;
-            redRollPlayers.clear();
-            updateScoreboard();
-            GameProgressStore.saveNow();
-        }
+        checkTeamRoll("red", redRollPlayers, redTeamRollCount, Message.NOTICE_RED_ROLL_SUCCESS);
     }
 
     private static void checkBlueRoll() {
-        Set<String> blueSet = new HashSet<>(blueRollPlayers);
-        Set<String> blueOnlineSet = new HashSet<>(getOnlineTeamPlayers("blue"));
-        if (!getOnlineTeamPlayers("blue").isEmpty() && blueSet.containsAll(blueOnlineSet)) {
-            List<String> b = new ArrayList<>(blocks);
-            b.removeAll(blueTeamBlocks);
-            Random random = new Random();
-            int rollAmount = getCurrentBlocks("blue").size();
-            for (int i = 0; i < rollAmount; i++) {
-                blueTeamRemainingBlocks.set(i, b.get(random.nextInt(b.size())));
+        checkTeamRoll("blue", blueRollPlayers, blueTeamRollCount, Message.NOTICE_BLUE_ROLL_SUCCESS);
+    }
+
+    private static void checkTeamRoll(String team, List<String> votes, int count, Message success) {
+        List<String> online = getOnlineTeamPlayers(team);
+        if (online.isEmpty() || !new HashSet<>(votes).containsAll(online)) return;
+        votes.clear();
+        if (count >= Block.maxRolls() || !Block.roll(team)) {
+            for (String name : online) {
+                Player player = Bukkit.getPlayer(name);
+                if (player != null) player.sendMessage(Message.BLOCK_LIBRARY_ROLL_FAILED.getString(player));
             }
-            sendAll(Message.NOTICE_BLUE_ROLL_SUCCESS);
-            blueTeamRollCount += 1;
-            blueRollPlayers.clear();
-            updateScoreboard();
-            GameProgressStore.saveNow();
+            return;
         }
+        if (team.equals("red")) redTeamRollCount++; else blueTeamRollCount++;
+        sendAll(success);
+        updateScoreboard();
+        GameProgressStore.saveNow();
     }
 
     private static void setLocateScore() {
@@ -757,7 +758,7 @@ public class Game {
                 Player p = Bukkit.getPlayer(player);
                 if (p == null)
                     continue;
-                if (p.getInventory().contains(Material.valueOf(block))) {
+                if (p.getInventory().contains(Materials.require(block))) {
                     redTaskComplete(block, player);
                     return;
                 }
@@ -766,7 +767,7 @@ public class Game {
         // Complete from team chest
         for (String block : getCurrentBlocks("red")) {
             for (Inventory chest : redTeamChest) {
-                if (chest.contains(Material.valueOf(block))) {
+                if (chest.contains(Materials.require(block))) {
                     redTaskComplete(block, Message.NOTICE_RED_TEAM_CHEST.getString());
                     return;
                 }
@@ -781,7 +782,7 @@ public class Game {
                 Player p = Bukkit.getPlayer(player);
                 if (p == null)
                     continue;
-                if (p.getInventory().contains(Material.valueOf(block))) {
+                if (p.getInventory().contains(Materials.require(block))) {
                     blueTaskComplete(block, player);
                     return;
                 }
@@ -790,7 +791,7 @@ public class Game {
         // Complete from team chest
         for (String block : getCurrentBlocks("blue")) {
             for (Inventory chest : blueTeamChest) {
-                if (chest.contains(Material.valueOf(block))) {
+                if (chest.contains(Materials.require(block))) {
                     blueTaskComplete(block, Message.NOTICE_BLUE_TEAM_CHEST.getString());
                     return;
                 }
@@ -799,6 +800,7 @@ public class Game {
     }
 
     public static void redTaskComplete(String block, String player) {
+        if (!Block.complete("red", block)) return;
         boolean collectedFromTeamChest = player.equals(Message.NOTICE_RED_TEAM_CHEST.getString());
         sendAll(Message.NOTICE_RED_COLLECT, (viewer, text) -> text
                 .replace("%block%", TranslationUtil.getValue(block, viewer))
@@ -808,7 +810,6 @@ public class Game {
         Bukkit.getLogger().info(Message.NOTICE_RED_COLLECT.getString()
                 .replace("%block%", TranslationUtil.getValue(block)).replace("%player%", player).replaceAll("§.", ""));
         playSound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
-        redTeamRemainingBlocks.remove(block);
         if (Setting.isSpeedMode())
             redTeamScore += 3;
         else
@@ -836,6 +837,7 @@ public class Game {
     }
 
     public static void blueTaskComplete(String block, String player) {
+        if (!Block.complete("blue", block)) return;
         boolean collectedFromTeamChest = player.equals(Message.NOTICE_BLUE_TEAM_CHEST.getString());
         sendAll(Message.NOTICE_BLUE_COLLECT, (viewer, text) -> text
                 .replace("%block%", TranslationUtil.getValue(block, viewer))
@@ -845,7 +847,6 @@ public class Game {
         Bukkit.getLogger().info(Message.NOTICE_BLUE_COLLECT.getString()
                 .replace("%block%", TranslationUtil.getValue(block)).replace("%player%", player).replaceAll("§.", ""));
         playSound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
-        blueTeamRemainingBlocks.remove(block);
         if (Setting.isSpeedMode())
             blueTeamScore += 3;
         else
@@ -904,8 +905,8 @@ public class Game {
 
     public static List<String> getCurrentBlocks(String team) {
         return switch (team) {
-            case "red" -> redTeamRemainingBlocks.subList(0, Math.min(redTeamRemainingBlocks.size(), 4));
-            case "blue" -> blueTeamRemainingBlocks.subList(0, Math.min(blueTeamRemainingBlocks.size(), 4));
+            case "red" -> List.copyOf(redTeamRemainingBlocks.subList(0, Math.min(redTeamRemainingBlocks.size(), 4)));
+            case "blue" -> List.copyOf(blueTeamRemainingBlocks.subList(0, Math.min(blueTeamRemainingBlocks.size(), 4)));
             default -> throw new IllegalStateException("Unexpected value: " + team);
         };
     }

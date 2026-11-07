@@ -4,7 +4,11 @@
 # While the server is running, change these options through the in-game menu.
 # Player languages are selected independently with /language and are not configured here.
 
-# Optional block pools in addition to the required easy pool
+# Legacy options retained only for recovery of old matches
+# Standard preset: casual / easy / normal / hard / nightmare; copper variants default off
+difficulty: normal
+copper-extras: false
+
 medium-block: false
 hard-block: false
 dyed-block: false
@@ -38,4 +42,4 @@ max-team-waypoint-num: 8
 max-roll-count: 3
 
 # Internal compatibility value. Do not edit this manually.
-config-version: 26.2.1
+config-version: 26.3.0

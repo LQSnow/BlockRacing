@@ -1,0 +1,9 @@
+minecraft:ancient_debris
+minecraft:crimson_nylium
+minecraft:nether_gold_ore
+minecraft:nether_quartz_ore
+minecraft:ochre_froglight
+minecraft:pearlescent_froglight
+minecraft:verdant_froglight
+minecraft:warped_nylium
+minecraft:wither_skeleton_skull

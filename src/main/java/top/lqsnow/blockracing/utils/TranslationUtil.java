@@ -1,6 +1,6 @@
 package top.lqsnow.blockracing.utils;
 
-import org.bukkit.Material;
+import top.lqsnow.blockracing.toolkit.material.Materials;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -8,11 +8,9 @@ import top.lqsnow.blockracing.Main;
 import top.lqsnow.blockracing.managers.Message;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Level;
 
 public class TranslationUtil {
@@ -22,10 +20,7 @@ public class TranslationUtil {
 
     public static String getValue(String block) {
         try {
-            String key = Objects.requireNonNull(Material.getMaterial(block)).translationKey();
-            if (block.equalsIgnoreCase("NETHER_WART")) {
-                key = "block.minecraft.nether_wart";
-            }
+            String key = Materials.require(block).translationKey();
             String language = Message.MESSAGE_LANG.getString();
             if (!language.equals(loadedLanguage)) {
                 reload();
@@ -42,10 +37,7 @@ public class TranslationUtil {
                 ? "zh_cn"
                 : "en_us";
         try {
-            String key = Objects.requireNonNull(Material.getMaterial(block)).translationKey();
-            if (block.equalsIgnoreCase("NETHER_WART")) {
-                key = "block.minecraft.nether_wart";
-            }
+            String key = Materials.require(block).translationKey();
             return loadTranslations(language).getOrDefault(key, block);
         } catch (Exception ex) {
             Main.getInstance().getLogger().log(Level.SEVERE, "[BlockRacing] Error getting localized block value!", ex);
@@ -56,17 +48,8 @@ public class TranslationUtil {
     public static synchronized void reload() {
         localizedTranslations.clear();
         String language = Message.MESSAGE_LANG.getString();
-        File file = new File(Main.getInstance().getDataFolder(), language + ".json");
-        try (Reader reader = new FileReader(file)) {
-            JSONObject jsonObject = (JSONObject) new JSONParser().parse(reader);
-            Map<String, String> loaded = new HashMap<>();
-            for (Object key : jsonObject.keySet()) {
-                Object value = jsonObject.get(key);
-                if (key instanceof String && value instanceof String) {
-                    loaded.put((String) key, (String) value);
-                }
-            }
-            translations = Map.copyOf(loaded);
+        try {
+            translations = readLanguage(language);
             loadedLanguage = language;
         } catch (Exception e) {
             Main.getInstance().getLogger().log(Level.SEVERE, "[BlockRacing] Error loading block translations!", e);
@@ -80,22 +63,40 @@ public class TranslationUtil {
         if (cached != null) {
             return cached;
         }
-        File file = new File(Main.getInstance().getDataFolder(), language + ".json");
-        try (Reader reader = new FileReader(file)) {
-            JSONObject jsonObject = (JSONObject) new JSONParser().parse(reader);
-            Map<String, String> loaded = new HashMap<>();
-            for (Object key : jsonObject.keySet()) {
-                Object value = jsonObject.get(key);
-                if (key instanceof String && value instanceof String) {
-                    loaded.put((String) key, (String) value);
-                }
-            }
-            Map<String, String> result = Map.copyOf(loaded);
+        try {
+            Map<String, String> result = readLanguage(language);
             localizedTranslations.put(language, result);
             return result;
         } catch (Exception ex) {
             Main.getInstance().getLogger().log(Level.SEVERE, "Error loading " + language + " block translations!", ex);
             return Map.of();
+        }
+    }
+
+    private static Map<String, String> readLanguage(String language) throws Exception {
+        Map<String, String> loaded = new HashMap<>();
+        try (var input = Main.getInstance().getResource(language + ".json")) {
+            if (input != null) {
+                try (Reader reader = new java.io.InputStreamReader(input, java.nio.charset.StandardCharsets.UTF_8)) {
+                    merge(loaded, (JSONObject) new JSONParser().parse(reader));
+                }
+            }
+        }
+        File file = new File(Main.getInstance().getDataFolder(), language + ".json");
+        if (file.isFile()) {
+            try (Reader reader = java.nio.file.Files.newBufferedReader(file.toPath(), java.nio.charset.StandardCharsets.UTF_8)) {
+                merge(loaded, (JSONObject) new JSONParser().parse(reader));
+            } catch (Exception ex) {
+                Main.getInstance().getLogger().log(Level.WARNING, "Invalid custom translations; using bundled " + language, ex);
+            }
+        }
+        return Map.copyOf(loaded);
+    }
+
+    private static void merge(Map<String, String> target, JSONObject json) {
+        for (Object key : json.keySet()) {
+            Object value = json.get(key);
+            if (key instanceof String k && value instanceof String v) target.put(k, v);
         }
     }
 }

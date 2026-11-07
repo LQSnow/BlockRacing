@@ -1,0 +1,16 @@
+# Dimension order: OVERWORLD, NETHER, END. Ranges are fixed for standard presets.
+# Thresholds use ceil(total * percent / 100) completed tasks at actual refill.
+id: nightmare
+max-tiers: [6, 6, 6]
+unlock-percent: [0, 20, 65]
+tier-weights: [5, 15, 20, 25, 20, 15]
+dimension-weights: [70, 30, 25]
+# Category order: GATHER, CRAFT, EXPLORE. Positive weights only; no category bans.
+pacing:
+  enabled: true
+  middle-start-percent: 20
+  late-start-percent: 80
+  category-weights:
+    early: [45, 40, 15]
+    middle: [25, 30, 45]
+    late: [30, 40, 30]

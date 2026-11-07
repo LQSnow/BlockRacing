@@ -18,5 +18,18 @@ class MaterialsTest {
     @Test
     void rejectsUnknownMaterials() {
         assertThrows(IllegalArgumentException.class, () -> Materials.require("NOT_A_REAL_BLOCK"));
+        assertThrows(IllegalArgumentException.class, () -> Materials.require("other:oak_log"));
+        assertThrows(IllegalArgumentException.class, () -> Materials.require("minecraft:not_a_real_block"));
+        assertThrows(IllegalArgumentException.class, () -> Materials.require("LEGACY_STONE"));
+        assertThrows(IllegalArgumentException.class, () -> Materials.require(""));
+        assertThrows(IllegalArgumentException.class, () -> Materials.require(null));
+    }
+
+    @Test
+    void resolvesCanonicalKeysAndLegacyTextFormatWithoutAliases() {
+        assertEquals(Material.OAK_LOG, Materials.require("minecraft:oak_log"));
+        assertEquals(Material.OAK_LOG, Materials.require("OAK_LOG"));
+        assertEquals(Material.SULFUR, Materials.require("minecraft:sulfur"));
+        assertEquals(Material.SULFUR, Materials.require("SULFUR"));
     }
 }

@@ -16,6 +16,7 @@ import static org.bukkit.Bukkit.getPluginManager;
 
 public class Main extends JavaPlugin {
     private static Main instance;
+    private boolean initialized;
 
     public static Main getInstance() {
         return instance;
@@ -93,9 +94,9 @@ public class Main extends JavaPlugin {
             Scoreboard.setPreGameScoreboard();
         }
         GameProgressStore.startAutosave();
-        new Game.runPer2Tick().runTaskTimer(this, 0L, 2L);
+        if (!GameProgressStore.hasRecoveryFailure()) new Game.runPer2Tick().runTaskTimer(this, 0L, 2L);
 
-        if (!recoveredGame) {
+        if (!recoveredGame && !GameProgressStore.hasRecoveryFailure()) {
             // Only initialize a fresh pregame world. A recovered game must keep
             // its world, player positions and border exactly as they were saved.
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
@@ -110,14 +111,17 @@ public class Main extends JavaPlugin {
         }
 
         // Complete
+        initialized = true;
         Bukkit.getLogger().info("[BlockRacing] Load Complete!");
     }
 
     @Override
     public void onDisable() {
+        // A malformed new preset/catalogue must not delete a valid match that was never loaded.
+        if (!initialized) return;
         if (Game.getCurrentGameState() == Game.GameState.INGAME) {
             GameProgressStore.saveNow();
-        } else {
+        } else if (!GameProgressStore.hasRecoveryFailure()) {
             GameProgressStore.clear();
         }
         Config.saveConfig();

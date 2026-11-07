@@ -26,9 +26,12 @@ import static top.lqsnow.blockracing.managers.Team.blueTeamPlayers;
 import static top.lqsnow.blockracing.managers.Team.redTeamPlayers;
 
 public final class GameProgressStore {
-    private static final int FORMAT_VERSION = 1;
+    private static final int FORMAT_VERSION = 3;
     private static File file;
     private static boolean recoveredGame;
+    private static boolean recoveryFailure;
+
+    public static boolean hasRecoveryFailure() { return recoveryFailure; }
 
     private GameProgressStore() {
     }
@@ -46,12 +49,31 @@ public final class GameProgressStore {
         if (!file.isFile()) {
             return false;
         }
-        YamlConfiguration state = YamlConfiguration.loadConfiguration(file);
+        YamlConfiguration state = new YamlConfiguration();
+        try {
+            state.load(file);
+        } catch (IOException | org.bukkit.configuration.InvalidConfigurationException ex) {
+            recoveryFailure = true;
+            Main.getInstance().getLogger().log(Level.SEVERE, "Cannot read game-progress.yml; original save preserved.", ex);
+            return false;
+        }
+        if (!state.contains("state")) {
+            recoveryFailure = true;
+            Main.getInstance().getLogger().severe("Missing state in game-progress.yml; original save preserved.");
+            return false;
+        }
         if (!Game.GameState.INGAME.name().equals(state.getString("state"))) {
-            clear();
+            if (List.of(Game.GameState.PREGAME.name(), Game.GameState.END.name()).contains(state.getString("state"))) {
+                clear();
+            } else {
+                recoveryFailure = true;
+                Main.getInstance().getLogger().severe("Unknown game state in game-progress.yml; original save preserved.");
+            }
             return false;
         }
         try {
+            int format = state.getInt("format-version", 1);
+            if (format < 1 || format > FORMAT_VERSION) throw new IllegalArgumentException("Unsupported progress format " + format);
             Game.currentGameState = Game.GameState.INGAME;
             Game.redTeamScore = state.getInt("scores.red");
             Game.blueTeamScore = state.getInt("scores.blue");
@@ -66,14 +88,14 @@ public final class GameProgressStore {
             try {
                 Setting.setCurrentGameMode(Setting.GameMode.valueOf(
                         state.getString("settings.game-mode", Setting.getCurrentGameMode().name())));
-            } catch (IllegalArgumentException ignored) {
-                // Keep the configured mode if an older/corrupt state contains an unknown value.
+            } catch (IllegalArgumentException ex) {
+                throw new IllegalArgumentException("Invalid saved game mode; original match preserved", ex);
             }
 
-            redTeamBlocks = new ArrayList<>(state.getStringList("blocks.red-all"));
-            blueTeamBlocks = new ArrayList<>(state.getStringList("blocks.blue-all"));
-            redTeamRemainingBlocks = new ArrayList<>(state.getStringList("blocks.red-remaining"));
-            blueTeamRemainingBlocks = new ArrayList<>(state.getStringList("blocks.blue-remaining"));
+            Block.restoreTasks(state);
+            if (Block.session() != null) {
+                Setting.setCurrentGameMode(Block.session().racing() ? Setting.GameMode.RACING : Setting.GameMode.NORMAL);
+            }
 
             Team.restoreTeams(state.getStringList("teams.red"), state.getStringList("teams.blue"));
             replace(Game.inGamePlayers, state.getStringList("players.in-game"));
@@ -89,6 +111,7 @@ public final class GameProgressStore {
             Main.getInstance().getLogger().info("Recovered unfinished BlockRacing game progress.");
             return true;
         } catch (RuntimeException ex) {
+            recoveryFailure = true;
             Main.getInstance().getLogger().log(Level.SEVERE,
                     "Unable to restore game-progress.yml; starting in pregame instead.", ex);
             Game.currentGameState = Game.GameState.PREGAME;
@@ -97,6 +120,7 @@ public final class GameProgressStore {
     }
 
     public static synchronized void saveNow() {
+        if (recoveryFailure) return;
         if (file == null) {
             file = new File(Main.getInstance().getDataFolder(), "game-progress.yml");
         }
@@ -121,6 +145,7 @@ public final class GameProgressStore {
 
     public static void clear() {
         recoveredGame = false;
+        recoveryFailure = false;
         if (file == null) {
             file = new File(Main.getInstance().getDataFolder(), "game-progress.yml");
         }
@@ -147,6 +172,7 @@ public final class GameProgressStore {
         state.set("locate-cost", Game.locateCost);
         state.set("settings.speed-mode", Setting.isSpeedMode());
         state.set("settings.game-mode", Setting.getCurrentGameMode().name());
+        Block.saveTasks(state);
         state.set("blocks.red-all", new ArrayList<>(redTeamBlocks));
         state.set("blocks.blue-all", new ArrayList<>(blueTeamBlocks));
         state.set("blocks.red-remaining", new ArrayList<>(redTeamRemainingBlocks));

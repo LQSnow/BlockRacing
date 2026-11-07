@@ -85,7 +85,14 @@ public class BasicListener implements Listener {
             return;
         }
         try {
-            setBlockAmount(Integer.parseInt(message), true);
+            int requested = Integer.parseInt(message);
+            Block.addUpBlocks();
+            if (requested < 10 || requested > maxBlockAmount) {
+                player.sendMessage(Message.BLOCK_LIBRARY_AMOUNT_ERROR.getString(player)
+                        .replace("%capacity%", String.valueOf(maxBlockAmount)));
+                return;
+            }
+            setBlockAmount(requested, true);
             editAmountPlayer.remove(player.getName());
         } catch (NumberFormatException ex) {
             player.sendMessage(Message.NOTICE_SET_BLOCKS_ERROR.getString(player));
@@ -105,7 +112,11 @@ public class BasicListener implements Listener {
 
     public static void setBlockAmount(int blockAmount, Boolean sendMessage) {
         Block.addUpBlocks();
-        blockAmount = Block.clampBlockAmount(blockAmount, maxBlockAmount);
+        if (blockAmount < 10 || blockAmount > maxBlockAmount) {
+            if (sendMessage) sendAll(Message.BLOCK_LIBRARY_AMOUNT_ERROR,
+                    (viewer, text) -> text.replace("%capacity%", String.valueOf(maxBlockAmount)));
+            return;
+        }
         if (sendMessage) {
             int finalBlockAmount = blockAmount;
             sendAll(Message.NOTICE_SET_BLOCKS_SUCCESS,

@@ -2,7 +2,7 @@
 
 [English](./TranslationTutorial-en.md) | [简体中文](../../TranslationTutorial.md)
 
-BlockRacing 26.2.1 includes English and Simplified Chinese, with an independent
+BlockRacing 26.3.0 includes English and Simplified Chinese, with an independent
 language preference for every player.
 
 ## Changing a Player's Language

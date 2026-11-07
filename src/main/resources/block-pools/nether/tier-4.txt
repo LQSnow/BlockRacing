@@ -1,0 +1,10 @@
+minecraft:brewing_stand
+minecraft:dried_ghast
+minecraft:ender_chest
+minecraft:gilded_blackstone
+minecraft:nether_wart
+minecraft:red_nether_brick_slab
+minecraft:red_nether_brick_stairs
+minecraft:red_nether_brick_wall
+minecraft:red_nether_bricks
+minecraft:respawn_anchor

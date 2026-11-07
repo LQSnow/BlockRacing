@@ -1,0 +1,9 @@
+minecraft:basalt
+minecraft:blackstone
+minecraft:blackstone_slab
+minecraft:blackstone_stairs
+minecraft:blackstone_wall
+minecraft:glowstone
+minecraft:polished_basalt
+minecraft:soul_sand
+minecraft:soul_soil

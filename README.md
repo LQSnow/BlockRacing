@@ -6,9 +6,11 @@
 
 This is a multiplayer racing mini-game in Minecraft, divided into two teams, where the team that collects the specified blocks first wins.
 
-Plugin version: 26.2.1
+Plugin version: 26.3.0
 
-Requirements: Minecraft Java Edition 26.2, Paper 26.2, and Java 25. BlockRacing uses Paper APIs directly and does not support Spigot.
+Requirements: Minecraft Java Edition 26.3, Paper 26.3, and Java 25. BlockRacing uses Paper APIs directly and does not support Spigot.
+
+The dimension × tier catalogue and audit reports are documented in [block library](./docs/block-library/README.md). Fresh games use [five difficulty presets and an independent copper-variant switch](./docs/block-library/preset-guide.md), with Standard + 50 targets and copper variants off by default. Legacy pools are retained for unfinished older matches.
 
 ## Upgrade Notice
 
@@ -16,8 +18,9 @@ Replacing only the plugin JAR does not update existing configuration files. If t
 
 Back up `plugins/BlockRacing` before upgrading, then choose one method:
 
-1. No customizations: delete the old `config.yml`, `lang.yml`, five block pools, and two translation JSON files, then restart the server to generate current files.
-2. Customized files: manually merge your changes into the current default files. Do not change only the version number at the end of a file.
+1. For an unfinished match, retain `game-progress.yml`, the worlds, and the existing configuration. The saved match continues with its original rules; missing library resources are installed without overwriting existing files.
+2. Merge the new `difficulty`, `copper-extras`, preset and language settings with the current defaults. Fresh games use the new reviewed library. Keep the five legacy TXT files for recovery and custom-data reference; deleting them is not required to enable the new library.
+3. After reviewing and merging configuration/language changes, update their compatibility versions to `26.3.0`. Do not change only the version markers without checking the actual settings.
 
 See the current default configuration and resource files in the [`src/main/resources` directory](./src/main/resources).
 
@@ -72,7 +75,7 @@ See the current default configuration and resource files in the [`src/main/resou
 
 # Installation Guide
 
-1. Set up a Paper 26.2 server running Java 25.
+1. Set up a Paper 26.3 server running Java 25.
 
 2. Download the plugin and place it in the `plugins` folder in the server directory.
 

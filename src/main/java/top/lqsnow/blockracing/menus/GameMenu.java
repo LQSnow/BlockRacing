@@ -373,7 +373,7 @@ public final class GameMenu extends MenuView {
                     ? "§b替换当前目标方块（每局每队最多 %count% 次）"
                     : "§bReplace current targets (up to %count% times per team)";
         }
-        return lore.replace("%count%", String.valueOf(Setting.getMaxRollCount()));
+        return lore.replace("%count%", String.valueOf(top.lqsnow.blockracing.managers.Block.maxRolls()));
     }
 
     private static List<String> replaceWaypointPlaceholders(List<String> lore, String dimension,

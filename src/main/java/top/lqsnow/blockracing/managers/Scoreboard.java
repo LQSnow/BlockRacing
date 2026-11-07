@@ -58,22 +58,9 @@ public final class Scoreboard {
     }
 
     public static String getBlockDisplay(String block, Player player) {
-        Message difficulty;
-        if (easyBlocks.contains(block)) {
-            difficulty = Message.SCOREBOARD_BLOCK_DIFFICULTY_EASY;
-        } else if (mediumBlocks.contains(block)) {
-            difficulty = Message.SCOREBOARD_BLOCK_DIFFICULTY_MEDIUM;
-        } else if (hardBlocks.contains(block)) {
-            difficulty = Message.SCOREBOARD_BLOCK_DIFFICULTY_HARD;
-        } else if (dyedBlocks.contains(block)) {
-            difficulty = Message.SCOREBOARD_BLOCK_DIFFICULTY_DYED;
-        } else if (endBlocks.contains(block)) {
-            difficulty = Message.SCOREBOARD_BLOCK_DIFFICULTY_END;
-        } else {
-            return null;
-        }
-
-        String difficultyText = text(difficulty, player).stripTrailing();
+        var entry = Block.find(block);
+        String difficultyText = entry == null ? text(Message.BLOCK_LIBRARY_LEGACY, player)
+                : text(Message.valueOf("BLOCK_LIBRARY_" + entry.dimension().name()), player) + " T" + entry.tier();
         String blockFormat = text(Message.SCOREBOARD_BLOCK_FORMAT, player);
         if (blockFormat.equals("%difficulty% | %block%")) {
             blockFormat = "§8[%difficulty%§8] §f%block%";
@@ -165,11 +152,7 @@ public final class Scoreboard {
                 ? baseMode + " + " + text(Message.SCOREBOARD_MODE_SPEED, player)
                 : baseMode;
 
-        String blocks = text(Message.SCOREBOARD_BLOCKS_EASY, player)
-                + (Setting.isEnableMediumBlock() ? " " + text(Message.SCOREBOARD_BLOCKS_MEDIUM, player) : "")
-                + (Setting.isEnableHardBlock() ? " " + text(Message.SCOREBOARD_BLOCKS_HARD, player) : "")
-                + (Setting.isEnableDyedBlock() ? " " + text(Message.SCOREBOARD_BLOCKS_DYED, player) : "")
-                + (Setting.isEnableEndBlock() ? " " + text(Message.SCOREBOARD_BLOCKS_END, player) : "");
+        String blocks = text(top.lqsnow.blockracing.menus.DifficultyMenu.name(Setting.getDifficulty()), player);
 
         setTitle(objective, text(Message.SCOREBOARD_PREGAME_TITLE, player));
         Map<Integer, String> lines = new HashMap<>();

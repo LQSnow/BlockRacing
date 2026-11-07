@@ -1,0 +1,5 @@
+minecraft:chorus_flower
+minecraft:end_stone_brick_slab
+minecraft:end_stone_brick_stairs
+minecraft:end_stone_brick_wall
+minecraft:end_stone_bricks

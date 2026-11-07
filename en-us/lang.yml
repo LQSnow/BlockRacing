@@ -288,4 +288,46 @@ chat:
   team-hint: "&8[&bTip&8] &7You are in team chat. Use &f/shout message&7 or start with &f@ / ! &7to message everyone."
 
 # Internal compatibility value. Do not edit this manually.
-lang-version: 26.2.1
+lang-version: 26.3.0
+block-library:
+  title: "&bDifficulty / Block library"
+  select: "&eSelect: "
+  selected: "&aCurrent: "
+  default: " &7(Default)"
+  back: "&eBack to preparation"
+  off: "Off"
+  legacy: "&7Legacy"
+  presets:
+    casual: "Casual"
+    easy: "Easy"
+    normal: "Standard"
+    hard: "Hard"
+    nightmare: "Nightmare"
+  dimensions:
+    overworld: "&aOverworld"
+    nether: "&cNether"
+    end: "&dEnd"
+  experiences:
+    casual: "&7Common Overworld gathering and basic crafting"
+    easy: "&7Common materials; basic Nether targets after halfway"
+    normal: "&7Survival and biome / cave / structure exploration; no End"
+    hard: "&7Rare resources and late-game End challenges"
+    nightmare: "&7Extreme targets; high cost and long waits"
+  preset-lore:
+    - "&7Overworld: %overworld%"
+    - "&7Nether: %nether% &8| &7Unlock: %nether_unlock%"
+    - "&7End: %end% &8| &7Unlock: %end_unlock%"
+    - "&7Unlocks use your team's completed target percentage"
+    - "&7Candidates with current copper setting: &f%capacity%"
+    - "&7Target count is separate; default 50 per team"
+    - "&eClick to select; match rules lock at the start"
+  copper: "&6Copper variants: "
+  copper-lore:
+    - "&7Keeps base copper ores; raw block and ordinary products"
+    - "&7Controls aged / waxed variants and golem statues"
+    - "&7Off by default; enabled entries keep their assigned tier"
+    - "&7Never expands difficulty ranges or unlocks dimensions early"
+  invalid-settings: "&cNot enough eligible targets before a dimension unlock. Reduce target count or check preset weights and thresholds."
+  amount-error: "&cTarget count must be between 10 and %capacity%. Please try again."
+  roll-failed: "&cNot enough legal replacements or future targets. No targets changed and no roll was charged."
+  recovery-failed: "&cThe saved match could not be safely restored. Its file was preserved. Ask an administrator to inspect and repair it or explicitly reset the match."
