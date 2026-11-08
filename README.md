@@ -8,6 +8,8 @@ This is a multiplayer racing mini-game in Minecraft, divided into two teams, whe
 
 Plugin version: 26.3.0
 
+Version numbers advance with official releases. Until 26.3.0 is published, all development changes remain under 26.3.0.
+
 Requirements: Minecraft Java Edition 26.3, Paper 26.3, and Java 25. BlockRacing uses Paper APIs directly and does not support Spigot.
 
 The dimension × tier catalogue and audit reports are documented in [block library](./docs/block-library/README.md). Fresh games use [five difficulty presets and an independent copper-variant switch](./docs/block-library/preset-guide.md), with Standard + 50 targets and copper variants off by default. Legacy pools are retained for unfinished older matches.
@@ -16,15 +18,40 @@ The dimension × tier catalogue and audit reports are documented in [block libra
 
 Replacing only the plugin JAR does not update existing configuration files. If the versions in an old `config.yml` or `lang.yml` do not match the plugin, an in-game warning is displayed and new settings or messages may not work correctly.
 
-Back up `plugins/BlockRacing` before upgrading, then choose one method:
+When upgrading, regenerate the configuration folder:
 
-1. For an unfinished match, retain `game-progress.yml`, the worlds, and the existing configuration. The saved match continues with its original rules; missing library resources are installed without overwriting existing files.
-2. Merge the new `difficulty`, `copper-extras`, preset and language settings with the current defaults. Fresh games use the new reviewed library. Keep the five legacy TXT files for recovery and custom-data reference; deleting them is not required to enable the new library.
-3. After reviewing and merging configuration/language changes, update their compatibility versions to `26.3.0`. Do not change only the version markers without checking the actual settings.
+1. Stop the server and back up the entire `plugins/BlockRacing` folder, including saved matches, local custom pools, presets and player language preferences. Keep the matching worlds if restoring a match.
+2. **Delete `plugins/BlockRacing`**, replace the plugin JAR, and restart to generate the new configuration and language files.
+3. Review and merge custom values into the new files. Do not copy old `config.yml` or language files back wholesale, or merely change their version markers. If restoring an unfinished match, preserve its saved rules and matching worlds; restore the saved match deliberately from the backup.
+
+The plugin warns in the console and on player login if the configuration or either language file is outdated. It does not automatically delete your data.
 
 See the current default configuration and resource files in the [`src/main/resources` directory](./src/main/resources).
 
+Version checks read this repository's latest official GitHub Release in the background at startup and every six hours. Only newer stable versions notify the console and administrators (permission `blockracing.update-notify`, default OP). Failed requests and up-to-date results are silent. Disable with `check-updates: false`; no automatic downloads occur.
+
+For a local offline test server, see [test server setup](./tools/test-server/README.md).
+
+The difficulty menu presents six mutually exclusive choices: the five standard presets and Custom, with a separate settings button beside Custom. Changes save automatically. Each T1–T6 selector shows its available block count and representative examples. The custom settings screen also has a copper-variant toggle for tier mode. Local-file mode reads both blocks and per-dimension `unlock-percent` from `plugins/BlockRacing/custom/blocks.yml`, independently of all GUI filters and the copper toggle. See the [custom pool guide](./docs/block-library/custom-guide.md) for file layout and validation.
+
 # Features
+
+Target labels and collection points share these display groups across all dimensions. The display groups do not change block classifications; generation follows the progressive rules below:
+
+| Label | Original tiers | Points | Speed Mode points |
+|---|---|---:|---:|
+| Easy | T1–T2 | 1 | 3 |
+| Medium | T3 | 2 | 4 |
+| Hard | T4–T5 | 3 | 5 |
+| Nightmare | T6 | 4 | 6 |
+
+The in-game rule book and Speed Mode description include this scoring table. Both Normal and Racing use the same points; Normal also gives the opposing team a stack of the collected block.
+
+The bottom-right button in the game menu toggles **Remember menu**, independently for each player (off by default). Shift+F and `/menu` both resume the last game menu, including a specific team chest, waypoints, teammate selection or language settings. Back arrows return to the parent menu; a team chest returns to the chest selector. `/menu main` always opens the main menu. The enabled preference is stored in `menu-preferences.yml`; remembered destinations reset on a new match or server restart. Invalid chest/team references fall back to the main menu.
+
+New matches use [progressive difficulty](./docs/block-library/pacing-guide.md): T1–T2 at the opening, T3 at 15% completed, T4 at 35%, T5 at 60%, and T6 at 80%, always intersected with the chosen preset and dimension gates. Tier weights shift from development to exploration and later challenges; rerolls obey the same gates. The reroll button shows remaining uses for your team and refreshes after a successful reroll. Existing matches keep their saved rules. Local-file mode controls this separately through its own optional `tier-progression` section.
+
+Team chests reserve their bottom-right slot for a protected back arrow, leaving 53 storage slots. A legacy item saved in that slot is retained through saves and restores, and moves into storage when a slot becomes free; it still counts for target detection while waiting.
 
 1. Team Chests: Each team has shared storage. The chest count is configurable with `max-team-chest-num`.
 
@@ -52,7 +79,8 @@ See the current default configuration and resource files in the [`src/main/resou
 
 - After entering the game, open the menu with Shift+F.
 - Choose a team in the menu.
-- Set the target block library in the menu, optionally enabling medium difficulty blocks, hard difficulty blocks, dyed blocks, and End dimension blocks.
+- Open Difficulty / Block library to choose Casual, Easy, Standard, Hard or Nightmare; toggle copper variants independently.
+- Open Custom block settings to select dimensions and tiers or use a local custom pool. Nightmare remains a block-only mode; tools and food are not targets.
 - Set the target block quantity in the menu.
 - Switch between modes (normal mode or racing mode, with an option to enable extreme speed mode).
 - Once all players are ready, click the diamond in the menu to start the game.
@@ -111,7 +139,9 @@ goto start
 
 Remember to change `server.jar` to your server core file name and adjust memory allocation accordingly.
 
-# Modifying Target Block Libraries
+# Legacy Block Libraries (Saved-Match Recovery)
+
+New matches use the reviewed dimension / tier pools and preset files described in the [block library guide](./docs/block-library/README.md). The five files below are retained for legacy matches; editing them does not change the five standard presets.
 
 In the `plugins/BlockRacing` directory under the server folder, there are the following files:
 
@@ -145,9 +175,11 @@ You can freely modify the 5 block library files, but please note:
 
 5. Do not modify file names or delete files.
 
-6. Except for the required easy block library, the rest can be selectively enabled. Avoid modifying these 5 files unless necessary.
+6. Legacy switches apply only to legacy matches. Choose new-match presets through Difficulty / Block library.
 
-# Changes in Generation Weight for Blocks of Different Difficulties
+# Legacy Generation Weights
+
+These weights apply to legacy saved matches only. New-match generation uses [dimension thresholds and tier weights](./docs/block-library/preset-guide.md) together with [acquisition phase weights](./docs/block-library/pacing-guide.md).
 
 Easy: Game progress from 0% to 100%, weight decreases from 100 to 20.
 

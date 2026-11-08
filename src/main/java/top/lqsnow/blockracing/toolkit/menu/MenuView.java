@@ -46,6 +46,7 @@ public abstract class MenuView implements InventoryHolder {
         inventory = Bukkit.createInventory(this, size, Texts.component(titleFactory.apply(player)));
         render(player);
         player.openInventory(inventory);
+        top.lqsnow.blockracing.managers.MenuMemory.record(player, this);
     }
 
     public final void refresh(Player player) {

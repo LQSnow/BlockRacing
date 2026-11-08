@@ -24,11 +24,13 @@ public final class LanguageManager {
     private static YamlConfiguration english;
     private static YamlConfiguration preferences;
     private static File preferencesFile;
+    private static boolean outdatedLanguageFiles;
 
     private LanguageManager() {
     }
 
     public static void load() {
+        outdatedLanguageFiles = false;
         chinese = loadLanguage(new File(Main.getInstance().getDataFolder(), "lang.yml"), "lang.yml");
         english = loadLanguage(
                 new File(Main.getInstance().getDataFolder(), "languages/en_us/lang.yml"),
@@ -37,6 +39,8 @@ public final class LanguageManager {
         preferencesFile = new File(Main.getInstance().getDataFolder(), "language-preferences.yml");
         preferences = YamlConfiguration.loadConfiguration(preferencesFile);
     }
+
+    public static boolean hasOutdatedLanguageFiles() { return outdatedLanguageFiles; }
 
     public static synchronized boolean registerFirstJoin(Player player) {
         String path = player.getUniqueId().toString();
@@ -96,6 +100,7 @@ public final class LanguageManager {
 
     private static YamlConfiguration loadLanguage(File file, String resourcePath) {
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+        if (!Main.getVersion().equals(configuration.getString("lang-version"))) outdatedLanguageFiles = true;
         try (InputStreamReader reader = new InputStreamReader(
                 Main.getInstance().getResource(resourcePath),
                 StandardCharsets.UTF_8

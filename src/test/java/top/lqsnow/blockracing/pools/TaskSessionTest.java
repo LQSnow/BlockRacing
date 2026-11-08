@@ -24,7 +24,7 @@ class TaskSessionTest {
         int[][] caps = {{2,0,0},{2,2,0},{4,3,0},{5,5,5},{6,6,6}};
         int[][] unlocks = {{0,100,100},{0,50,100},{0,25,100},{0,25,70},{0,20,65}};
         int[][] weights = {{60,40,0,0,0,0},{45,55,0,0,0,0},{15,35,35,15,0,0},{10,20,30,25,15,0},{5,15,20,25,20,15}};
-        for (var kind : DifficultyPreset.Kind.values()) {
+        for (var kind : DifficultyPreset.Kind.standards()) {
             YamlConfiguration yaml = new YamlConfiguration();
             yaml.load(Path.of("src/main/resources/presets/" + kind.id() + ".yml").toFile());
             DifficultyPreset preset = DifficultyPreset.load(yaml);
@@ -39,7 +39,7 @@ class TaskSessionTest {
     @Test
     void copperToggleFiltersOnlyTheExplicitlyTaggedExtrasWithinEachPreset() throws Exception {
         assertEquals(106, catalog().entries().stream().filter(PoolEntry::copperExtra).count());
-        for (var kind : DifficultyPreset.Kind.values()) {
+        for (var kind : DifficultyPreset.Kind.standards()) {
             TaskSession off = session(kind, false, false, 1);
             TaskSession on = session(kind, true, false, 1);
             assertTrue(off.pool().stream().noneMatch(PoolEntry::copperExtra));
@@ -83,7 +83,7 @@ class TaskSessionTest {
 
     @Test
     void everyActualRefillAndRollHonorsCompletedProgressAcrossAllFivePresets() throws Exception {
-        for (var kind : DifficultyPreset.Kind.values()) for (long seed = 0; seed < 8; seed++) {
+        for (var kind : DifficultyPreset.Kind.standards()) for (long seed = 0; seed < 8; seed++) {
             TaskSession match = session(kind, true, false, seed);
             Set<String> completed = new HashSet<>();
             Random random = new Random(seed);
@@ -184,6 +184,7 @@ class TaskSessionTest {
         assertEquals(active, match.active("red"));
         assertEquals(seen, match.seen("red"));
         assertEquals(0, match.rolls("red"));
+        assertEquals(3, match.rollsRemaining("red"));
         while (!match.active("red").isEmpty()) assertTrue(match.complete("red", match.active("red").getFirst()));
         assertEquals(50, match.completed("red"));
     }
@@ -218,6 +219,7 @@ class TaskSessionTest {
             TaskSession match = new TaskSession(DifficultyPreset.defaults(DifficultyPreset.Kind.HARD), true,
                     count, 1, true, 543, catalog().entries());
             assertTrue(match.roll("red"));
+            assertEquals(0, match.rollsRemaining("red"));
             assertFalse(match.roll("red"));
             for (String team : List.of("red", "blue")) {
                 while (!match.active(team).isEmpty()) match.complete(team, match.active(team).getLast());

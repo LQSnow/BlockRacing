@@ -25,7 +25,6 @@ public final class PreGameMenu extends MenuView {
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44,
             45, 46, 47, 48, 49, 50, 51, 52, 53
     );
-    private static final Set<Integer> BLUE_BACKGROUND = Set.of(13, 14, 15, 31, 32, 40, 41, 42);
 
     public PreGameMenu() {
         super(54, player -> Message.MENU_PREGAME_TITLE.getString(player));
@@ -40,7 +39,8 @@ public final class PreGameMenu extends MenuView {
         ));
         setButton(20, MenuButton.of(player -> ItemBuilder.of(Material.BOOK)
                 .name(Message.BLOCK_LIBRARY_TITLE.getString(player) + ": "
-                        + DifficultyMenu.name(Setting.getDifficulty()).getString(player)).build(),
+                        + DifficultyMenu.name(Setting.getDifficulty()).getString(player))
+                .lore(Message.BLOCK_LIBRARY_CONFIGURE.getStringList(player)).build(),
                 (player, click) -> {
                     if (Game.getCurrentGameState() == Game.GameState.PREGAME) new DifficultyMenu().open(player);
                 }));
@@ -90,7 +90,7 @@ public final class PreGameMenu extends MenuView {
                         .build(),
                 (player, click) -> Game.checkStartDemands(player)
         ));
-        setButton(41, MenuButton.of(
+        setButton(15, MenuButton.of(
                 player -> ItemBuilder.of(Material.PLAYER_HEAD)
                         .name(Message.MENU_RANDOM_TEAM.getString(player))
                         .lore(Message.MENU_RANDOM_TEAM_LORE.getStringList(player))
@@ -109,9 +109,6 @@ public final class PreGameMenu extends MenuView {
     protected ItemStack getBackgroundItem(int slot, Player player) {
         if (GREEN_BACKGROUND.contains(slot)) {
             return item(Material.LIME_STAINED_GLASS_PANE, " ");
-        }
-        if (BLUE_BACKGROUND.contains(slot)) {
-            return item(Material.LIGHT_BLUE_STAINED_GLASS_PANE, " ");
         }
         if (slot == 10 || slot == 16) {
             return item(Material.YELLOW_STAINED_GLASS_PANE, Message.MENU_SELECT_TEAM.getString(player));

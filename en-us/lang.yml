@@ -27,8 +27,8 @@ scoreboard:
     slot7: " "
     slot6: "&7Mode &f%game_mode%"
     slot5: "&7Targets &f%block_amount%"
-    slot4: "&7Block Pools"
-    slot3: "%blocks%"
+    slot4: "&7Difficulty &f%blocks%"
+    slot3: ""
     slot2: " "
     slot1: "&7/language &8> &bLanguage"
   ingame:
@@ -42,6 +42,7 @@ scoreboard:
       easy: "&aEASY"
       medium: "&eMID"
       hard: "&cHARD"
+      nightmare: "&5NIGHTMARE"
       dyed: "&dDYED"
       end: "&eEND"
 
@@ -60,6 +61,10 @@ team:
 
 # Menu
 menu:
+  memory:
+    title: "&bRemember menu: "
+    description:
+      - "&7The next time you open the menu, it will open your last game menu, such as team chests or waypoints."
   pregame-menu:
     title: "&0Preparation Menu"
     join-red: "&cJoin Red Team"
@@ -95,13 +100,11 @@ menu:
       - "&eand collecting blocks will &lnot&r&e give 64 blocks"
       - "&eof that block to the opposing team!"
     speed-mode-lore:
-      - "&aAfter enabling Speed Mode, players will be"
-      - "&e&lgiven certain items and effects&e at the start,"
-      - "&eand gaining blocks will earn 3 points, "
-      - "&espeeding up the game progress."
-      - "&bItems: Silk Touch Iron Pickaxe, Cooked Beef, "
-      - "&b       Damaged Elytra, Enchanted Book of Mending"
-      - "&bEffects: Haste V"
+      - "&aExtra starting items and effects in Speed Mode"
+      - "&7Easy / Medium / Hard / Nightmare: &e3 / 4 / 5 / 6 points"
+      - "&bItems: Silk Touch iron pickaxe, golden carrots,"
+      - "&b       damaged elytra and Mending book"
+      - "&bEffects: Haste V, Speed II and Resistance II"
     select-team: "&aSelect Team"
     block-setting: "&aBlock Setting"
     select-mode: "&aMode Selection"
@@ -115,6 +118,7 @@ menu:
     team-chest: "&aTeam Chest"
     team-chest-lore: "&bOpen the team chest selection menu"
     roll: "&eRoll"
+    roll-remaining: "&7(%remaining% remaining)"
     roll-lore: "&bReplace current targets (up to %count% times per team)"
     locate: "&bLocate"
     locate-lore:
@@ -181,13 +185,16 @@ rule-book:
     - "&b&lVanilla Changes\n\n&0• Chat is team-only while a game is active\n• Use /shout or start with @ or ! for global chat\n• /tp only targets teammates\n• Use /teleport or /minecraft:tp for the vanilla command"
     - "&b&lAdmin Settings\n\n&0Team chest count, waypoint count and rerolls per game can be changed in config.yml.\n\nKeys:\nmax-team-chest-num\nmax-team-waypoint-num\nmax-roll-count"
     - "&b&lCore Rules\n\n&0Both teams collect the target blocks shown on the scoreboard.\n\nThe first team to complete every target wins."
-    - "&b&lModes & Scoring\n\n&0Normal: 1 point and a stack sent to the opponent.\n\nRacing: shared targets, with no item gifts.\n\nSpeed: 3 points per target."
-    - "&b&lMenu Features\n\n&0Press Shift+F for the menu.\n\nTeam Chest: shared items\nWaypoints: save/teleport\nReroll: online team vote\nLocate: costs points\nRandom TP: first use free\nSpeed Supplies: 5 points"
+    - "&b&lModes & Scoring\n\n&0Normal: sends a stack to the opponent.\n\nRacing: shared targets without item gifts."
+    - "&b&lMatch Pacing\n\n&0Opening: T1–T2\n15% completed: T3\n35%: T4\n60%: T5\n80%: T6\n\nOnly selected tiers/dimensions apply. Rerolls follow the same gates.\n\nLocal files control their own progression."
+    - "&b&lBlock Points\n\n&0Easy (T1–T2): 1\nMedium (T3): 2\nHard (T4–T5): 3\nNightmare (T6): 4\n\nSpeed Mode: 3 / 4 / 5 / 6.\n\nLabels and points share this mapping; generation tiers stay unchanged."
+    - "&b&lMenu Features\n\n&0Press Shift+F for the menu.\nEnable menu memory to resume a submenu.\nBack arrows go up; /menu main opens the main menu.\n\nTeam Chest: shared items\nWaypoints: save/teleport\nReroll: online team vote\nLocate: costs points\nRandom TP: first use free\nSpeed Supplies: 5 points"
     - "&b&lCommands 1/2\n\n&0/language change language\n/randomteam balance teams\n/block <red|blue> <index> show a full target name\n/tp <player> teammate teleport\n/shout <message> global chat"
     - "&b&lCommands 2/2\n\n&0/menu open menu\n/waypoint remove <index>\n/locatebiome <biome>\n/locatestructure <structure>\n/restartgame vote to reset"
 
 # Notices
 notice:
+  regenerate-config: "&cUpdate required: stop the server and back up plugins/BlockRacing (including saved matches and custom files), then DELETE that configuration folder and restart to regenerate the new version. Merge custom settings afterward; do not restore old config/lang files wholesale."
   welcome: "&b&lWelcome to Block Racing! Press Shift+F to open the menu for team selection and preparation! If there's no response, check the sneak and offhand switch shortcuts! If the block names displayed on the scoreboard are incomplete, you can use the /block <team> <number> command to query!"
   welcome-lines:
     - "&8&m--------------------------------"
@@ -291,11 +298,13 @@ chat:
 lang-version: 26.3.0
 block-library:
   title: "&bDifficulty / Block library"
+  configure-lore:
+    - "&eClick to configure"
   select: "&eSelect: "
   selected: "&aCurrent: "
   default: " &7(Default)"
   back: "&eBack to preparation"
-  off: "Off"
+  'off': "Off"
   legacy: "&7Legacy"
   presets:
     casual: "Casual"
@@ -303,31 +312,78 @@ block-library:
     normal: "Standard"
     hard: "Hard"
     nightmare: "Nightmare"
+    custom: "Custom"
   dimensions:
     overworld: "&aOverworld"
     nether: "&cNether"
     end: "&dEnd"
   experiences:
-    casual: "&7Common Overworld gathering and basic crafting"
-    easy: "&7Common materials; basic Nether targets after halfway"
-    normal: "&7Survival and biome / cave / structure exploration; no End"
+    casual: "&7Common blocks and basic crafted items."
+    easy: "&7Common blocks and basic crafted items."
+    normal: "&7Blocks from survival, biomes, caves and structures."
     hard: "&7Rare resources and late-game End challenges"
-    nightmare: "&7Extreme targets; high cost and long waits"
+    nightmare: "&7All survival-obtainable blocks."
+  examples: "&6Example blocks: &f%blocks%"
+  dimension-lore: "%dimension%&7: %tiers% &8| &7Unlock progress: %unlock%"
+  progression-lore: "&7Tiers unlock gradually with completed progress"
+  click-select: "&eClick to select"
   preset-lore:
-    - "&7Overworld: %overworld%"
-    - "&7Nether: %nether% &8| &7Unlock: %nether_unlock%"
-    - "&7End: %end% &8| &7Unlock: %end_unlock%"
-    - "&7Unlocks use your team's completed target percentage"
-    - "&7Candidates with current copper setting: &f%capacity%"
-    - "&7Target count is separate; default 50 per team"
-    - "&eClick to select; match rules lock at the start"
+    - "&eClick to select"
   copper: "&6Copper variants: "
   copper-lore:
-    - "&7Keeps base copper ores; raw block and ordinary products"
-    - "&7Controls aged / waxed variants and golem statues"
-    - "&7Off by default; enabled entries keep their assigned tier"
-    - "&7Never expands difficulty ranges or unlocks dimensions early"
-  invalid-settings: "&cNot enough eligible targets before a dimension unlock. Reduce target count or check preset weights and thresholds."
+    - "&7Include hard-to-obtain aged / waxed copper"
+    - "&7variants, copper golem statues and similar blocks."
+    - "&7(Copper ores and ordinary copper products"
+    - "&7are unaffected by this option.)"
+  invalid-settings: "&cNot enough eligible targets before a dimension unlock. Reduce target count or check dimensions, tiers and thresholds."
   amount-error: "&cTarget count must be between 10 and %capacity%. Please try again."
   roll-failed: "&cNot enough legal replacements or future targets. No targets changed and no roll was charged."
   recovery-failed: "&cThe saved match could not be safely restored. Its file was preserved. Ask an administrator to inspect and repair it or explicitly reset the match."
+custom-blocks:
+  title: "&bCustom block settings"
+  select-lore:
+    - "&7Current configuration: &f%source%"
+    - "&7Use the adjacent button to edit settings"
+    - "&eClick to select"
+  source-local: "Local file"
+  source-tiers: "Custom tiers"
+  empty-tier: "No blocks available"
+  entry-lore:
+    - "&7Configure each dimension and its T1–T6 tiers"
+    - "&7Or use a local custom block configuration"
+    - "&eClick to configure"
+  dimension-lore:
+    - "&7Click to toggle this dimension in tier-based custom mode"
+    - "&7Use the button below to select its six tiers"
+  details: "%dimension%&b block settings"
+  details-lore:
+    - "&7Selected tiers: &f%tiers%"
+    - "&eClick to configure T1–T6"
+  tier-lore:
+    - "&7Block count: &f%count%"
+    - "&7Example blocks: &f%examples%"
+    - "&eClick to toggle this tier"
+    - "&7Changes save automatically; use them by selecting Custom"
+  threshold: "%dimension%&7 unlock progress: &f%percent%%"
+  threshold-lore:
+    - "&7Unlocks use your team's completed target percentage"
+    - "&7Left -5%, right +5%; Shift changes by 10%"
+    - "&7At least one non-empty dimension must start at 0%"
+    - "&7Applies to custom tiers; local-file thresholds are set in YAML"
+  use-tiers: "&aUse custom tiers"
+  use-tiers-lore:
+    - "&7Use the enabled dimensions and selected tiers above"
+    - "&7Target count is set separately"
+    - "&eClick to validate and select"
+  use-local: "&6Use local custom block configuration"
+  use-local-lore:
+    - "&7Read plugins/BlockRacing/custom/blocks.yml"
+    - "&7The file chooses the pool; tier/dimension toggles are ignored"
+    - "&7Independent of the copper toggle; thresholds come from this file"
+    - "&7After editing the file, click again to validate and load"
+    - "&eClick to validate and select"
+  back: "&eBack to Difficulty / Block library"
+  applied: "&aCustom pool selected. Match rules will be saved at the start."
+  invalid: "&cCustom pool unavailable: %reason% &7Check the file, dimension thresholds or reduce target count."
+updates:
+  available: '&8[&bBlockRacing&8] &eVersion &f%latest% &eis available &7(current: %current%): &b%url%'

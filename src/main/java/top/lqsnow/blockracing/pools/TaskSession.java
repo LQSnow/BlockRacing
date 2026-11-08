@@ -66,6 +66,7 @@ public final class TaskSession {
     public List<String> seen(String team) { return List.copyOf(state(team).seen); }
     public int completed(String team) { return state(team).completed.size(); }
     public int rolls(String team) { return state(team).rolls; }
+    public int rollsRemaining(String team) { return Math.max(0, maxRolls - state(team).rolls); }
     public int generated(String team) { return state(team).generated; }
 
     private TeamState state(String team) {
@@ -165,7 +166,7 @@ public final class TaskSession {
                 .filter(d -> eligible.stream().anyMatch(e -> e.dimension() == d)).toList();
         PoolEntry.Dimension dimension = weighted(dimensions, d -> preset.dimensionWeights().get(d.ordinal()), random);
         List<Integer> tiers = eligible.stream().filter(e -> e.dimension() == dimension).map(PoolEntry::tier).distinct().sorted().toList();
-        int tier = weighted(tiers, t -> preset.tierWeights().get(t - 1), random);
+        int tier = weighted(tiers, t -> preset.tierWeight(t, completed, total), random);
         List<PoolEntry> layer = eligible.stream().filter(e -> e.dimension() == dimension && e.tier() == tier).toList();
         if (preset.pacing().enabled()) {
             List<Integer> weights = preset.pacing().weightsAt(completed, total);
@@ -189,6 +190,7 @@ public final class TaskSession {
     }
 
     public void save(ConfigurationSection section) {
+        section.set("generation-rules-version", 2);
         preset.save(section.createSection("preset"));
         section.set("copper-extras", copperExtras);
         section.set("total", total);
@@ -216,6 +218,12 @@ public final class TaskSession {
 
     public static TaskSession load(ConfigurationSection section, boolean requirePacing) {
         if (section == null) throw new IllegalArgumentException("Missing task snapshot");
+        if (section.isSet("generation-rules-version")) {
+            if (!(section.get("generation-rules-version") instanceof Integer version) || version != 2
+                    || section.getConfigurationSection("preset.tier-progression") == null) {
+                throw new IllegalArgumentException("Missing or invalid saved tier progression rules");
+            }
+        }
         for (String key : List.of("preset", "copper-extras", "total", "max-rolls", "racing", "seed", "pool", "sequences.red", "sequences.blue", "red", "blue")) {
             if (!section.isSet(key)) throw new IllegalArgumentException("Missing snapshot field: " + key);
         }
