@@ -5,7 +5,7 @@
 # Player languages are selected independently with /language and are not configured here.
 
 # Legacy options retained only for recovery of old matches
-# Standard preset: casual / easy / normal / hard / nightmare; copper variants default off
+# Standard preset: casual / easy / normal / hard / nightmare / custom; copper variants default off
 difficulty: normal
 copper-extras: false
 
@@ -26,7 +26,7 @@ game-mode: normal
 
 # Speed mode:
 # Gives players additional starting items and effects. Each collected block is
-# worth 3 points instead of 1.
+# worth 3/4/5/6 points for Easy/Medium/Hard/Nightmare (normally 1/2/3/4).
 # Items: Silk Touch iron pickaxe, cooked beef, damaged elytra and Mending book
 # Effect: Haste V
 speed-mode: false
@@ -43,3 +43,7 @@ max-roll-count: 3
 
 # Internal compatibility value. Do not edit this manually.
 config-version: 26.3.0
+
+# Check GitHub stable releases at startup and every 6 hours; only notify about newer versions.
+# Connection failures and up-to-date results are silent. No automatic downloads.
+check-updates: true

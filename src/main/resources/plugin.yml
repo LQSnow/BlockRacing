@@ -4,6 +4,10 @@ main: top.lqsnow.blockracing.Main
 api-version: '26.3'
 authors: [ LQ_Snow, xiaojiuwo233, FHSHKL ]
 description: The first team to collect the required blocks wins
+permissions:
+  blockracing.update-notify:
+    description: Receive notifications about newer official BlockRacing releases.
+    default: op
 commands:
   tp:
     usage: "/tp <Teammate>"

@@ -12,6 +12,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import top.lqsnow.blockracing.Main;
 
 public enum Config {
+    CHECK_UPDATES("check-updates"),
     DIFFICULTY("difficulty"),
     COPPER_EXTRAS("copper-extras"),
     MEDIUM_BLOCK("medium-block"),
@@ -56,6 +57,7 @@ public enum Config {
         boolean missingMaxRollCount = !config.contains(MAX_ROLL_COUNT.path);
         boolean missingDifficulty = !config.contains(DIFFICULTY.path);
         boolean missingCopper = !config.contains(COPPER_EXTRAS.path);
+        boolean missingUpdateCheck = !config.contains(CHECK_UPDATES.path);
         try (Reader reader = new InputStreamReader(Main.getInstance().getResource("config.yml"), StandardCharsets.UTF_8)) {
             YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(reader);
             config.setDefaults(defConfig);
@@ -64,7 +66,8 @@ public enum Config {
             }
             if (missingDifficulty) config.set(DIFFICULTY.path, defConfig.getString(DIFFICULTY.path));
             if (missingCopper) config.set(COPPER_EXTRAS.path, defConfig.getBoolean(COPPER_EXTRAS.path));
-            if (missingMaxRollCount || missingDifficulty || missingCopper) saveConfig();
+            if (missingUpdateCheck) config.set(CHECK_UPDATES.path, defConfig.getBoolean(CHECK_UPDATES.path));
+            if (missingMaxRollCount || missingDifficulty || missingCopper || missingUpdateCheck) saveConfig();
         } catch (IOException ioe) {
             Main.getInstance().getLogger().log(Level.SEVERE, "[BlockRacing] Error reading config.yml!", ioe);
         }

@@ -4,8 +4,9 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
-if (!$ApiSnapshot) { $ApiSnapshot = Join-Path $projectRoot 'docs/block-library/materials-api-26.3.csv' }
+if (!$ApiSnapshot) { $ApiSnapshot = Join-Path $projectRoot 'src/test/resources/catalogue/materials-api-26.3.csv' }
 $poolRoot = Join-Path $projectRoot 'src/main/resources/block-pools'
+$reportRoot = Join-Path $projectRoot '.runtime/material-audit/reports'
 $api = @(Import-Csv -LiteralPath $ApiSnapshot)
 $chinese = Get-Content -LiteralPath (Join-Path $projectRoot 'src/main/resources/zh_cn.json') -Raw | ConvertFrom-Json -AsHashtable
 $apiById = @{}
@@ -69,6 +70,7 @@ foreach ($row in ($metadata | Where-Object status -eq 'included')) {
 $utf8 = [Text.UTF8Encoding]::new($false)
 function Write-OutputFile([string]$Path, [string]$Content) {
     $Content = $Content.Replace("`r`n", "`n")
+    if ($Check -and $Path.StartsWith($reportRoot + [IO.Path]::DirectorySeparatorChar)) { return }
     if ($Check) {
         if (!(Test-Path -LiteralPath $Path) -or [IO.File]::ReadAllText($Path).Replace("`r`n", "`n") -cne $Content) { throw "Stale generated file: $Path" }
     } else {
@@ -119,7 +121,6 @@ $audit = foreach ($material in ($api | Where-Object is_block -eq 'true' | Sort-O
         evidence = $(if ($review) { $review.evidence } else { 'Bukkit Material.isItem() / Material.isAir()' })
     }
 }
-$reportRoot = Join-Path $projectRoot 'docs/block-library'
 $categoryList = [Collections.Generic.List[string]]::new()
 $categoryList.Add('# 主要获取标签完整清单')
 $categoryList.Add('')
@@ -188,6 +189,7 @@ $presetCounts = foreach ($spec in $presetSpecs) {
         copper_off = @($eligible | Where-Object { ($_.flags -split ';') -notcontains 'copper_extra' }).Count
         copper_on = $eligible.Count; nether_unlock = $spec.gates[0]; end_unlock = $spec.gates[1] }
 }
+Write-OutputFile (Join-Path $projectRoot 'src/test/resources/catalogue/preset-summary.csv') ((@($presetCounts | ConvertTo-Csv -NoTypeInformation) -join "`n") + "`n")
 foreach ($report in @(
     @{ Name = 'counts.csv'; Rows = $stats },
     @{ Name = 'block-audit.csv'; Rows = @($audit) },

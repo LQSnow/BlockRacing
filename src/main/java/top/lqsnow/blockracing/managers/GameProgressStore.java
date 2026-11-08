@@ -192,7 +192,7 @@ public final class GameProgressStore {
 
     private static void saveChests(YamlConfiguration state, String path, List<Inventory> chests) {
         for (int index = 0; index < chests.size(); index++) {
-            state.set(path + "." + index, Arrays.asList(chests.get(index).getContents()));
+            state.set(path + "." + index, Arrays.asList(TeamChestNavigation.savedContents(chests.get(index))));
         }
     }
 
@@ -205,7 +205,7 @@ public final class GameProgressStore {
                     contents[slot] = item;
                 }
             }
-            chests.get(index).setContents(contents);
+            TeamChestNavigation.restore(chests.get(index), contents);
         }
     }
 

@@ -39,6 +39,7 @@ public class Main extends JavaPlugin {
         // Register events
         getPluginManager().registerEvents(new BasicListener(), this);
         getPluginManager().registerEvents(new MenuListener(), this);
+        getPluginManager().registerEvents(new TeamChestNavigation(), this);
 
         // Register commands
         getPluginCommand("debug").setExecutor(new Debug());
@@ -79,6 +80,11 @@ public class Main extends JavaPlugin {
         Message.saveDefaultConfig();
         Message.load();
         LanguageManager.load();
+        MenuMemory.load();
+        if (!getVersion().equals(Config.CONFIG_VERSION.getString()) || !getVersion().equals(Message.MESSAGE_VERSION.getString())
+                || LanguageManager.hasOutdatedLanguageFiles()) {
+            getLogger().warning("Configuration version mismatch. Stop the server, back up plugins/BlockRacing (including unfinished matches and custom files), delete that folder, and restart to regenerate it. Review old custom settings before restoring them; do not copy old config/lang files back wholesale.");
+        }
         Setting.getSettings();
         Game.initChest();
         Team.createTeam();
@@ -112,6 +118,7 @@ public class Main extends JavaPlugin {
 
         // Complete
         initialized = true;
+        new top.lqsnow.blockracing.updates.UpdateChecker(this).start();
         Bukkit.getLogger().info("[BlockRacing] Load Complete!");
     }
 

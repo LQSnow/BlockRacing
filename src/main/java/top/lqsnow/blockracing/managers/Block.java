@@ -23,6 +23,7 @@ public class Block {
     private static BlockCatalog catalog;
     private static final Map<DifficultyPreset.Kind, DifficultyPreset> presets = new EnumMap<>(DifficultyPreset.Kind.class);
     private static TaskSession session;
+    private static CustomSettings customSettings;
     private static List<String> legacyPool = List.of();
 
     public Block() { reloadBlock(); }
@@ -45,7 +46,7 @@ public class Block {
                     saveIfAbsent("block-pools/" + dimension.name().toLowerCase(Locale.ROOT) + "/tier-" + tier + ".txt");
                 }
             }
-            for (DifficultyPreset.Kind kind : DifficultyPreset.Kind.values()) {
+            for (DifficultyPreset.Kind kind : DifficultyPreset.Kind.standards()) {
                 String resource = "presets/" + kind.id() + ".yml";
                 saveIfAbsent(resource);
                 YamlConfiguration yaml = new YamlConfiguration();
@@ -53,14 +54,25 @@ public class Block {
                 yaml.load(Main.getInstance().getDataFolder().toPath().resolve(resource).toFile());
                 DifficultyPreset preset = DifficultyPreset.load(yaml);
                 if (preset.kind() != kind) throw new IllegalArgumentException("Preset ID does not match " + resource);
+                boolean migrated = false;
                 if (!yaml.isSet("pacing")) {
                     preset.pacing().save(yaml.createSection("pacing"));
-                    yaml.save(Main.getInstance().getDataFolder().toPath().resolve(resource).toFile());
+                    migrated = true;
                 }
+                if (!yaml.isSet("tier-progression")) {
+                    preset.tierProgression().save(yaml.createSection("tier-progression"));
+                    migrated = true;
+                }
+                if (migrated) yaml.save(Main.getInstance().getDataFolder().toPath().resolve(resource).toFile());
                 presets.put(kind, preset);
             }
             catalog = BlockCatalog.load(Main.getInstance().getDataFolder().toPath().resolve("block-pools"));
             BlockCatalog.validateLive(catalog.entries());
+            saveIfAbsent("custom/settings.yml");
+            saveIfAbsent("custom/blocks.yml");
+            YamlConfiguration customYaml = new YamlConfiguration();
+            customYaml.load(Main.getInstance().getDataFolder().toPath().resolve("custom/settings.yml").toFile());
+            customSettings = CustomSettings.load(customYaml);
             easyBlocks = readLegacy("EasyBlocks.txt");
             mediumBlocks = readLegacy("MediumBlocks.txt");
             hardBlocks = readLegacy("HardBlocks.txt");
@@ -78,11 +90,56 @@ public class Block {
                 .filter(line -> !line.isEmpty() && !line.startsWith("#")).toList();
     }
 
-    public static DifficultyPreset preset(DifficultyPreset.Kind kind) { return presets.get(kind); }
+    public static DifficultyPreset preset(DifficultyPreset.Kind kind) {
+        return kind == DifficultyPreset.Kind.CUSTOM ? customSelection(customSettings, Setting.isCopperExtras()).preset() : presets.get(kind);
+    }
+    public static CustomSettings customSettings() { return customSettings; }
+
+    public static void saveCustomSettings(CustomSettings next) {
+        try {
+            YamlConfiguration yaml = new YamlConfiguration();
+            yaml.options().parseComments(true);
+            Path path = Main.getInstance().getDataFolder().toPath().resolve("custom/settings.yml");
+            yaml.load(path.toFile());
+            next.save(yaml);
+            yaml.save(path.toFile());
+            customSettings = next;
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Unable to save custom/settings.yml: " + ex.getMessage(), ex);
+        }
+    }
+
+    private record Selection(DifficultyPreset preset, List<PoolEntry> pool, boolean copperExtras) {}
+
+    private static Selection customSelection(CustomSettings settings, boolean copperExtras) {
+        if (settings.source() == CustomSettings.Source.TIERS) return new Selection(settings.preset(), catalog.entries(), copperExtras);
+        try {
+            YamlConfiguration yaml = new YamlConfiguration();
+            yaml.load(Main.getInstance().getDataFolder().toPath().resolve("custom/blocks.yml").toFile());
+            LocalBlockPool.Configuration local = LocalBlockPool.read(yaml, catalog);
+            // Local files explicitly choose their blocks and thresholds, independently of GUI settings.
+            return new Selection(local.preset(), local.entries(), true);
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("custom/blocks.yml: " + ex.getMessage(), ex);
+        }
+    }
+
+    public static void activateCustom(CustomSettings.Source source) {
+        CustomSettings next = customSettings.withSource(source);
+        createSession(customSelection(next, Setting.isCopperExtras()), 0L); // Validate before changing the active selection.
+        saveCustomSettings(next);
+        Setting.setDifficulty(DifficultyPreset.Kind.CUSTOM);
+        addUpBlocks();
+    }
     public static DifficultyPreset effectivePreset() { return session == null ? preset(Setting.getDifficulty()) : session.preset(); }
     public static TaskSession session() { return session; }
     public static int targetTotal() { return session == null ? Setting.getBlockAmount() : session.total(); }
     public static int maxRolls() { return session == null ? Setting.getMaxRollCount() : session.maxRolls(); }
+    public static int rollsRemaining(String team) {
+        if (!team.equals("red") && !team.equals("blue")) throw new IllegalArgumentException("Unknown team: " + team);
+        return session == null ? Math.max(0, maxRolls() - (team.equals("red") ? Game.redTeamRollCount : Game.blueTeamRollCount))
+                : session.rollsRemaining(team);
+    }
 
     public static PoolEntry find(String id) {
         String key = Materials.require(id).getKey().toString();
@@ -90,13 +147,28 @@ public class Block {
         return saved != null ? saved : catalog.find(key);
     }
 
+    public static DisplayDifficulty displayDifficulty(String id) {
+        PoolEntry entry = find(id);
+        return entry == null ? DisplayDifficulty.EASY : DisplayDifficulty.forTier(entry.tier());
+    }
+
     public static List<PoolEntry> candidates(DifficultyPreset.Kind kind, boolean copperExtras) {
-        DifficultyPreset preset = preset(kind);
-        return catalog.entries().stream().filter(preset::allows).filter(e -> copperExtras || !e.copperExtra()).toList();
+        Selection selection = selection(kind, copperExtras);
+        return selection.pool().stream().filter(selection.preset()::allows)
+                .filter(e -> selection.copperExtras() || !e.copperExtra()).toList();
+    }
+
+    public static TierSummary tierSummary(PoolEntry.Dimension dimension, int tier) {
+        return TierSummary.from(catalog.entries(), dimension, tier, Setting.isCopperExtras());
     }
 
     public static void addUpBlocks() {
-        blocks = candidates(Setting.getDifficulty(), Setting.isCopperExtras()).stream().map(PoolEntry::id).toList();
+        try {
+            blocks = candidates(Setting.getDifficulty(), Setting.isCopperExtras()).stream().map(PoolEntry::id).toList();
+        } catch (IllegalArgumentException ex) {
+            // Invalid edits remain visible in preparation; start/apply provides the detailed error.
+            blocks = List.of();
+        }
         allBlocks = new ArrayList<>(blocks);
         maxBlockAmount = blocks.size();
     }
@@ -113,8 +185,17 @@ public class Block {
     }
 
     public static void validateSettings() {
-        new TaskSession(preset(Setting.getDifficulty()), Setting.isCopperExtras(), Setting.getBlockAmount(),
-                Setting.getMaxRollCount(), Setting.getCurrentGameMode() == Setting.GameMode.RACING, 0L, catalog.entries());
+        createSession(selection(Setting.getDifficulty(), Setting.isCopperExtras()), 0L);
+    }
+
+    private static Selection selection(DifficultyPreset.Kind kind, boolean copperExtras) {
+        return kind == DifficultyPreset.Kind.CUSTOM ? customSelection(customSettings, copperExtras)
+                : new Selection(presets.get(kind), catalog.entries(), copperExtras);
+    }
+
+    private static TaskSession createSession(Selection selection, long seed) {
+        return new TaskSession(selection.preset(), selection.copperExtras(), Setting.getBlockAmount(), Setting.getMaxRollCount(),
+                Setting.getCurrentGameMode() == Setting.GameMode.RACING, seed, selection.pool());
     }
 
     public static boolean checkBlock() {
@@ -128,9 +209,7 @@ public class Block {
     }
 
     public static void setupBlocks() {
-        TaskSession next = new TaskSession(preset(Setting.getDifficulty()), Setting.isCopperExtras(), Setting.getBlockAmount(),
-                Setting.getMaxRollCount(), Setting.getCurrentGameMode() == Setting.GameMode.RACING,
-                new Random().nextLong(), catalog.entries());
+        TaskSession next = createSession(selection(Setting.getDifficulty(), Setting.isCopperExtras()), new Random().nextLong());
         session = next;
         legacyPool = List.of();
         Game.redTeamCurrentBlockAmount = Game.blueTeamCurrentBlockAmount = 0;

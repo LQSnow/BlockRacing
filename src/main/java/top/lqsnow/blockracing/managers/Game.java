@@ -105,6 +105,8 @@ public class Game {
                     LEGACY_SERIALIZER.deserialize(Message.MENU_RED_CHEST.getString() + (i + 1))));
             blueTeamChest.add(Bukkit.createInventory(null, 6 * 9,
                     LEGACY_SERIALIZER.deserialize(Message.MENU_BLUE_CHEST.getString() + (i + 1))));
+            TeamChestNavigation.prepare(redTeamChest.get(i));
+            TeamChestNavigation.prepare(blueTeamChest.get(i));
         }
     }
 
@@ -158,8 +160,10 @@ public class Game {
 
     private static void checkUpdate(Player player) {
         player.resetTitle();
-        if (!Config.CONFIG_VERSION.getString().equals(Main.getVersion())
-                || !Message.MESSAGE_VERSION.getString().equals(Main.getVersion())) {
+        if (!Main.getVersion().equals(Config.CONFIG_VERSION.getString())
+                || !Main.getVersion().equals(Message.MESSAGE_VERSION.getString())
+                || LanguageManager.hasOutdatedLanguageFiles()) {
+            player.sendMessage(Message.NOTICE_REGENERATE_CONFIG.getString(player));
             if (Message.NOTICE_VERSION_MISMATCH.getString() != null) {
                 Message.NOTICE_VERSION_MISMATCH_LINES.getStringList(player)
                         .forEach(player::sendMessage);
@@ -733,6 +737,7 @@ public class Game {
             return;
         }
         if (team.equals("red")) redTeamRollCount++; else blueTeamRollCount++;
+        Gui.updateMenu(new top.lqsnow.blockracing.menus.GameMenu());
         sendAll(success);
         updateScoreboard();
         GameProgressStore.saveNow();
@@ -767,7 +772,7 @@ public class Game {
         // Complete from team chest
         for (String block : getCurrentBlocks("red")) {
             for (Inventory chest : redTeamChest) {
-                if (chest.contains(Materials.require(block))) {
+                if (TeamChestNavigation.contains(chest, Materials.require(block))) {
                     redTaskComplete(block, Message.NOTICE_RED_TEAM_CHEST.getString());
                     return;
                 }
@@ -791,7 +796,7 @@ public class Game {
         // Complete from team chest
         for (String block : getCurrentBlocks("blue")) {
             for (Inventory chest : blueTeamChest) {
-                if (chest.contains(Materials.require(block))) {
+                if (TeamChestNavigation.contains(chest, Materials.require(block))) {
                     blueTaskComplete(block, Message.NOTICE_BLUE_TEAM_CHEST.getString());
                     return;
                 }
@@ -810,10 +815,7 @@ public class Game {
         Bukkit.getLogger().info(Message.NOTICE_RED_COLLECT.getString()
                 .replace("%block%", TranslationUtil.getValue(block)).replace("%player%", player).replaceAll("§.", ""));
         playSound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
-        if (Setting.isSpeedMode())
-            redTeamScore += 3;
-        else
-            redTeamScore += 1;
+        redTeamScore += Block.displayDifficulty(block).points(Setting.isSpeedMode());
         redTeamCurrentBlockAmount += 1;
         collect(player);
         updateScoreboard();
@@ -847,10 +849,7 @@ public class Game {
         Bukkit.getLogger().info(Message.NOTICE_BLUE_COLLECT.getString()
                 .replace("%block%", TranslationUtil.getValue(block)).replace("%player%", player).replaceAll("§.", ""));
         playSound(Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
-        if (Setting.isSpeedMode())
-            blueTeamScore += 3;
-        else
-            blueTeamScore += 1;
+        blueTeamScore += Block.displayDifficulty(block).points(Setting.isSpeedMode());
         blueTeamCurrentBlockAmount += 1;
         collect(player);
         updateScoreboard();
@@ -960,6 +959,7 @@ public class Game {
     }
 
     public static void setCurrentGameState(GameState currentGameState) {
+        if (Game.currentGameState != currentGameState) MenuMemory.resetDestinations();
         Game.currentGameState = currentGameState;
     }
 

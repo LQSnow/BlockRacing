@@ -31,6 +31,8 @@ class YamlResourceTest {
 
         for (Path path : List.of(
                 Path.of("src/main/resources/config.yml"),
+                Path.of("src/main/resources/custom/settings.yml"),
+                Path.of("src/main/resources/custom/blocks.yml"),
                 Path.of("src/main/resources/block-pools/catalogue.yml"),
                 Path.of("src/main/resources/presets/casual.yml"),
                 Path.of("src/main/resources/presets/easy.yml"),

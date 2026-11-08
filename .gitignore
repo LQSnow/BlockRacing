@@ -6,3 +6,35 @@
 target/
 dependency-reduced-pom.xml
 server/*
+docs/TODO.md
+# Local workspaces and generated artifacts
+logs/
+*.log
+.agents/
+.codex/
+.aws/
+**/[Tt][Oo][Dd][Oo]*
+tools/test-server/
+tools/material-audit/MeasureProgression.java
+
+# Publish only maintained user guides from docs; reports stay local.
+docs/*
+!docs/block-library/
+!docs/en/
+!docs/zh/
+docs/block-library/*
+!docs/block-library/README.md
+!docs/block-library/preset-guide.md
+!docs/block-library/pacing-guide.md
+!docs/block-library/custom-guide.md
+
+# Keep additional local notes out of the public documentation set.
+/*.md
+!/README.md
+!/CHANGELOG.md
+!/TranslationTutorial.md
+docs/en/*
+!docs/en/README-en.md
+!docs/en/TranslationTutorial-en.md
+docs/zh/*
+!docs/zh/README-zh.md

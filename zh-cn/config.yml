@@ -23,7 +23,7 @@ block-amount: 50
 game-mode: normal
 
 # 极速模式：
-# 开启极速模式后，开局时将会给予玩家部分道具和效果，且获得方块时加3分，以加快游戏进度
+# 开启后给予额外道具和效果；简单/中等/困难/噩梦分别获得3/4/5/6分（普通为1/2/3/4分）
 # 物品：精准采集铁镐、熟牛排、损坏的鞘翅、经验修补附魔书
 # 效果：急迫V
 speed-mode: false
@@ -44,3 +44,7 @@ max-roll-count: 3
 
 # 内部兼容版本，请勿手动修改
 config-version: 26.3.0
+
+# Check GitHub stable releases at startup and every 6 hours; only notify about newer versions.
+# Connection failures and up-to-date results are silent. No automatic downloads.
+check-updates: true

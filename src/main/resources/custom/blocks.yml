@@ -1,0 +1,89 @@
+# Local custom block list. Each ID may occur only once across this file.
+# Only reviewed survival block items are allowed. Omitted tiers/dimensions are empty.
+# This file chooses the pool in Local mode; GUI tier/dimension toggles are ignored.
+# Local mode ignores the GUI copper toggle and thresholds; set unlock-percent per dimension here.
+# Example pool: 70 Overworld blocks. Edit while in preparation, then click Local to reload.
+overworld:
+  unlock-percent: 0
+  tier-1:
+    - minecraft:andesite
+    - minecraft:birch_log
+    - minecraft:birch_planks
+    - minecraft:birch_sapling
+    - minecraft:birch_wood
+    - minecraft:chest
+    - minecraft:cobblestone
+    - minecraft:crafting_table
+    - minecraft:diorite
+    - minecraft:dirt
+    - minecraft:granite
+    - minecraft:gravel
+    - minecraft:ladder
+    - minecraft:lever
+    - minecraft:oak_log
+    - minecraft:oak_planks
+    - minecraft:oak_sapling
+    - minecraft:oak_wood
+    - minecraft:sand
+    - minecraft:spruce_log
+    - minecraft:spruce_planks
+    - minecraft:spruce_sapling
+    - minecraft:spruce_wood
+    - minecraft:torch
+  tier-2:
+    - minecraft:activator_rail
+    - minecraft:andesite_slab
+    - minecraft:andesite_stairs
+    - minecraft:andesite_wall
+    - minecraft:barrel
+    - minecraft:birch_button
+    - minecraft:birch_door
+    - minecraft:birch_fence
+    - minecraft:birch_fence_gate
+    - minecraft:birch_leaves
+    - minecraft:birch_pressure_plate
+    - minecraft:birch_shelf
+    - minecraft:birch_sign
+    - minecraft:birch_slab
+    - minecraft:birch_stairs
+    - minecraft:birch_trapdoor
+    - minecraft:black_bed
+    - minecraft:black_carpet
+    - minecraft:black_wool
+    - minecraft:black_wool_slab
+    - minecraft:black_wool_stairs
+    - minecraft:blast_furnace
+    - minecraft:brick_slab
+    - minecraft:brick_stairs
+    - minecraft:brick_wall
+    - minecraft:bricks
+    - minecraft:brown_mushroom
+    - minecraft:campfire
+    - minecraft:cartography_table
+    - minecraft:carved_pumpkin
+    - minecraft:cauldron
+    - minecraft:chiseled_bookshelf
+    - minecraft:chiseled_deepslate
+    - minecraft:chiseled_sandstone
+    - minecraft:chiseled_stone_bricks
+nether:
+  unlock-percent: 25
+end:
+  unlock-percent: 70
+
+# Optional tier progression for local files; disabled unless explicitly enabled here.
+# Progress uses completed goals, not generated queue positions. Order is T1 through T6.
+# Zero blocks a tier; positive values multiply the preset's base tier weights.
+tier-progression:
+  enabled: false
+  stages:
+    - start-percent: 0
+      tier-multipliers: [8, 3, 0, 0, 0, 0]
+    - start-percent: 15
+      tier-multipliers: [4, 4, 1, 0, 0, 0]
+    - start-percent: 35
+      tier-multipliers: [2, 3, 4, 1, 0, 0]
+    - start-percent: 60
+      tier-multipliers: [1, 2, 4, 3, 1, 0]
+    - start-percent: 80
+      tier-multipliers: [1, 1, 2, 4, 4, 2]

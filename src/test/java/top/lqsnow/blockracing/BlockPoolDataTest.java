@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /** Data contract tests. Actual isBlock/isItem checks run in the real Paper registry exporter. */
 class BlockPoolDataTest {
     private static final Path POOLS = Path.of("src/main/resources/block-pools");
-    private static final Path SNAPSHOT = Path.of("docs/block-library/materials-api-26.3.csv");
+    private static final Path SNAPSHOT = Path.of("src/test/resources/catalogue/materials-api-26.3.csv");
 
     private static List<String[]> rows(Path path, String delimiter) throws Exception {
         return Files.readAllLines(path, StandardCharsets.UTF_8).stream().skip(1)

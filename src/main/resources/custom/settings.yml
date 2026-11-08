@@ -1,0 +1,16 @@
+# Custom selection, saved by the preparation menu.
+# Local mode uses custom/blocks.yml instead of the dimension/tier toggles.
+# Unlock percentages below apply only to tier mode. Local mode reads custom/blocks.yml.
+source: tiers
+overworld:
+  enabled: true
+  tiers: [1, 2, 3, 4]
+  unlock-percent: 0
+nether:
+  enabled: true
+  tiers: [1, 2, 3]
+  unlock-percent: 25
+end:
+  enabled: false
+  tiers: [1, 2, 3, 4, 5, 6]
+  unlock-percent: 70

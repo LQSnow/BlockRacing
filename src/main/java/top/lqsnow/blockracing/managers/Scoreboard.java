@@ -58,9 +58,7 @@ public final class Scoreboard {
     }
 
     public static String getBlockDisplay(String block, Player player) {
-        var entry = Block.find(block);
-        String difficultyText = entry == null ? text(Message.BLOCK_LIBRARY_LEGACY, player)
-                : text(Message.valueOf("BLOCK_LIBRARY_" + entry.dimension().name()), player) + " T" + entry.tier();
+        String difficultyText = text(Message.valueOf("SCOREBOARD_BLOCK_DIFFICULTY_" + Block.displayDifficulty(block).name()), player);
         String blockFormat = text(Message.SCOREBOARD_BLOCK_FORMAT, player);
         if (blockFormat.equals("%difficulty% | %block%")) {
             blockFormat = "§8[%difficulty%§8] §f%block%";
@@ -149,7 +147,7 @@ public final class Scoreboard {
                 ? text(Message.SCOREBOARD_MODE_NORMAL, player)
                 : text(Message.SCOREBOARD_MODE_RACING, player);
         String displayedGameMode = Setting.isSpeedMode()
-                ? baseMode + " + " + text(Message.SCOREBOARD_MODE_SPEED, player)
+                ? baseMode + " §f+ " + text(Message.SCOREBOARD_MODE_SPEED, player)
                 : baseMode;
 
         String blocks = text(top.lqsnow.blockracing.menus.DifficultyMenu.name(Setting.getDifficulty()), player);
@@ -166,12 +164,15 @@ public final class Scoreboard {
             if (originalMessage.isEmpty()) {
                 continue;
             }
-            lines.put(slot, originalMessage
-                    .replace("%game_mode%", displayedGameMode)
-                    .replace("%block_amount%", String.valueOf(Setting.getBlockAmount()))
-                    .replace("%blocks%", blocks));
+            lines.put(slot, originalMessage);
         }
-        lines.forEach((slot, line) -> setSlot(board, objective, slot, line));
+        List<String> ordered = lines.entrySet().stream().sorted(Map.Entry.<Integer, String>comparingByKey().reversed())
+                .map(Map.Entry::getValue).toList();
+        List<String> merged = top.lqsnow.blockracing.toolkit.text.PregameLines.mergeDifficulty(ordered);
+        for (int index = 0; index < merged.size(); index++) setSlot(board, objective, merged.size() - index, merged.get(index)
+                .replace("%game_mode%", displayedGameMode)
+                .replace("%block_amount%", String.valueOf(Setting.getBlockAmount()))
+                .replace("%blocks%", blocks));
     }
 
     private static void renderInGame(org.bukkit.scoreboard.Scoreboard board,

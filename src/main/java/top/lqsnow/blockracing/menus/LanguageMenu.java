@@ -23,6 +23,9 @@ public final class LanguageMenu extends MenuView {
         setButton(4, button(Material.COMPASS, "自动 / Auto", "跟随客户端语言 / Follow client language",
                 LanguageManager.Preference.AUTO));
         setButton(6, button(Material.BLUE_BANNER, "English", "Use English", LanguageManager.Preference.EN_US));
+        setButton(8, MenuButton.of(player -> ItemBuilder.of(Material.ARROW)
+                .name(top.lqsnow.blockracing.managers.Message.MENU_ALL_RETURN_BACK.getString(player)).build(),
+                (player, click) -> Gui.openMainMenu(player)));
     }
 
     public static void sendFirstJoinPrompt(Player player) {
@@ -45,7 +48,7 @@ public final class LanguageMenu extends MenuView {
                 ? "§aLanguage changed to English."
                 : "§aLanguage set to Auto. / 语言已设为自动。");
         player.closeInventory();
-        Gui.openMenu(player);
+        Gui.openMainMenu(player);
     }
 
     private static MenuButton button(Material material, String name, String lore,

@@ -19,7 +19,7 @@ public class VerifyTaskRuntime {
         BlockCatalog catalog = BlockCatalog.load(root.resolve("src/main/resources/block-pools"));
         BlockCatalog.validateLive(catalog.entries());
         int matches = 0;
-        for (var kind : DifficultyPreset.Kind.values()) {
+        for (var kind : DifficultyPreset.Kind.standards()) {
             YamlConfiguration yaml = new YamlConfiguration();
             yaml.load(root.resolve("src/main/resources/presets/" + kind.id() + ".yml").toFile());
             for (boolean copper : List.of(false, true)) for (boolean racing : List.of(false, true)) {
